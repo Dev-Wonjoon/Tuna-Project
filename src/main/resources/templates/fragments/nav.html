@@ -1,37 +1,51 @@
-<nav th:fragment="nav"
-    class="flex items-center gap-6 px-5 py-4
-            md:h-full md:flex-col md:items-start md:gap-0
-            md:px-6 md:py-8
-">
-    <a
-        th:href="@{/}"
-        class="
-            shrink-0 text-xl font-medium tracking-tight
-            text-neutral-900
-        "
-    >
-        Tuna
-    </a>
-
-    <div class="ml-auto md:md-0 md:mt-8">
+<ul th:fragment="nav" class="mt-7 flex flex-col items-start gap-2">
+    <li>
         <a
-            th:href="@{/login}"
+            th:href="@{/}"
+            class="text-sm hover:underline"
+        >
+            홈
+        </a>
+    </li>
+
+    <li>
+       <a
+           th:href="@{/mypage}"
+           class="text-sm hover:underline"
+       >
+            마이페이지
+       </a>
+    </li>
+
+    <li class="mt-5 text-xs font-semibold text-neutral-500">
+        플레이리스트
+    </li>
+
+    <li
+        th:each="playlist : ${playlists}"
+        class="w-full"
+    >
+        <a
+            th:href="@{/playlists/{id}(id=${playlist['id']})}"
             class="
-                block text-sm font-medium text-neutral-800
-                underline-offset-4 hover:underline
+                flex w-full items-center justify-between
+                gap-2 rounded px-2 py-1.5
+                text-sm text-neutral-700
+                hover:bg-neutral-100
             "
         >
-            로그인
+            <span
+                class="truncate"
+                th:text="${playlist['name']}"
+            >
+                플레이리스트
+            </span>
+            <span
+                class="text-xs text-neutral-400"
+                th:text="${playlist['postCount']}"
+            >
+                0
+            </span>
         </a>
-        <p></p>
-    </div>
-
-    <ul class="
-            flex items-center gap-4
-            md:mt-7 md:flex-col md:items-start md:gap-3
-    ">
-        <li>
-            
-        </li>
-    </ul>
-</nav>
+    </li>
+</ul>
