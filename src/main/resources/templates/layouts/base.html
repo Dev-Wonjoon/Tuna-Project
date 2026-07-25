@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko"
+        xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${title}">Tuna</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="min-h-screen bg-white text-neutral-900 antialiased">
+<div class="min-h-screen md:flex">
+    <!-- Nav bar -->
+    <aside class="w-full border-b border-neutral-300 bg-white
+                md:fixed md:inset-y-0 md:left-0 md:w-36
+                md:border-b-0 md:border-r
+    ">
+        <th:block th:replace="~{fragments/nav :: nav}"/>
+    </aside>
+
+    <!-- Main Content -->
+     <main class="flex min-h-screen flex-1 justify-center
+                    px-4 py-6
+                    md:ml-36 md:px-8 md:py-9
+     ">
+        <th:block th:replace="${content}"/>
+     </main>
+</div>
+
+</body>
+</html>
