@@ -3,14 +3,14 @@
             'Tuna',
             ~{::section}
         )}">
-<section class="flex w-full max-w-[320px] flex-col gap-5">
+<section class="flex w-full max-w-md flex-col gap-5">
 
     <!--  게시글 파트  -->
-    <article th:each="post : ${posts}" class="min-h-[289px] bg-neutral-200
-                transition-colors hover:bg-neutral-300
+    <article th:each="post : ${posts}" class="min-h-72 bg-neutral-200
+                transition-colors hover:bg-neutral-300 items-center
         ">
         <a th:href="@{/posts/{id}(id=${post['id']})}" class="flex flex-col">
-            <div class="flex-1 min-h-[280px]">
+            <div class="flex-1 min-h-17">
                 <h2 class="text-lg font-semibold" th:text="${post['title']}">
                     게시글 제목
                 </h2>

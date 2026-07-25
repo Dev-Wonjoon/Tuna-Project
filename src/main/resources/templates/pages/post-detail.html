@@ -7,10 +7,10 @@
 >
 <body>
 <article th:fragment="detail" class="
-        min-h[289px] bg-neutral-200
+        min-h-72 bg-neutral-200
         transition-colors hover:bg-neutral-300
     ">
-    <a th:href="@{/posts/{id}(id=${post['id']})}" class="block min-h[280px] p-5">
+    <a th:href="@{/posts/{id}(id=${post['id']})}" class="block min-h-70 p-5">
         <h2 class="text-lg font-semibold" th:text="${post['title']}">
             게시글 제목
         </h2>
