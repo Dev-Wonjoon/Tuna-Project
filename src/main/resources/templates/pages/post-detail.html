@@ -6,19 +6,27 @@
         ~{::detail})}"
 >
 <body>
-<article th:fragment="detail" class="
-        min-h-72 bg-neutral-200
-        transition-colors hover:bg-neutral-300
+<article th:fragment="detail"
+         class="
+            w-full max-w-2xl self-start
+            overflow-hidden rounded-lg
+            bg-neutral-200
     ">
-    <a th:href="@{/posts/{id}(id=${post['id']})}" class="block min-h-70 p-5">
-        <h2 class="text-lg font-semibold" th:text="${post['title']}">
+    <div class="min-h-80 p-6">
+        <h1
+            class="text-xl font-semibold"
+            th:text="${post['title']}"
+        >
             게시글 제목
-        </h2>
+        </h1>
 
-        <p class="mt-3 whitespace-pre-line text-sm text-neutral-600" th:text="${post['content']}">
+        <p
+            class="mt-4 whitespace-pre-line text-base text-neutral-600"
+            th:text="${post['content']}"
+        >
             게시글 내용
         </p>
-    </a>
+    </div>
 
     <div class="
             flex items-center border-t border-neutral-300
@@ -66,6 +74,7 @@
         </div>
     </div>
 
+    <!-- 댓글 부분 -->
     <section
             id="comments"
             class="mt-6 border-t border-neutral-300 px-5 py-5"

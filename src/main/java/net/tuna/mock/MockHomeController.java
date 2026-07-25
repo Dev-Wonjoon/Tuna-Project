@@ -98,4 +98,14 @@ public class MockHomeController {
         model.addAttribute("comments", comments);
         return "pages/post-detail";
     }
+
+    @GetMapping("/login")
+    public String login() {
+        return "pages/auth/login";
+    }
+
+    @GetMapping("/signup")
+    public String signup() {
+        return "pages/auth/signup";
+    }
 }

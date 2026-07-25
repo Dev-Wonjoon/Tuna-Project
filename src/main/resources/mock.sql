@@ -149,7 +149,26 @@ INSERT IGNORE INTO posts (
        251,
        NOW() - INTERVAL 8 HOUR,
        NOW() - INTERVAL 8 HOUR
+),
+(
+       104,
+       '게시글 4',
+       '내용 4',
+       3,
+       251,
+       NOW() - INTERVAL 8 HOUR,
+       NOW() - INTERVAL 8 HOUR
+),
+(
+       105,
+       '게시글 5',
+       '내용 5',
+       3,
+       251,
+       NOW() - INTERVAL 8 HOUR,
+       NOW() - INTERVAL 8 HOUR
 );
+
 
 INSERT IGNORE INTO comments (
        id,
