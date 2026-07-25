@@ -1,0 +1,40 @@
+<div
+    xmlns:th="http://www.thymeleaf.org"
+    th:fragment="musicUrlField"
+    class="mt-6"
+>
+    <div class="flex items-center gap-2">
+        <label
+            for="music-url"
+            class="text-sm font-medium"
+        >
+            노래 링크
+        </label>
+
+        <span class="text-xs text-neutral-400">
+            선택
+        </span>
+    </div>
+
+    <input
+        id="music-url"
+        name="musicUrl"
+        type="url"
+        maxlength="2048"
+        inputmode="url"
+        autocomplete="url"
+        placeholder="https://www.example.com..."
+        class="
+            mt-2 w-full rounded-md
+            border border-neutral-300 bg-white
+            px-3 py-2
+            placeholder:text-neutral-400
+            focus:border-neutral-900
+            focus:outline-none
+        "
+        >
+
+    <p class="mt-2 text-xs text-neutral-500">
+        YouTube, Spotify, SoundCloud 등의 노래 링크를 입력할 수 있습니다.
+    </p>
+</div>

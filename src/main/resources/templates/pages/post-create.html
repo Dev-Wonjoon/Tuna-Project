@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/base :: layout('글 작성 | Tuna', ~{::section})}"
+>
+<section class="w-full max-w-2xl">
+    <div class="
+        overflow-hidden rounded-lg
+        border border-neutral-200
+        bg-neutral-100
+    ">
+        <header class="border-b border-neutral-300 px-6 py-5">
+            <h1 class="text-xl font-semibold">
+                새 게시글
+            </h1>
+
+            <p class="mt-1 text-sm text-neutral-500">
+                제목과 내용을 입력해주세요.
+            </p>
+        </header>
+
+        <form
+            th:action="@{/posts}"
+            method="POST"
+            class="p-6"
+        >
+            <div>
+                <label
+                    for="title"
+                    class="text-sm font-medium"
+                >
+                    제목
+                </label>
+
+                <input
+                    id="title"
+                    name="title"
+                    type="text"
+                    maxlength="255"
+                    required
+                    placeholder="제목을 입력하세요."
+                    class="
+                        mt-2 w-full rounded-md
+                        border border-neutral-300 bg-white
+                        px-3 py-2
+                        placeholder:text-neutral-400
+                        focus:border-neutral-900
+                        focus:outline-none
+                    "
+                >
+            </div>
+
+            <th:block
+                th:replace="~{fragments/music-url-field :: musicUrlField}"/>
+
+            <div class="mt-6">
+                <label
+                    for="content"
+                    class="text-sm font-medium"
+                >
+                    내용
+                </label>
+
+                <textarea
+                    id="content"
+                    name="content"
+                    rows="14"
+                    required
+                    placeholder="내용을 입력하세요."
+                    class="
+                        mt-2 min-h-80 w-full resize-y
+                        rounded-md border border-neutral-300
+                        bg-white px-3 py-3
+                        placeholder:text-neutral-400
+                        focus:border-neutral-900
+                        focus:outline-none
+                    "
+                ></textarea>
+            </div>
+
+            <div class="
+                mt-6 flex items-center justify-end gap-3
+                border-t border-neutral-300 pt-5
+            ">
+                <a
+                    th:href="@{/}"
+                    class="
+                        rounded-md border border-neutral-300
+                        bg-white px-4 py-2
+                        text-sm font-medium
+                        hover:bg-neutral-50
+                    "
+                >
+                    취소
+                </a>
+
+                <button
+                    type="submit"
+                    class="
+                        rounded-md border border-neutral-900
+                        px-4 py-2
+                        text-sm font-medium text-white
+                        hover:bg-neutral-700
+                        focus-visible:outline-2
+                        focus-visible:outline-offset-2
+                        focus-visible:outline-neutral-900
+                    "
+                >
+                    게시하기
+                </button>
+            </div>
+        </form>
+    </div>
+
+</section>
+</html>

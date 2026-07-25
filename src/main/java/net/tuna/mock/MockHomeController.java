@@ -68,6 +68,7 @@ public class MockHomeController {
                 p.id,
                 p.title,
                 p.content,
+                p.music_url AS musicUrl,
                 p.view_count AS viewCount,
                 p.created_at AS createdAt,
                 m.id AS authorId,
@@ -107,5 +108,14 @@ public class MockHomeController {
     @GetMapping("/signup")
     public String signup() {
         return "pages/auth/signup";
+    }
+
+    @GetMapping("/posts/new")
+    public String postCreateForm(Model model) {
+        model.addAttribute("title", "글 작성 | Tuna");
+        model.addAttribute("currentMenu", "post-create");
+        model.addAttribute("currentPlaylistId", null);
+
+        return "pages/post-create";
     }
 }

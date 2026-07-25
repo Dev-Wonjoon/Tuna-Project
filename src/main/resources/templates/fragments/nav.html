@@ -1,7 +1,7 @@
 <nav th:fragment="nav" class="flex h-full flex-col px-4 py-5">
     <a
-        th:href="@{/}"
-        class="px-2 text-2xl font-semibold tracking-tight"
+            th:href="@{/}"
+            class="px-2 text-2xl font-semibold tracking-tight"
     >
         Tuna
     </a>
@@ -9,8 +9,8 @@
     <!-- 로그인 버튼 -->
     <div class="mt-8 px-2">
         <a
-            th:href="@{/login}"
-            class="text-sm font-medium hover:underline"
+                th:href="@{/login}"
+                class="text-sm font-medium hover:underline"
         >
             로그인
         </a>
@@ -27,13 +27,13 @@
     <ul class="mt-8 flex flex-col gap-1">
         <li>
             <a
-                th:href="@{/}"
-                class="
+                    th:href="@{/}"
+                    class="
                     flex w-full items-center rounded-md
                     px-3 py-2 text-sm text-neutral-700
                     hover:bg-neutral-100 hover:text-neutral-950
                 "
-                th:classappend="${currentMenu == 'home'}
+                    th:classappend="${currentMenu == 'home'}
                     ? ' bg-neutral-200 font-medium text-neutral-950'
                     : ''"
             >
@@ -42,21 +42,46 @@
         </li>
 
         <li>
-           <a
-               th:href="@{/mypage}"
-               class="
+            <a
+                    th:href="@{/mypage}"
+                    class="
                     flex w-full items-center rounded-md
                     px-3 py-2 text-sm text-neutral-700
                     hover:bg-neutral-100 hover:text-neutral-950
                "
-               th:classappend="${currentMenu == 'mypage'}
+                    th:classappend="${currentMenu == 'mypage'}
                ? ' bg-neutral-200 font-medium text-neutral-950'
                : ''"
-           >
-               마이 페이지
-           </a>
+            >
+                마이 페이지
+            </a>
         </li>
     </ul>
+
+    <div class="mt-6 px-2">
+        <a
+                th:href="@{/posts/new}"
+                class="
+                flex w-full items-center justify-center gap-2
+                rounded-md bg-neutral-900
+                px-4 py-2.5
+                text-sm font-medium text-white
+                hover:bg-neutral-700
+                focus-visible:outline-2
+                focus-visible:outline-offset-2
+                focus-visible:outline-neutral-900
+            "
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                 class="lucide lucide-pencil-icon lucide-pencil">
+                <path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>
+                <path d="m15 5 4 4"/>
+            </svg>
+
+            <span>글 작성</span>
+        </a>
+    </div>
 
     <!-- 플레이리스트 -->
     <div class="mt-8 flex items-center justify-between px-2">
@@ -65,9 +90,9 @@
         </h2>
 
         <button
-            type="button"
-            aria-label="새 플레이리스트 만들기"
-            class="
+                type="button"
+                aria-label="새 플레이리스트 만들기"
+                class="
                 flex size-7 items-center justify-center
                 rounded-md text-neutral-500
                 hover:bg-neutral-100 hover:text-neutral-950
@@ -90,35 +115,35 @@
     <ul class="mt-2 flex flex-col gap-1">
         <li th:each="playlist : ${playlists}">
             <a
-                th:href="@{/playlists/{id}(id=${playlist['id']})}"
-                class="
+                    th:href="@{/playlists/{id}(id=${playlist['id']})}"
+                    class="
                     flex items-center justify-between gap-3
                     rounded-md px-3 py-2
                     text-sm text-neutral-700
                     hover:bg-neutral-100 hover:text-neutral-950
                 "
-                th:classappend="${
+                    th:classappend="${
                     currentPlaylistId != null
                     and currentPlaylistId == playlist['id']
                 } ? ' bg-neutral-200 font-medium text-neutral-950' : ''"
             >
                 <span
-                    class="truncate"
-                    th:text="${playlist['name']}"
+                        class="truncate"
+                        th:text="${playlist['name']}"
                 >
                     플레이리스트
                 </span>
 
                 <span
-                    class="shrink-0 text-xs text-neutral-400"
-                    th:text="${playlist['postCount']}"
+                        class="shrink-0 text-xs text-neutral-400"
+                        th:text="${playlist['postCount']}"
                 >0</span>
             </a>
         </li>
 
         <li
-            th:if="${playlists == null or #lists.isEmpty(playlists)}"
-            class="px-3 py-2 text-xs text-neutral-400"
+                th:if="${playlists == null or #lists.isEmpty(playlists)}"
+                class="px-3 py-2 text-xs text-neutral-400"
         >
             플레이리스트가 없습니다.
         </li>
