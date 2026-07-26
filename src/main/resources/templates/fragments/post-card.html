@@ -1,0 +1,91 @@
+<article xmlns:th="http://www.thymeleaf.org"
+         th:fragment="postCard(post)"
+         class="
+                w-full overflow-hidden rounded-lg
+                bg-neutral-200
+                transition-colors hover:bg-neutral-300
+        "
+>
+    <!-- 게시글 상단 -->
+    <a
+            th:href="@{/posts/{id}(id=${post['id']})}"
+            class="block min-h-80 p-6"
+    >
+        <h2
+                class="text-xl font-semibold"
+                th:text="${post['title']}"
+        >
+            게시글 제목
+        </h2>
+        <p
+                class="mt-4 whitespace-pre-line text-base text-neutral-600"
+                th:text="${post['content']}"
+        >
+            게시글 내용
+        </p>
+    </a>
+
+    <div class="px-6 pb-6">
+        <th:block th:replace="~{fragments/music-link :: musicLink(${post['musicUrl']})}"/>
+    </div>
+
+    <!-- 게시글 하단 -->
+    <div
+            class="
+                flex items-center
+                border-t border-neutral-300
+                px-6 py-4
+                text-sm text-neutral-500
+        ">
+        <div class="flex items-center gap-1">
+            <button
+                    type="button"
+                    aria-label="플레이리스트에 추가"
+                    title="플레이리스트에 추가"
+                    class="
+                        flex size-7 items-center justify-center
+                        rounded-md text-neutral-500
+                        hover:bg-neutral-100 hover:text-neutral-950
+                ">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                     stroke-linejoin="round" class="size-4" aria-hidden="true">
+                    <path d="M16 5H3"/>
+                    <path d="M11 12H3"/>
+                    <path d="M16 19H3"/>
+                    <path d="M18 9v6"/>
+                    <path d="M21 12h-6"/>
+                </svg>
+            </button>
+            <a
+                    th:href="@{/posts/{id}(id=${post['id']})} + '#comments'"
+                    aria-label="댓글 보기"
+                    title="댓글 보기"
+                    class="
+                        flex size-7 items-center justify-center
+                        rounded-md text-neutral-500
+                        hover:bg-neutral-100 hover:text-neutral-950
+                    "
+            >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                     stroke-linejoin="round" class="size-4" aria-hidden="true">
+                    <path
+                            d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719"/>
+                    <path d="M8 12h.01"/>
+                    <path d="M12 12h.01"/>
+                    <path d="M16 12h.01"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="ml-auto flex items-center gap-3">
+                <span th:text="${post['authorEmail']}">
+                    작성자
+                </span>
+
+            <span>
+                    조회수
+                    <span th:text="${post['viewCount']}">0</span>
+                </span>
+        </div>
+    </div>
+</article>

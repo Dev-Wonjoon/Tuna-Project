@@ -27,6 +27,7 @@ public class MockHomeController {
                 p.id,
                 p.title,
                 p.content,
+                p.music_url AS musicUrl,
                 p.view_count AS viewCount,
                 p.created_at AS createdAt,
                 m.email AS authorEmail
