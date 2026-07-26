@@ -17,7 +17,7 @@
 
         <p class="mt-1 text-xs text-neutral-500">
             회원이 아니신가요?
-            <a th:href="@{/signup}" class="hover:underline">
+            <a th:href="@{/signup}" class="hover:underline text-blue-600 font-semibold hover:text-blue-700">
                 회원가입
             </a>
         </p>
@@ -89,13 +89,17 @@
             플레이리스트
         </h2>
 
-        <button
-                type="button"
+        <a
+                th:href="@{/playlists/new}"
                 aria-label="새 플레이리스트 만들기"
+                title="새 플레이리스트 만들기"
                 class="
-                flex size-7 items-center justify-center
-                rounded-md text-neutral-500
-                hover:bg-neutral-100 hover:text-neutral-950
+                    flex size-7 items-center justify-center
+                    rounded-md text-neutral-500
+                    hover:bg-neutral-100 hover:text-neutral-950
+                    focus-visible:outline-2
+                    focus-visible:outline-offset-2
+                    focus-visible:outline-neutral-900
             "
         >
             <svg
@@ -109,7 +113,7 @@
                 <path d="M12 5v14"/>
                 <path d="M5 12h14"/>
             </svg>
-        </button>
+        </a>
     </div>
 
     <ul class="mt-2 flex flex-col gap-1">

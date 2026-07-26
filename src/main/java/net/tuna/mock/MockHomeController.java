@@ -119,4 +119,78 @@ public class MockHomeController {
 
         return "pages/post-create";
     }
+
+    @GetMapping("/playlists/{playlistId}")
+    public String playlistDetail(
+            @PathVariable long playlistId,
+            Model model
+    ) {
+        long memberId = 2;
+
+        Map<String, Object> playlist = jdbcTemplate.queryForMap("""
+            SELECT
+                pl.id,
+                pl.name
+            FROM playlists pl
+            WHERE pl.id = ?
+                AND pl.member_id = ?
+        """, playlistId, memberId);
+
+        List<Map<String, Object>> posts = jdbcTemplate.queryForList("""
+            SELECT
+                p.id,
+                p.title,
+                p.content,
+                p.music_url AS musicUrl,
+                p.view_count AS viewCount,
+                p.created_at AS createdAt,
+                m.email AS authorEmail
+            FROM post_playlist_mapping ppm
+            JOIN posts p
+                ON p.id = ppm.post_id
+            JOIN members m
+                ON m.id = p.member_id
+            WHERE ppm.playlist_id = ?
+            ORDER BY p.created_at DESC, p.id ASC
+        """, playlistId);
+
+        model.addAttribute(
+                "title",
+                playlist.get("name") + " | Tuna"
+        );
+        model.addAttribute("playlist", playlist);
+        model.addAttribute("posts", posts);
+        model.addAttribute("playlists", findPlaylists(memberId));
+        model.addAttribute("currentMenu", null);
+        model.addAttribute("currentPlaylistId", playlist.get("id"));
+
+        return "pages/playlist-detail";
+    }
+
+    @GetMapping("/playlists/new")
+    public String playlistCreateForm(Model model) {
+        long memberId = 2;
+
+        model.addAttribute("title", "플레이리스트 추가 | Tuna");
+        model.addAttribute("playlists", findPlaylists(memberId));
+        model.addAttribute("currentMenu", null);
+        model.addAttribute("currentPlaylistId", null);
+
+        return "pages/playlist-create";
+    }
+
+    private List<Map<String, Object>> findPlaylists(long memberId) {
+        return jdbcTemplate.queryForList("""
+            SELECT
+                pl.id,
+                pl.name,
+                COUNT(ppm.post_id) AS postCount
+            FROM playlists pl
+            LEFT JOIN post_playlist_mapping ppm
+                ON ppm.playlist_id = pl.id
+            WHERE pl.member_id = ?
+            GROUP BY pl.id, pl.name, pl.created_at
+            ORDER BY pl.created_at DESC
+        """, memberId);
+    }
 }

@@ -9,7 +9,7 @@ DROP TABLE IF EXISTS members;
 SET FOREIGN_KEY_CHECKS = 1;
 
 CREATE TABLE IF NOT EXISTS members (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     role ENUM('ADMIN', 'USER') NOT NULL DEFAULT 'USER',
@@ -17,11 +17,11 @@ CREATE TABLE IF NOT EXISTS members (
 );
 
 CREATE TABLE IF NOT EXISTS posts (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL UNIQUE,
     content TEXT NOT NULL,
     music_url VARCHAR(2048) NULL,
-    member_id INT NOT NULL,
+    member_id BIGINT NOT NULL,
     view_count INT UNSIGNED NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -36,10 +36,10 @@ CREATE TABLE IF NOT EXISTS posts (
 );
 
 CREATE TABLE IF NOT EXISTS comments (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     content TEXT NOT NULL,
-    member_id INT NOT NULL,
-    post_id INT NOT NULL,
+    member_id BIGINT NOT NULL,
+    post_id BIGINT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
@@ -58,8 +58,8 @@ CREATE TABLE IF NOT EXISTS comments (
 );
 
 CREATE TABLE IF NOT EXISTS playlists (
-    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    member_id INT NOT NULL,
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    member_id BIGINT NOT NULL,
     name VARCHAR(255) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
@@ -75,8 +75,8 @@ CREATE TABLE IF NOT EXISTS playlists (
 );
 
 CREATE TABLE IF NOT EXISTS post_playlist_mapping (
-    post_id INT NOT NULL,
-    playlist_id INT NOT NULL,
+    post_id BIGINT NOT NULL,
+    playlist_id BIGINT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY (post_id, playlist_id),
@@ -139,7 +139,7 @@ INSERT IGNORE INTO posts (
        101,
        '게시글 1',
        '내용 1',
-       'https://youtu.be/NbKH4iZqq1Y?si=gcbmVIiHspUsSiYV',
+       'https://post1',
        2,
        128,
        NOW() - INTERVAL 3 DAY,
@@ -149,7 +149,7 @@ INSERT IGNORE INTO posts (
        102,
        '게시글 2',
        '내용 2',
-       'https://www.youtube.com/watch?v=ZF49-rKzTLk&pp=ygUGcmVkcmVk0gcJCaMLAYcqIYzv',
+       'https://post2',
        2,
        73,
        NOW() - INTERVAL 1 DAY,
@@ -184,6 +184,25 @@ INSERT IGNORE INTO posts (
        251,
        NOW() - INTERVAL 8 HOUR,
        NOW() - INTERVAL 8 HOUR
+);
+
+-- music url 뺀 게시글
+INSERT IGNORE INTO posts (
+       id,
+       title,
+       content,
+       member_id,
+       view_count,
+       created_at,
+       updated_at
+) VALUE (
+       106,
+       '게시글 6',
+       '내용 6',
+       1,
+       111,
+       NOW() - INTERVAL 1 HOUR,
+       NOW() - INTERVAL 1 HOUR
 );
 
 -- 댓글
