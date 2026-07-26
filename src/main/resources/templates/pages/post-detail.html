@@ -26,6 +26,8 @@
         >
             게시글 내용
         </p>
+
+        <th:block th:replace="~{fragments/music-link :: musicLink(${post['musicUrl']})}"/>
     </div>
 
     <div class="
