@@ -1,3 +1,13 @@
+SET FOREIGN_KEY_CHECKS = 0;
+
+DROP TABLE IF EXISTS post_playlist_mapping;
+DROP TABLE IF EXISTS comments;
+DROP TABLE IF EXISTS playlists;
+DROP TABLE IF EXISTS posts;
+DROP TABLE IF EXISTS members;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
 CREATE TABLE IF NOT EXISTS members (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -119,6 +129,7 @@ INSERT IGNORE INTO posts (
        id,
        title,
        content,
+       music_url,
        member_id,
        view_count,
        created_at,
@@ -128,6 +139,7 @@ INSERT IGNORE INTO posts (
        101,
        '게시글 1',
        '내용 1',
+       'https://youtu.be/NbKH4iZqq1Y?si=gcbmVIiHspUsSiYV',
        2,
        128,
        NOW() - INTERVAL 3 DAY,
@@ -137,6 +149,7 @@ INSERT IGNORE INTO posts (
        102,
        '게시글 2',
        '내용 2',
+       'https://www.youtube.com/watch?v=ZF49-rKzTLk&pp=ygUGcmVkcmVk0gcJCaMLAYcqIYzv',
        2,
        73,
        NOW() - INTERVAL 1 DAY,
@@ -146,6 +159,7 @@ INSERT IGNORE INTO posts (
        103,
        '게시글 3',
        '내용 3',
+       'https://post3',
        3,
        251,
        NOW() - INTERVAL 8 HOUR,
@@ -155,6 +169,7 @@ INSERT IGNORE INTO posts (
        104,
        '게시글 4',
        '내용 4',
+       'https://post4',
        3,
        251,
        NOW() - INTERVAL 8 HOUR,
@@ -164,13 +179,14 @@ INSERT IGNORE INTO posts (
        105,
        '게시글 5',
        '내용 5',
+       'https://post5',
        3,
        251,
        NOW() - INTERVAL 8 HOUR,
        NOW() - INTERVAL 8 HOUR
 );
 
-
+-- 댓글
 INSERT IGNORE INTO comments (
        id,
        content,
