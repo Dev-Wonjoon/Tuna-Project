@@ -10,15 +10,52 @@
          class="
             w-full max-w-2xl self-start
             overflow-hidden rounded-lg
-            bg-neutral-200
+            bg-neutral-100
+            border border-neutral-200 border-t
     ">
     <div class="min-h-80 p-6">
-        <h1
-            class="text-xl font-semibold"
-            th:text="${post['title']}"
-        >
-            게시글 제목
-        </h1>
+        <header>
+            <h1 class="text-xl font-semibold"
+                th:text="${post['title']}"
+            >
+                게시글 제목
+            </h1>
+
+            <div
+                th:if="${isAuthor}"
+                class="flex shrink-0 items-center gap-2"
+            >
+                <a
+                    th:href="@{/posts/{id}/edit(id=${post['id']})}"
+                    class="
+                        rounded-md border border-neutral-300
+                        bg-white px-3 py-1.5
+                        text-sm font-medium
+                        hover:bg-neutral-50
+                    "
+                >
+                    수정
+                </a>
+
+                <form
+                    th:action="@{/posts/{id}/delete(id=${post['id']})}"
+                    method="POST"
+                    data-post-delete-form
+                >
+                    <button
+                        type="submit"
+                        class="
+                            rounded-md border border-red-200
+                            bg-white px-3 py-1.5
+                            text-sm font-medium text-red-600
+                            hover:bg-red-50
+                        "
+                    >
+                        삭제
+                    </button>
+                </form>
+            </div>
+        </header>
 
         <p
             class="mt-4 whitespace-pre-line text-base text-neutral-600"

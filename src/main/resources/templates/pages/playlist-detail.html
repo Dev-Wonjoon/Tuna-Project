@@ -27,6 +27,35 @@
             >
                 0곡
             </span>
+
+            <a
+                th:href="@{playlists/{id}/edit(id=${playlist['id']})}"
+                class="
+                    rounded-md border border-neutral-300
+                    bg-white px-3 py-1.5
+                    text-sm font-medium
+                    hover:bg-neutral-50
+                "
+            >
+                수정
+            </a>
+
+            <form
+                th:action="@{/playlists/{id}/delete(id=${playlist['id']})}"
+                method="POST"
+            >
+                <button
+                    type="submit"
+                    class="
+                        rounded-md border border-red-200
+                        bg-white px-3 py-1.5
+                        text-sm font-medium text-red-600
+                        hover:bg-red-50
+                    "
+                >
+                    삭제
+                </button>
+            </form>
         </div>
     </header>
 
