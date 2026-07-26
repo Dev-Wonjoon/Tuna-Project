@@ -205,6 +205,57 @@ INSERT IGNORE INTO posts (
        NOW() - INTERVAL 1 HOUR
 );
 
+-- music_url 테스트용 post
+INSERT IGNORE INTO posts (
+       id,
+       title,
+       content,
+       music_url,
+       member_id,
+       view_count,
+       created_at,
+       updated_at
+) VALUES (
+       901,
+       '플리 1',
+       '플리 1',
+       'https://music.youtube.com/watch?v=RdpoNjxVNVI&si=yzCFqLvINAu0YeL4',
+       1,
+       11,
+       NOW() - INTERVAL 2 HOUR,
+       NOW() - INTERVAL 2 HOUR
+),
+(
+       902,
+       '플리 2',
+       '플리 2',
+       'https://music.youtube.com/watch?v=PluoENBB_3s&si=0u7AaOzdiUziEQ4P',
+       1,
+       11,
+       NOW() - INTERVAL 2 HOUR,
+       NOW() - INTERVAL 2 HOUR
+),
+(
+       903,
+       '플리 3',
+       '플리 3',
+       'https://music.youtube.com/watch?v=Q4AE3ub4nBM&si=Qrf_SUCed3Siponl',
+       1,
+       11,
+       NOW() - INTERVAL 2 HOUR,
+       NOW() - INTERVAL 2 HOUR
+),
+(
+        904,
+       '플리 4',
+       '플리 4',
+       'https://music.youtube.com/watch?v=1vU4qYnyOlY&si=7QE4g12Hpqmp4hGA',
+       1,
+       11,
+       NOW() - INTERVAL 2 HOUR,
+       NOW() - INTERVAL 2 HOUR
+);
+
 -- 댓글
 INSERT IGNORE INTO comments (
        id,
@@ -258,12 +309,22 @@ INSERT IGNORE INTO post_playlist_mapping (
        created_at
 ) VALUES
 (
-       103,
+       901,
        201,
        NOW() - INTERVAL 7 HOUR
 ),
 (
-       101,
-       202,
+       902,
+       201,
+       NOW() - INTERVAL 3 DAY
+),
+(
+       903,
+       201,
+       NOW() - INTERVAL 3 DAY
+),
+(
+       904,
+       201,
        NOW() - INTERVAL 3 DAY
 );
