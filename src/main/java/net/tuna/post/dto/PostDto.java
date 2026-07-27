@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 public class PostDto {
-    private int id;
+    private Long id;
     private String title;
     private String content;
     private String musicUrl;
