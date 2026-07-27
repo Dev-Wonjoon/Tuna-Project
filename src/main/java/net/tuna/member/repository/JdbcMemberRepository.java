@@ -1,0 +1,45 @@
+package net.tuna.member.repository;
+
+import net.tuna.member.dto.MemberDto;
+import net.tuna.member.dto.Role;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Repository
+public class JdbcMemberRepository implements MemberRepository {
+
+    private final JdbcTemplate jdbcTemplate;
+
+    public JdbcMemberRepository(JdbcTemplate jdbcTemplate) {
+        this.jdbcTemplate = jdbcTemplate;
+    }
+
+    private final RowMapper<MemberDto> memberRowMapper = (rs, rowNum) -> {
+        MemberDto member = new MemberDto();
+
+        member.setId(rs.getLong("id"));
+        member.setEmail(rs.getString("email"));
+        member.setPassword(rs.getString("password"));
+        member.setRole(Role.valueOf(rs.getString("role")));
+        member.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
+
+        return member;
+    };
+
+    @Override
+    public MemberDto findByEmail(String email) {
+        String sql = "SELECT * FROM members WHERE email = ?";
+
+        List<MemberDto> result = jdbcTemplate.query(sql, memberRowMapper, email);
+
+        if (result.isEmpty()) {
+            return null;
+        }
+
+        return result.get(0);
+    }
+}
