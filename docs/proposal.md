@@ -4,7 +4,7 @@
 
 ### 프로젝트명 : Tuna
 
-## 본인 취향의 음악과 짧은 감상평을 올리고, 댓글로 서로 소통하는 음악 공유 서비스입니다.
+**본인 취향의 음악과 짧은 감상평을 올리고, 댓글로 서로 소통하는 음악 공유 서비스입니다.**
 
 ---
 
@@ -121,3 +121,24 @@
     - 댓글 CRUD 및 접근 권한: 한나라
 - 플레이리스트
     - 생성, 등록/삭제, 수정, 제거: 이원준
+
+---
+## 7. 시스템 아키텍처 구상
+
+**1. 클라이언트 계층 (Presentation Layer)**
+- HTML5, CSS3, JavaScript
+- Thymeleaf Template Engine (Server-Side Rendering)
+
+**2. 애플리케이션 계층 (Application Layer)**
+- Spring Boot Web (Spring MVC)
+- Spring Security를 이용한 세션 기반 로그인 인증 및 URL 패턴별 인증 체크
+- Controller / Service / Repository 계층 분리 3-Tier Layered Architecture
+
+**3. 데이터 계층 (Data Layer)**
+- Spring JDBC (JdbcTemplate 기반 데이터 접근 및 RowMapper 데이터 매핑)
+- MySQL Database
+
+---
+## 8. ERD 다이어그램
+
+![img.png](img.png)
