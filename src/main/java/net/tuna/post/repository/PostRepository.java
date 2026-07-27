@@ -1,6 +1,6 @@
-package net.tuna.mock.post.repository;
+package net.tuna.post.repository;
 
-import net.tuna.mock.post.dto.PostDto;
+import net.tuna.post.dto.PostDto;
 
 import java.util.List;
 
