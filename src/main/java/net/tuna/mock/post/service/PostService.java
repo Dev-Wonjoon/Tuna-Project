@@ -1,4 +1,9 @@
 package net.tuna.mock.post.service;
 
-public class PostService {
+import net.tuna.mock.post.dto.PostDto;
+
+import java.util.List;
+
+public interface PostService {
+    List<PostDto> getPosts();
 }
