@@ -1,0 +1,23 @@
+<div
+    xmlns:th="http://www.thymeleaf.org"
+    th:fragment="musicLink(musicUrl)"
+    th:if="${musicUrl != null and !#strings.isEmpty(musicUrl)}"
+    class="mt-6 rounded-md border border-neutral-300 bg-white p-4"
+>
+    <p class="text-sm font-medium">
+        노래 링크
+    </p>
+
+    <a
+        th:href="${musicUrl}"
+        th:text="${musicUrl}"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="
+            mt-2 block break-all text-sm text-blue-600
+            underline hover:text-blue-800
+        "
+    >
+        노래 듣기
+    </a>
+</div>

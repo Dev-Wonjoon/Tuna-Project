@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html
+    lang="ko"
+    xmlns:th="http://www.thymeleaf.org"
+>
+<th:block th:fragment="youtubePlaylistPlayer(posts, playlistId)">
+    <section
+        hidden
+        data-youtube-playlist
+        th:attr="data-playlist-id=${playlistId}"
+        class="
+            overflow-hidden rounded-lg
+            border border-neutral-200
+            bg-neutral-100
+        "
+    >
+        <header class="border-b border-neutral-300 px-5 py-4">
+            <h2 class="font-semibold">
+                YouTube 연속 재생
+            </h2>
+
+            <p
+                data-youtube-status
+                class="mt-1 text-sm text-neutral-500"
+            >
+                재생목록을 준비하고 있습니다.
+            </p>
+        </header>
+
+        <div class="aspect-video bg-black">
+            <div
+                data-youtube-player
+                th:id="|youtube-player-${playlistId}|"
+            ></div>
+        </div>
+
+        <div hidden data-youtube-sources>
+            <span
+                th:each="post : ${posts}"
+                th:if="${
+                    post['musicUrl'] != null
+                    and !#strings.isEmpty(post['musicUrl'])
+                }"
+                th:attr="data-music-url=${post['musicUrl']}"
+            ></span>
+        </div>
+    </section>
+</th:block>
+</html>

@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layouts/auth :: layout('로그인 | Tuna', ~{::section})}"
+>
+<body>
+
+<section
+    class="
+        w-full max-w-sm
+        rounded-xl border border-neutral-200
+        bg-white p-8 shadow-sm
+">
+    <a
+        th:href="@{/}"
+        class="text-2xl font-semibold"
+    >
+        Tuna
+    </a>
+    <h1 class="mt-8 text-xl font-semibold">
+        로그인
+    </h1>
+
+    <form
+        th:action="@{/login}"
+        method="post"
+        class="mt-6 flex flex-col gap-5"
+    >
+        <div>
+            <label
+                for="email"
+                class="text-sm font-medium">
+                이메일
+            </label>
+            <input
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                class="
+                    mt-2 w-full rounded-md
+                    border border-neutral-300
+                    px-3 py-2
+                    focus:border-neutral-900
+                    focus:outline-none
+                ">
+        </div>
+        <div>
+            <label
+                for="password"
+                class="text-sm font-medium"
+            >
+                비밀번호
+            </label>
+            <input
+                id="password"
+                name="password"
+                type="password"
+                autocomplete="current-password"
+                required
+                class="
+                    mt-2 w-full rounded-md
+                    border border-neutral-300
+                    px-3 py-2
+                    focus:border-neutral-900
+                    focus:outline-none
+                "
+            >
+        </div>
+
+        <button
+            type="submit"
+            class="
+                rounded-md bg-neutral-900
+                px-4 py-2.5
+                font-medium text-white
+                hover:bg-neutral-700
+            "
+        >
+            로그인
+        </button>
+    </form>
+    <p class="mt-6 text-center text-sm text-neutral-500">
+        계정이 없으신가요?
+
+        <a th:href="@{/signup}"
+           class="font-medium text-neutral-900 hover:underline"
+        >
+            회원가입
+        </a>
+    </p>
+</section>
+
+</body>
+</html>
