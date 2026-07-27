@@ -1,7 +1,7 @@
-package net.tuna.mock.post.service;
+package net.tuna.post.service;
 
-import net.tuna.mock.post.dto.PostDto;
-import net.tuna.mock.post.repository.PostRepository;
+import net.tuna.post.dto.PostDto;
+import net.tuna.post.repository.PostRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
