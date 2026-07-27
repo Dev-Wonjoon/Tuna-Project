@@ -71,14 +71,15 @@ public class JdbcPlaylistRepositoryTest{
     @Test
     void 플레이리스트_생성() {
         // given
-        int memberId = 1;
+        long memberId = 1;
 
         Playlist playlist = new Playlist();
 
         playlist.setName("test_playlist");
+        playlist.setMemberId(memberId);
 
         //when
-        playlistRepository.createPlaylist(playlist, memberId);
+        playlistRepository.save(playlist);
 
         // then
         Integer count = jdbcTemplate.queryForObject("""
