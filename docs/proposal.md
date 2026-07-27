@@ -124,7 +124,6 @@
   - 도메인: 게시글 - 게시글 CRUD
 - 한나라: [lyc258](github.com/lyc258)
   - 도메인: 댓글 - 댓글 CRUD / 공통 - 접근권한
-![img2.png](img2.png)
 
 ---
 ## 7. 시스템 아키텍처 구상
@@ -141,6 +140,7 @@
 **3. 데이터 계층 (Data Layer)**
 - Spring JDBC (JdbcTemplate 기반 데이터 접근 및 RowMapper 데이터 매핑)
 - MySQL Database
+![img2.png](img2.png)
 
 ---
 ## 8. ERD 다이어그램
