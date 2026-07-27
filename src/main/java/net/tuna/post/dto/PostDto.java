@@ -1,4 +1,4 @@
-package net.tuna.mock.post.dto;
+package net.tuna.post.dto;
 
 import lombok.*;
 import org.springframework.stereotype.Service;

@@ -1,9 +1,9 @@
-package net.tuna.mock.post.controller;
+package net.tuna.post.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import net.tuna.member.security.CustomUserDetails;
-import net.tuna.mock.post.dto.PostDto;
-import net.tuna.mock.post.service.PostService;
+import net.tuna.post.dto.PostDto;
+import net.tuna.post.service.PostService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
