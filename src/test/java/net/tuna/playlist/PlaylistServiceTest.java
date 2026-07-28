@@ -1,7 +1,5 @@
 package net.tuna.playlist;
 
-import net.tuna.member.dto.MemberDto;
-import net.tuna.member.repository.MemberRepository;
 import net.tuna.playlist.repository.PlaylistPostRepository;
 import net.tuna.playlist.repository.PlaylistRepository;
 import net.tuna.post.dto.PostDto;
@@ -96,7 +94,7 @@ public class PlaylistServiceTest {
         long memberId = 1L;
 
         PostDto postDto = PostDto.builder()
-                .id(100)
+                .id(100L)
                 .title("테스트 게시글")
                 .content("테스트 내용")
                 .build();
@@ -178,29 +176,6 @@ public class PlaylistServiceTest {
             this.requestedMemberId = memberId;
 
             return postsToReturn;
-        }
-    }
-
-    private static class StubMemberRepository implements MemberRepository {
-
-        private String searchedEmail;
-        private MemberDto member;
-
-
-        @Override
-        public MemberDto findByEmail(String email) {
-            this.searchedEmail = email;
-            return member;
-        }
-
-        @Override
-        public int save(MemberDto memberDto) {
-            return 0;
-        }
-
-        @Override
-        public MemberDto findById(Long id) {
-            return null;
         }
     }
 }
