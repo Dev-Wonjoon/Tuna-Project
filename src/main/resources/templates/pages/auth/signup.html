@@ -27,6 +27,7 @@
         th:action="@{/signup}"
         method="POST"
         class="mt-6 flex flex-col gap-5"
+        th:object="${signUpForm}"
     >
         <div>
             <label for="email" class="text-sm font-medium">
@@ -34,8 +35,7 @@
             </label>
 
             <input
-                id="email"
-                name="email"
+                th:field="*{email}"
                 type="email"
                 autocomplete="email"
                 required
@@ -44,14 +44,20 @@
                     border-neutral-300 px-3 py-2
                 "
             >
+            <div
+                    th:if="${#fields.hasErrors('email')}"
+                    th:errors="*{email}"
+                    class="text-sm text-red-500 text-red-600 mt-1"
+            >
+                에러메세지
+            </div>
         </div>
         <div>
             <label for="password" class="text-sm font-medium">
                 비밀번호
             </label>
             <input
-                id="password"
-                name="password"
+                th:field="*{password}"
                 type="password"
                 autocomplete="new-password"
                 required
@@ -60,6 +66,13 @@
                     border-neutral-300 px-3 py-2
                 "
             >
+            <div
+                    th:if="${#fields.hasErrors('password')}"
+                    th:errors="*{password}"
+                    class="text-sm text-red-500 text-red-600 mt-1"
+            >
+                에러메세지
+            </div>
         </div>
 
         <div>
@@ -68,8 +81,7 @@
             </label>
 
             <input
-                id="passwordConfirm"
-                name="passwordConfirm"
+                th:field="*{passwordConfirm}"
                 type="password"
                 autocomplete="new-password"
                 required
@@ -78,6 +90,14 @@
                     border-neutral-300 px-3 py-2
                 "
             >
+
+            <div
+                th:if="${#fields.hasErrors('passwordConfirm')}"
+                th:errors="*{passwordConfirm}"
+                class="text-sm text-red-500 text-red-600 mt-1"
+            >
+                에러메세지
+            </div>
         </div>
 
         <button
