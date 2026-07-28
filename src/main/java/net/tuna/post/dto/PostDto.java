@@ -2,7 +2,6 @@ package net.tuna.post.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
-import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 

@@ -101,7 +101,7 @@
             </a>
         </div>
         <div class="ml-auto flex items-center gap-3">
-            <span th:text="${post['authorEmail']}">
+            <span th:text="${post.authorEmail}">
                 작성자
             </span>
 
@@ -136,14 +136,14 @@
                 <div class="flex items-center justify-between">
                     <strong
                             class="text-sm"
-                            th:text="${comment['authorEmail']}"
+                            th:text="${comment['author_email']}"
                     >
                         작성자
                     </strong>
 
                     <time
                             class="text-xs text-neutral-500"
-                            th:text="${comment['createdAt']}"
+                            th:text="${#temporals.format(comment['created_at'],'yyyy-MM-dd HH:mm:ss')}"
                     >
                         작성일
                     </time>
