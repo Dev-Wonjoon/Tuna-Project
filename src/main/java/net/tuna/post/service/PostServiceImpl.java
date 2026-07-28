@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PostServiceImpl implements PostService {
@@ -23,5 +24,15 @@ public class PostServiceImpl implements PostService {
     @Override
     public void writePost(PostDto post) {
         postRepository.createPost(post);
+    }
+
+    @Override
+    public PostDto getPost(long id) {
+        return  postRepository.findById(id);
+    }
+
+    @Override
+    public List<Map<String, Object>> getComments(long id) {
+        return postRepository.findCommentsById(id);
     }
 }

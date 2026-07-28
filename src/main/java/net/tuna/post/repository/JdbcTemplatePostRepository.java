@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public class JdbcTemplatePostRepository implements PostRepository{
@@ -48,5 +49,23 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 , post.getContent()
                 , post.getMusicUrl()
                 , post.getMemberId());
+    }
+
+    @Override
+    public PostDto findById(long id) {
+        String sql = "SELECT p.*, m.email AS author_email " +
+                "FROM posts p " +
+                "LEFT JOIN members m ON p.member_id = m.id " +
+                "WHERE p.id = ?";
+        return jdbcTemplate.queryForObject(sql,postRowMapper,id);
+    }
+
+    @Override
+    public List<Map<String, Object>> findCommentsById(long id) {
+        String sql = "SELECT c.*, m.email AS author_email " +
+                "FROM comments c " +
+                "LEFT JOIN members m ON c.member_id = m.id " +
+                "WHERE c.post_id = ?";
+        return jdbcTemplate.queryForList(sql,id);
     }
 }

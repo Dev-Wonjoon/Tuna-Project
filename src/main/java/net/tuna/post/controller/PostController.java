@@ -4,19 +4,19 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.tuna.member.security.CustomUserDetails;
 import net.tuna.post.dto.PostDto;
+import net.tuna.post.repository.JdbcTemplatePostRepository;
+import net.tuna.post.repository.PostRepository;
 import net.tuna.post.service.PostService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 
 import javax.naming.Binding;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Controller
 @Slf4j
@@ -62,5 +62,21 @@ public class PostController {
 
         postService.writePost(post);
         return "redirect:/";
+    }
+
+    @GetMapping("/posts/{postId}")
+    public String getDetail(@PathVariable("postId") int id, Model model
+            ,@AuthenticationPrincipal CustomUserDetails userDetails){
+        PostDto post = postService.getPost(id);
+        model.addAttribute("post",post);
+        if(userDetails != null){
+            String email = userDetails.getMember().getEmail();
+            model.addAttribute("authorEmail",email);
+        }
+
+        List<Map<String,Object>> comments = postService.getComments(id);
+        model.addAttribute("comments",comments);
+
+        return "pages/post-detail";
     }
 }
