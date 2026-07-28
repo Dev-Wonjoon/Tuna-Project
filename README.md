@@ -19,3 +19,9 @@
   - 도메인: 댓글 - 댓글 CRUD / 공통 - 접근권한
 
 ## [기획서](docs/proposal.md)
+
+## [기능명세 및 요구사항](docs/requirements.md)
+
+## [시스템 아키텍처](docs/architecture.md)
+
+## [ERD 데이터그램](docs/erd.md)
