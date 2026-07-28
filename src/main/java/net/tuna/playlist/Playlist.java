@@ -24,6 +24,19 @@ public class Playlist {
     @Size(min = 1, max = 255, message = "최소 1자에서 최대 255자 사이입니다.")
     private String name;
 
+
     @Setter
     private LocalDateTime createdAt;
+
+
+    private long postCount;
+
+    public Playlist(
+            long id,
+            long memberId,
+            String name,
+            LocalDateTime createdAt
+    ) {
+        this(id, memberId, name, createdAt, 0L);
+    }
 }

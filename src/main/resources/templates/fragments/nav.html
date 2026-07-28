@@ -119,7 +119,7 @@
     <ul class="mt-2 flex flex-col gap-1">
         <li th:each="playlist : ${playlists}">
             <a
-                    th:href="@{/playlists/{id}(id=${playlist['id']})}"
+                    th:href="@{/playlists/{id}(id=${playlist.id})}"
                     class="
                     flex items-center justify-between gap-3
                     rounded-md px-3 py-2
@@ -128,19 +128,19 @@
                 "
                     th:classappend="${
                     currentPlaylistId != null
-                    and currentPlaylistId == playlist['id']
+                    and currentPlaylistId == playlist.id
                 } ? ' bg-neutral-200 font-medium text-neutral-950' : ''"
             >
                 <span
                         class="truncate"
-                        th:text="${playlist['name']}"
+                        th:text="${playlist.name}"
                 >
                     플레이리스트
                 </span>
 
                 <span
                         class="shrink-0 text-xs text-neutral-400"
-                        th:text="${playlist['postCount']}"
+                        th:text="${playlist.postCount}"
                 >0</span>
             </a>
         </li>
