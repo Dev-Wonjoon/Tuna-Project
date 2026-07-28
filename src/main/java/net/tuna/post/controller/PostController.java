@@ -1,5 +1,6 @@
 package net.tuna.post.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.tuna.member.security.CustomUserDetails;
 import net.tuna.post.dto.PostDto;
@@ -7,10 +8,14 @@ import net.tuna.post.service.PostService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 
+import javax.naming.Binding;
 import java.util.List;
 
 @Controller
@@ -33,5 +38,29 @@ public class PostController {
         List<PostDto> posts = postService.getPosts();
         model.addAttribute("posts", posts );
         return "pages/home";
+    }
+
+    //게시글 등록화면 요청
+    @GetMapping("/posts/new")
+    public String getCreateForm(@ModelAttribute("postForm") PostDto post){
+        return "pages/post-create";
+    }
+
+    //게시글 등록 요청
+    @PostMapping("/posts")
+    public String createPost(@Valid @ModelAttribute("postForm") PostDto post,
+                             BindingResult bindingResult,
+                             @AuthenticationPrincipal CustomUserDetails userDetails){
+        if(bindingResult.hasFieldErrors()){
+            return "pages/post-create";
+        }
+
+        //멤버단에서 본인 아이디가져오기
+        if(userDetails != null){
+            post.setMemberId(userDetails.getMember().getId());
+        }
+
+        postService.writePost(post);
+        return "redirect:/";
     }
 }
