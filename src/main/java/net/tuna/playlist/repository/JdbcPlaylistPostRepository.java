@@ -15,7 +15,7 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
             (resultSet, rowNum) -> {
                 PostDto post = new PostDto();
 
-                post.setId(resultSet.getInt("id"));
+                post.setId(resultSet.getLong("id"));
                 post.setTitle(resultSet.getString("title"));
                 post.setContent(resultSet.getString("content"));
                 post.setMusicUrl(resultSet.getString("musicUrl"));
