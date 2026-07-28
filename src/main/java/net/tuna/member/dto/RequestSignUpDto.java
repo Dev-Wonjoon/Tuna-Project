@@ -15,6 +15,10 @@ public class RequestSignUpDto {
     private String email;
 
     @NotBlank(message = "비밀번호는 필수 입력 항목입니다.")
-    @Size(max = 50, message = "비밀번호는 50자 이하로 입력해야 합니다.")
+    @Size(min = 8, max = 50, message = "비밀번호는 8자리 이상 50자 이하로 입력해야 합니다.")
     private String password;
+
+    @NotBlank(message = "비밀번호 확인은 필수 입력 항목입니다.")
+    @Size(min = 8, max = 50, message = "비밀번호는 8자리 이상 50자 이하로 입력해야 합니다.")
+    private String passwordConfirm;
 }
