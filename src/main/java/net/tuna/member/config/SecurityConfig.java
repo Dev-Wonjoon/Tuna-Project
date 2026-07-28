@@ -32,8 +32,13 @@ public class SecurityConfig {
                                 "/css/**",
                                 "/js/**",
                                 "/images/**",
-                                "/signup"
+                                "/signup",
+                                "/admin/signup"
                         ).permitAll()
+
+//                        .requestMatchers("/admin/update-role")
+//                        .hasRole("ADMIN") // admin권한으로 로그인한 사용자만 사용자의 권한을 update가능하게 하는 코드
+
                         .anyRequest().authenticated()
                 )
 
