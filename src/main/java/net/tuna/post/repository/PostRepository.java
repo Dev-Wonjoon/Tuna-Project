@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface PostRepository {
     List<PostDto> findAll();
+    void createPost(PostDto post);
+
 }

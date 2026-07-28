@@ -19,7 +19,9 @@ public class JdbcTemplatePostRepository implements PostRepository{
 
     private final RowMapper<PostDto> postRowMapper = (ResultSet rs, int rowNum) -> {
         return PostDto.builder()
-                .id(rs.getInt("id"))
+                //Long으로 변경
+                .id(rs.getLong("id"))
+
                 .title(rs.getString("title"))
                 .content(rs.getString("content"))
                 .musicUrl(rs.getString("music_url"))
@@ -36,5 +38,15 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 "FROM posts p " +
                 "LEFT JOIN members m ON p.member_id = m.id";
         return jdbcTemplate.query(sql, postRowMapper);
+    }
+
+    @Override
+    public void createPost(PostDto post) {
+        String sql = "INSERT INTO posts(title,content,music_url,member_id) VALUES (?,?,?,?)";
+        jdbcTemplate.update(sql
+                , post.getTitle()
+                , post.getContent()
+                , post.getMusicUrl()
+                , post.getMemberId());
     }
 }
