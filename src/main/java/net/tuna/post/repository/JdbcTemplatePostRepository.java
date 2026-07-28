@@ -40,10 +40,11 @@ public class JdbcTemplatePostRepository implements PostRepository{
 
     @Override
     public void createPost(PostDto post) {
-        String sql = "INSERT INTO posts(title,content,music_url) VALUES (?,?,?)";
+        String sql = "INSERT INTO posts(title,content,music_url,member_id) VALUES (?,?,?,?)";
         jdbcTemplate.update(sql
                 , post.getTitle()
                 , post.getContent()
-                , post.getMusicUrl());
+                , post.getMusicUrl()
+                , post.getMemberId());
     }
 }
