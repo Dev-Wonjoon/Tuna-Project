@@ -19,7 +19,9 @@ public class JdbcTemplatePostRepository implements PostRepository{
 
     private final RowMapper<PostDto> postRowMapper = (ResultSet rs, int rowNum) -> {
         return PostDto.builder()
+                //Long으로 변경
                 .id(rs.getLong("id"))
+
                 .title(rs.getString("title"))
                 .content(rs.getString("content"))
                 .musicUrl(rs.getString("music_url"))
