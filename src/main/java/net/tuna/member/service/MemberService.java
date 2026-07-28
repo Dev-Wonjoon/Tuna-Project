@@ -20,6 +20,7 @@ public class MemberService {
                 MemberDto.builder()
                         .email(requestSignUpDto.getEmail())
                         .password(passwordEncoder.encode(requestSignUpDto.getPassword()))
+                        .name((requestSignUpDto.getName()))
                         .role(Role.USER)
                         .build()
         );
