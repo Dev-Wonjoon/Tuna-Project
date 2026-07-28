@@ -42,4 +42,17 @@ public class JdbcMemberRepository implements MemberRepository {
 
         return result.get(0);
     }
+
+    @Override
+    public int save(MemberDto memberDto) {
+        return jdbcTemplate.update(
+                "INSERT INTO members (email, password, role) VALUES (?, ?, ?)",
+                memberDto.getEmail(), memberDto.getPassword(), memberDto.getRole().name()
+        );
+    }
+
+    @Override
+    public MemberDto findById(Long id) {
+        return jdbcTemplate.queryForObject("SELECT * FROM members WHERE id = ?", memberRowMapper, id);
+    }
 }
