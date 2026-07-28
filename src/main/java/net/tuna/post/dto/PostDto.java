@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 public class PostDto {
+    //Long으로 변경
     private Long id;
     @NotBlank(message = "제목은 필수 입력 항목입니다.")
     private String title;
