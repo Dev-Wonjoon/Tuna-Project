@@ -37,4 +37,13 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 "LEFT JOIN members m ON p.member_id = m.id";
         return jdbcTemplate.query(sql, postRowMapper);
     }
+
+    @Override
+    public void createPost(PostDto post) {
+        String sql = "INSERT INTO posts(title,content,music_url) VALUES (?,?,?)";
+        jdbcTemplate.update(sql
+                , post.getTitle()
+                , post.getContent()
+                , post.getMusicUrl());
+    }
 }
