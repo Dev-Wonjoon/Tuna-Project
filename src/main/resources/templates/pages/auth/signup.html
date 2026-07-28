@@ -53,6 +53,28 @@
             </div>
         </div>
         <div>
+            <label for="name" class="text-sm font-medium">
+                닉네임
+            </label>
+
+            <input
+                    th:field="*{name}"
+                    type="text"
+                    required
+                    class="
+                    mt-2 w-full rounded-md border
+                    border-neutral-300 px-3 py-2
+                "
+            >
+            <div
+                    th:if="${#fields.hasErrors('name')}"
+                    th:errors="*{name}"
+                    class="text-sm text-red-500 text-red-600 mt-1"
+            >
+                에러메세지
+            </div>
+        </div>
+        <div>
             <label for="password" class="text-sm font-medium">
                 비밀번호
             </label>

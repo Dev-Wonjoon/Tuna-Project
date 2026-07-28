@@ -14,6 +14,10 @@ public class RequestSignUpDto {
     @Size(max = 50, message = "이메일은 50자 이하로 입력해야 합니다.")
     private String email;
 
+    @NotBlank(message = "닉네임은 필수 입력 항목입니다.")
+    @Size(min=2, max = 10, message = "닉네임은 2자 이상 10자 이하로 입력해야 합니다.")
+    private String name;
+
     @NotBlank(message = "비밀번호는 필수 입력 항목입니다.")
     @Size(min = 8, max = 50, message = "비밀번호는 8자리 이상 50자 이하로 입력해야 합니다.")
     private String password;
@@ -21,4 +25,6 @@ public class RequestSignUpDto {
     @NotBlank(message = "비밀번호 확인은 필수 입력 항목입니다.")
     @Size(min = 8, max = 50, message = "비밀번호는 8자리 이상 50자 이하로 입력해야 합니다.")
     private String passwordConfirm;
+
+
 }
