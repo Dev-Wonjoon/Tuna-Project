@@ -10,4 +10,5 @@ public interface PostService {
     void writePost(PostDto post);
     PostDto getPost(long id);
     List<Map<String,Object>> getComments(long id);
+    List<PostDto> getPostsByMemberId(long id);
 }

@@ -79,4 +79,5 @@ public class PostController {
 
         return "pages/post-detail";
     }
+
 }
