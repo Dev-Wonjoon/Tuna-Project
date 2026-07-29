@@ -79,7 +79,7 @@ CREATE TABLE IF NOT EXISTS post_playlist_mapping (
     member_id BIGINT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-    PRIMARY KEY (post_id, playlist_id),
+    PRIMARY KEY (post_id, playlist_id, member_id),
 
     CONSTRAINT fk_mapping_post
     FOREIGN KEY (post_id)
