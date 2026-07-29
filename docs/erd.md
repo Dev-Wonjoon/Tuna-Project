@@ -61,8 +61,8 @@ erDiagram
 ```sql
 -- 회원
 CREATE TABLE IF NOT EXISTS members (
-                                       id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                                       email VARCHAR(255) NOT NULL UNIQUE,
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
     name VARCHAR(16) NOT NULL,
     password VARCHAR(255) NOT NULL,
     image_url VARCHAR(255) NOT NULL,
@@ -72,8 +72,8 @@ CREATE TABLE IF NOT EXISTS members (
 
 -- 게시글
 CREATE TABLE IF NOT EXISTS posts (
-                                     id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                                     title VARCHAR(255) NOT NULL,
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
     music_url VARCHAR(2048) NULL,
     member_id BIGINT NOT NULL,
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS posts (
     CONSTRAINT fk_posts_member
     FOREIGN KEY (member_id)
     REFERENCES members (id)
-                                                           ON DELETE CASCADE,
+    ON DELETE CASCADE,
 
     INDEX idx_posts_member_created_at (member_id, created_at),
     INDEX idx_posts_created_at (created_at)
@@ -92,15 +92,15 @@ CREATE TABLE IF NOT EXISTS posts (
 
 -- 댓글
 CREATE TABLE IF NOT EXISTS comments (
-                                        id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                                        content TEXT NOT NULL,
-                                        member_id BIGINT NOT NULL,
-                                        post_id BIGINT NOT NULL,
-                                        created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                                        updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-
-                                        CONSTRAINT fk_comments_member
-                                        FOREIGN KEY (member_id)
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    content TEXT NOT NULL,
+    member_id BIGINT NOT NULL,
+    post_id BIGINT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    
+    CONSTRAINT fk_comments_member
+    FOREIGN KEY (member_id)
     REFERENCES members (id)
     ON DELETE CASCADE,
 
@@ -115,8 +115,8 @@ CREATE TABLE IF NOT EXISTS comments (
 
 -- 플레이리스트
 CREATE TABLE IF NOT EXISTS playlists (
-                                         id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                                         image_url VARCHAR(255) NULL,
+    id BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    image_url VARCHAR(255) NULL,
     member_id BIGINT NOT NULL,
     name VARCHAR(255) NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -134,11 +134,11 @@ CREATE TABLE IF NOT EXISTS playlists (
 
 -- 게시글 <-> 플레이리스트 매핑 테이블
 CREATE TABLE IF NOT EXISTS post_playlist_mapping (
-                                                     post_id BIGINT NOT NULL,
-                                                     playlist_id BIGINT NOT NULL,
-                                                     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    post_id BIGINT NOT NULL,
+    playlist_id BIGINT NOT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
-                                                     PRIMARY KEY (post_id, playlist_id),
+    PRIMARY KEY (post_id, playlist_id),
 
     CONSTRAINT fk_mapping_post
     FOREIGN KEY (post_id)
