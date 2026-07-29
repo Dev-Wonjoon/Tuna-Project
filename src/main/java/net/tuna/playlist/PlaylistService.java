@@ -3,6 +3,7 @@ package net.tuna.playlist;
 import net.tuna.playlist.repository.PlaylistPostRepository;
 import net.tuna.playlist.repository.PlaylistRepository;
 import net.tuna.post.dto.PostDto;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

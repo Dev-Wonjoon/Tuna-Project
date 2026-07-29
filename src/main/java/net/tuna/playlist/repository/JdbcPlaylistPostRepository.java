@@ -16,11 +16,12 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 PostDto post = new PostDto();
 
                 post.setId(resultSet.getLong("id"));
+                post.setMemberId(resultSet.getLong("member_id"));
                 post.setTitle(resultSet.getString("title"));
                 post.setContent(resultSet.getString("content"));
-                post.setMusicUrl(resultSet.getString("musicUrl"));
-                post.setAuthorEmail(resultSet.getString("authorEmail"));
-                post.setViewCount(resultSet.getInt("viewCount"));
+                post.setMusicUrl(resultSet.getString("music_url"));
+                post.setAuthorEmail(resultSet.getString("author_email"));
+                post.setViewCount(resultSet.getInt("view_count"));
                 post.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
                 post.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
 
@@ -38,21 +39,82 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
         return jdbcTemplate.query("""
             SELECT
                 p.id,
+                p.member_id,
                 p.title,
                 p.content,
                 p.music_url,
-                m.email AS author_email,
                 p.view_count,
                 p.created_at,
-                p.updated_at
+                p.updated_at,
+                m.name,
+                m.email AS author_email
             FROM post_playlist_mapping ppm
             JOIN playlists pl
                 ON pl.id = ppm.playlist_id
             JOIN posts p
                 ON p.id = ppm.post_id
-            WHERE pl.id = ?
+            JOIN members m
+                ON m.id = p.member_id
+            WHERE ppm.playlist_id = ?
                 AND pl.member_id = ?
-            ORDER BY ppm.created_at DESC
+                AND ppm.member_id = pl.member_id
+            ORDER BY
+                ppm.created_at DESC,
+                ppm.post_id DESC
         """, POST_ROW_MAPPER, playlistId, memberId);
+    }
+
+    @Override
+    public int add(long playlistId, long postId, long memberId) {
+        return jdbcTemplate.update("""
+            INSERT INTO post_playlist_mapping (
+                post_id,
+                playlist_id,
+                member_id
+            )
+            SELECT
+                p.id,
+                pl.id,
+                pl.member_id
+            FROM posts p
+            JOIN playlists pl
+                ON pl.id = ?
+            WHERE p.id = ?
+                AND pl.member_id = ?
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM post_playlist_mapping ppm
+                    WHERE ppm.post_id = p.id
+                        AND ppm.playlist_id = pl.id
+                        AND ppm.member_id = pl.member_id
+            )
+        """,
+                playlistId,
+                postId,
+                memberId
+        );
+
+    }
+
+    @Override
+    public int remove(long playlistId, long postId, long memberId) {
+        return jdbcTemplate.update("""
+            DELETE FROM post_playlist_mapping ppm
+            WHERE post_id = ?
+                AND playlist_id = ?
+                AND member_id = ?
+                AND playlist_id IN (
+                    SELECT id
+                    FROM playlists
+                    WHERE id = ?
+                        AND member_id = ?
+                )
+        """,
+                postId,
+                playlistId,
+                memberId,
+                playlistId,
+                memberId
+        );
     }
 }
