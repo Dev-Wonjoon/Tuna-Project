@@ -35,4 +35,10 @@ public class PostServiceImpl implements PostService {
     public List<Map<String, Object>> getComments(long id) {
         return postRepository.findCommentsById(id);
     }
+
+    @Override
+    public List<PostDto> getPostsByMemberId(long id) {
+        return postRepository.findPostsByMemberId(id);
+    }
+
 }

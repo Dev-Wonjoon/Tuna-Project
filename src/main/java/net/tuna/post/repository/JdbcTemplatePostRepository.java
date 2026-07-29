@@ -42,16 +42,6 @@ public class JdbcTemplatePostRepository implements PostRepository{
     }
 
     @Override
-    public void createPost(PostDto post) {
-        String sql = "INSERT INTO posts(title,content,music_url,member_id) VALUES (?,?,?,?)";
-        jdbcTemplate.update(sql
-                , post.getTitle()
-                , post.getContent()
-                , post.getMusicUrl()
-                , post.getMemberId());
-    }
-
-    @Override
     public PostDto findById(long id) {
         String sql = "SELECT p.*, m.name AS name , m.email AS author_email " +
                 "FROM posts p " +
@@ -61,6 +51,29 @@ public class JdbcTemplatePostRepository implements PostRepository{
     }
 
     @Override
+    public List<PostDto> findPostsByMemberId(long id) {
+        String sql = "SELECT p.*, m.name AS name, m.email AS author_email " +
+                "FROM posts p " +
+                "LEFT JOIN members m ON p.member_id = m.id " +
+                "WHERE p.member_id = ?";
+        return jdbcTemplate.query(sql, postRowMapper, id);
+    }
+
+
+
+    @Override
+    public void createPost(PostDto post) {
+        String sql = "INSERT INTO posts(title,content,music_url,member_id) VALUES (?,?,?,?)";
+        jdbcTemplate.update(sql
+                , post.getTitle()
+                , post.getContent()
+                , post.getMusicUrl()
+                , post.getMemberId());
+    }
+
+
+
+    @Override
     public List<Map<String, Object>> findCommentsById(long id) {
         String sql = "SELECT c.*, m.name AS name, m.email As author_email " +
                 "FROM comments c " +
@@ -68,4 +81,6 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 "WHERE c.post_id = ?";
         return jdbcTemplate.queryForList(sql,id);
     }
+
+
 }

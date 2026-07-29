@@ -10,4 +10,5 @@ public interface PostRepository {
     void createPost(PostDto post);
     PostDto findById(long id);
     List<Map<String, Object>> findCommentsById(long id);
+    List<PostDto> findPostsByMemberId(long id);
 }
