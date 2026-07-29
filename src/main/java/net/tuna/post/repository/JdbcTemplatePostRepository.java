@@ -37,7 +37,8 @@ public class JdbcTemplatePostRepository implements PostRepository{
     public List<PostDto> findAll() {
         String sql = "SELECT p.*, m.name AS name , m.email AS author_email " +
                 "FROM posts p " +
-                "LEFT JOIN members m ON p.member_id = m.id";
+                "LEFT JOIN members m ON p.member_id = m.id " +
+                "ORDER BY p.created_at DESC";
         return jdbcTemplate.query(sql, postRowMapper);
     }
 
