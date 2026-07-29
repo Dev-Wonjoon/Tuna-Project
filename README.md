@@ -24,4 +24,6 @@
 
 ## [시스템 아키텍처](docs/architecture.md)
 
+## [화면 설계서](docs/wireframe.md)
+
 ## [ERD 데이터그램](docs/erd.md)

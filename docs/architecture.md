@@ -16,4 +16,4 @@
 
 ---
 
-![img2.png](img2.png)
+![img2.png](images/img2.png)
