@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS playlists (
 CREATE TABLE IF NOT EXISTS post_playlist_mapping (
     post_id BIGINT NOT NULL,
     playlist_id BIGINT NOT NULL,
+    member_id BIGINT NOT NULL,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     PRIMARY KEY (post_id, playlist_id),
@@ -88,6 +89,11 @@ CREATE TABLE IF NOT EXISTS post_playlist_mapping (
     CONSTRAINT fk_mapping_playlist
     FOREIGN KEY (playlist_id)
     REFERENCES playlists (id)
+    ON DELETE CASCADE,
+
+    CONSTRAINT fk_mapping_member
+    FOREIGN KEY (member_id)
+    REFERENCES members (id)
     ON DELETE CASCADE,
 
     INDEX idx_mapping_playlist_id (playlist_id)
