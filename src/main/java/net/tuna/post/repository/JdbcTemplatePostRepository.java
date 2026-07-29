@@ -22,11 +22,11 @@ public class JdbcTemplatePostRepository implements PostRepository{
         return PostDto.builder()
                 //Long으로 변경
                 .id(rs.getLong("id"))
-
+                .name(rs.getString("name"))
+                .authorEmail(rs.getString("author_email"))
                 .title(rs.getString("title"))
                 .content(rs.getString("content"))
                 .musicUrl(rs.getString("music_url"))
-                .authorEmail(rs.getString("author_Email"))
                 .viewCount(rs.getInt("view_count"))
                 .createdAt(rs.getObject("created_at", LocalDateTime.class))
                 .updatedAt(rs.getObject("updated_at", LocalDateTime.class))
@@ -35,7 +35,7 @@ public class JdbcTemplatePostRepository implements PostRepository{
 
     @Override
     public List<PostDto> findAll() {
-        String sql = "SELECT p.*, m.email AS author_email " +
+        String sql = "SELECT p.*, m.name AS name , m.email AS author_email " +
                 "FROM posts p " +
                 "LEFT JOIN members m ON p.member_id = m.id";
         return jdbcTemplate.query(sql, postRowMapper);
@@ -53,7 +53,7 @@ public class JdbcTemplatePostRepository implements PostRepository{
 
     @Override
     public PostDto findById(long id) {
-        String sql = "SELECT p.*, m.email AS author_email " +
+        String sql = "SELECT p.*, m.name AS name , m.email AS author_email " +
                 "FROM posts p " +
                 "LEFT JOIN members m ON p.member_id = m.id " +
                 "WHERE p.id = ?";
@@ -62,7 +62,7 @@ public class JdbcTemplatePostRepository implements PostRepository{
 
     @Override
     public List<Map<String, Object>> findCommentsById(long id) {
-        String sql = "SELECT c.*, m.email AS author_email " +
+        String sql = "SELECT c.*, m.name AS name, m.email As author_email " +
                 "FROM comments c " +
                 "LEFT JOIN members m ON c.member_id = m.id " +
                 "WHERE c.post_id = ?";

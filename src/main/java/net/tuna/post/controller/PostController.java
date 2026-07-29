@@ -32,8 +32,8 @@ public class PostController {
     public String getPostList(Model model, @AuthenticationPrincipal CustomUserDetails userDetails){
 
         if(userDetails != null){
-            String email = userDetails.getMember().getEmail();
-            model.addAttribute("authorEmail",email);
+            String name = userDetails.getMember().getName();
+            model.addAttribute("name",name);
         }
         List<PostDto> posts = postService.getPosts();
         model.addAttribute("posts", posts );
@@ -70,8 +70,8 @@ public class PostController {
         PostDto post = postService.getPost(id);
         model.addAttribute("post",post);
         if(userDetails != null){
-            String email = userDetails.getMember().getEmail();
-            model.addAttribute("authorEmail",email);
+            String name = userDetails.getMember().getName();
+            model.addAttribute("name",name);
         }
 
         List<Map<String,Object>> comments = postService.getComments(id);
