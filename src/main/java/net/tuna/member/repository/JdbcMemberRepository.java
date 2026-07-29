@@ -25,6 +25,7 @@ public class JdbcMemberRepository implements MemberRepository {
         member.setEmail(rs.getString("email"));
         member.setPassword(rs.getString("password"));
         member.setName((rs.getString("name")));
+        member.setImageUrl((rs.getString("image_url")));
         member.setRole(Role.valueOf(rs.getString("role")));
         member.setCreatedAt(rs.getObject("created_at", LocalDateTime.class));
 
@@ -47,8 +48,12 @@ public class JdbcMemberRepository implements MemberRepository {
     @Override
     public int save(MemberDto memberDto) {
         return jdbcTemplate.update(
-                "INSERT INTO members (email, password, name, role) VALUES (?, ?, ?, ?)",
-                memberDto.getEmail(), memberDto.getPassword(), memberDto.getName(), memberDto.getRole().name()
+                "INSERT INTO members (email, password, name, image_url, role) VALUES (?, ?, ?, ?, ?)",
+                memberDto.getEmail(),
+                memberDto.getPassword(),
+                memberDto.getName(),
+                memberDto.getImageUrl(),
+                memberDto.getRole().name()
         );
     }
 
