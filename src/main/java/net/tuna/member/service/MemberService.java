@@ -5,7 +5,6 @@ import net.tuna.member.dto.MemberDto;
 import net.tuna.member.dto.RequestSignUpDto;
 import net.tuna.member.dto.Role;
 import net.tuna.member.repository.MemberRepository;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +15,20 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
 
     public int save(RequestSignUpDto requestSignUpDto) {
+        String[] imgList = new String[]{
+                "/img/tuna-note-blurple.png",
+                "/img/tuna-note-coral.png",
+                "/img/tuna-note-gold.png",
+                "/img/tuna-note-mint.png",
+                "/img/tuna-note-pink.png",
+                "/img/tuna-note-sky-blue.png"
+        };
         return memberRepository.save(
                 MemberDto.builder()
                         .email(requestSignUpDto.getEmail())
                         .password(passwordEncoder.encode(requestSignUpDto.getPassword()))
                         .name((requestSignUpDto.getName()))
+                        .imageUrl(imgList[(int)(Math.random() * 6)])
                         .role(Role.USER)
                         .build()
         );
