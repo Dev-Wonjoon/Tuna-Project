@@ -18,12 +18,12 @@
 - 한나라: [lyc258](github.com/lyc258)
   - 도메인: 댓글 - 댓글 CRUD / 공통 - 접근권한
 
-## [기획서](docs/proposal.md)
+## [기획서](docs/01_planning/01_proposal.md)
 
-## [기능명세 및 요구사항](docs/requirements.md)
+## [기능명세 및 요구사항](docs/01_planning/02_prd.md)
 
-## [시스템 아키텍처](docs/architecture.md)
+## [시스템 아키텍처](docs/02_design/01_architecture.md)
 
-## [화면 설계서](docs/wireframe.md)
+## [화면 설계서](docs/02_design/03_ui_wireframe.md)
 
-## [ERD 데이터그램](docs/erd.md)
+## [ERD 데이터그램](docs/02_design/02_erd.md)

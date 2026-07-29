@@ -21,7 +21,7 @@
 
 ## 공통 nav
 
-![nav](images/0-nav.jpg)
+![nav](../images/0-nav.jpg)
 
 - 출력 항목
     - 로그인 안된 상태: 로그인 버튼, 회원가입 버튼만 출력
@@ -39,7 +39,7 @@
 
 ## 메인화면 (Home)
 
-![home](images/1-home.jpg)
+![home](../images/1-home.jpg)
 
 - 출력 항목
     - 게시글 목록 영역: 제목, 내용, 링크, 작성자 이름, 조회수 → 게시글 전체 목록 조회
@@ -54,7 +54,7 @@
 
 ## 게시글 상세 (Post Detail)
 
-![post-detail](images/2-post-detail.jpg)
+![post-detail](../images/2-post-detail.jpg)
 
 - 출력 항목
     - 게시글 본문 영역: 게시글 정보 (제목, 내용, 노래 링크, 작성자 이름, 조회수)
@@ -75,7 +75,7 @@
 
 ## 플레이리스트 노래 추가 팝업
 
-![playlist-popup](images/11-playlist-popup.jpg)
+![playlist-popup](../images/11-playlist-popup.jpg)
 
 - 출력 항목:
     - 플레이리스트 목록 조회
@@ -89,7 +89,7 @@
 
 ## 게시글 작성 (Post Create)
 
-![post-create](images/3-post-create.jpg)
+![post-create](../images/3-post-create.jpg)
 
 - 출력 항목
     - 항목 없음
@@ -103,7 +103,7 @@
 
 ## 게시글 수정 (Post Edit)
 
-![post-edit](images/4-post-edit.jpg)
+![post-edit](../images/4-post-edit.jpg)
 
 - 출력 항목
     - 항목 없음
@@ -118,7 +118,7 @@
 
 ## 플레이리스트 상세 (Playlist Detail)
 
-![playlist-detail](images/7-playlist-detail.jpg)
+![playlist-detail](../images/7-playlist-detail.jpg)
 
 - 출력 항목
     - 플레이리스트 상세 조회
@@ -132,20 +132,20 @@
 
 ## 플레이리스트 생성 (Playlist Create)
 
-![playlist-create](images/5-playlist-create.jpg)
+![playlist-create](../images/5-playlist-create.jpg)
 
 - 출력 항목
     - 항목 없음
 - 입력 데이터 및 검증 규칙 (Input Data & Validation):
-    - 플레이리스트 이름: 최소 1자에서 30자까지 입력, 사용자의 플레이리스트 중 중복된 이름 사용 불가, 문자 허용 규칙은 다음 정규식을 따름: ^[A-Za-z가-힣0-9]+$
+    - 플레이리스트 이름: 최소 1자에서 30자까지 입력, 사용자의 플레이리스트 중 중복된 이름 사용 불가, 문자 허용 규칙은 다음 정규식을 따름: `^[A-Za-z가-힣0-9]+$`
 - 화면 제어 및 권한 규칙(Behavior Rules):
     - 본문 영역:
         - 취소: `/` 로 이동
-        - 만들기: `/playlists/new` 로 post 요청 후 생성이 성공되면`/playlists/{playlist_id}` 로 이동 실패시 다시 `playlists/new` 로 리다이렉트 후 에러 메세지 출력
+        - 만들기: `/playlists/new` 로 post 요청 후 생성이 성공되면`/playlists/{playlist_id}` 로 이동, 실패시 다시 `playlists/new` 로 리다이렉트 후 에러 메세지 출력
 
 ## 플레이리스트 수정 (Playlist Edit)
 
-![playlist-edit](images/6-playlist-edit.jpg)
+![playlist-edit](../images/6-playlist-edit.jpg)
 
 - 출력 항목
     - 플레이리스트 상세 조회
@@ -153,7 +153,7 @@
         - 플레이리스트 내부의 post 개수 (count)
         - post 목록 조회
 - 입력 데이터 및 검증 규칙 (Input Data & Validation):
-    - 플레이리스트 이름: 최소 1자에서 최대 30자까지 입력, 사용자의 플레이리스트 중 중복된 이름 사용 불가, 문자 허용 규칙은 다음 정규식을 따름: ^[A-Za-z가-힣0-9]+$
+    - 플레이리스트 이름: 최소 1자에서 최대 30자까지 입력, 사용자의 플레이리스트 중 중복된 이름 사용 불가, 문자 허용 규칙은 다음 정규식을 따름: `^[A-Za-z가-힣0-9]+$`
 - 화면 제어 및 권한 규칙(Behavior Rules):
     - 본문 영역
         - 전체 삭제: `/playlists/{playlist_id}/delete` delete 메서드 요청 후 `/playlists/{playlist_id}/edit` 로 리다이렉트
@@ -162,7 +162,7 @@
 
 ## 로그인 (Login)
 
-![login](images/8-login.jpg)
+![login](../images/8-login.jpg)
 
 - 출력 항목
     - 없음
@@ -175,7 +175,7 @@
 
 ## 회원가입 (Signin)
 
-![signin](images/9-signin.jpg)
+![signin](../images/9-signin.jpg)
 
 - 출력 항목
     - 없음
@@ -192,7 +192,7 @@
 
 ## 마이페이지 (My Page)
 
-![mypage](images/10-mypage.jpg)
+![mypage](../images/10-mypage.jpg)
 
 - 출력 항목
     - 사용자 영역 : 회원가입 시 저장된 사용자 정보 (이메일, 이름 , 가입날짜, 권한등급, 게시글 작성수)
