@@ -20,6 +20,7 @@ public class PostDto {
     @NotBlank(message = "내용은 필수 입력 항목입니다.")
     private String content;
     private String musicUrl;
+    private String thumbnailUrl; // 추가
     private String authorEmail;
     private int viewCount;
     private LocalDateTime createdAt;
