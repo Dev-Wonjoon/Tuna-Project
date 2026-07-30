@@ -14,7 +14,7 @@
             border border-neutral-200 border-t
     ">
     <div class="min-h-80 p-6">
-        <header>
+        <header class="flex items-center justify-between">
             <h1 class="text-xl font-semibold"
                 th:text="${post['title']}"
             >
@@ -22,12 +22,12 @@
             </h1>
 
             <div
-                th:if="${isAuthor}"
-                class="flex shrink-0 items-center gap-2"
+                    th:if="${isAuthor}"
+                    class="flex shrink-0 items-center gap-2"
             >
                 <a
-                    th:href="@{/posts/{id}/edit(id=${post['id']})}"
-                    class="
+                        th:href="@{/posts/{id}/edit(id=${post['id']})}"
+                        class="
                         rounded-md border border-neutral-300
                         bg-white px-3 py-1.5
                         text-sm font-medium
@@ -38,13 +38,14 @@
                 </a>
 
                 <form
-                    th:action="@{/posts/{id}/delete(id=${post['id']})}"
-                    method="POST"
-                    data-post-delete-form
+                        th:action="@{/posts/{id}/delete(id=${post['id']})}"
+                        method="POST"
+                        data-post-delete-form
+                        onsubmit="return confirm('정말 삭제하시겠습니까?');"
                 >
                     <button
-                        type="submit"
-                        class="
+                            type="submit"
+                            class="
                             rounded-md border border-red-200
                             bg-white px-3 py-1.5
                             text-sm font-medium text-red-600
@@ -58,8 +59,8 @@
         </header>
 
         <p
-            class="mt-4 whitespace-pre-line text-base text-neutral-600"
-            th:text="${post['content']}"
+                class="mt-4 whitespace-pre-line text-base text-neutral-600"
+                th:text="${post['content']}"
         >
             게시글 내용
         </p>
@@ -123,7 +124,7 @@
         </h2>
 
         <th:block
-            th:replace="~{fragments/comment-form :: commentForm(${post['id']})}"
+                th:replace="~{fragments/comment-form :: commentForm(${post['id']})}"
         />
 
         <ul th:if="${!#lists.isEmpty(comments)}"

@@ -11,4 +11,5 @@ public interface PostRepository {
     PostDto findById(long id);
     List<Map<String, Object>> findCommentsById(long id);
     List<PostDto> findPostsByMemberId(long id);
+    void deleteById(long id);
 }
