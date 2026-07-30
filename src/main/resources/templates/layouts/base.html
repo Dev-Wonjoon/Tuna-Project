@@ -36,6 +36,8 @@
     </main>
 
 </div>
+<th:block th:replace="~{fragments/playlist-popup :: playlistPopup}"/>
+<th:block th:replace="~{fragments/playlist-create-popup :: playlistCreatePopup}"/>
 <script defer th:src="@{/js/playlist-popup.js}"></script>
 </body>
 </html>

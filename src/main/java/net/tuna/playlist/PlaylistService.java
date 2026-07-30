@@ -5,6 +5,7 @@ import net.tuna.playlist.repository.PlaylistRepository;
 import net.tuna.post.dto.PostDto;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -22,8 +23,34 @@ public class PlaylistService {
         this.playlistPostRepository = playlistPostRepository;
     }
 
-    public void createPlaylist(Playlist playlist) {
-        playlistRepository.save(playlist);
+
+    public long createPlaylist(
+            Playlist playlist
+    ) {
+        playlist.setName(playlist.getName().trim());
+        return playlistRepository.save(playlist);
+    }
+
+    @Transactional
+    public long createPlaylistWithPost(
+            Playlist playlist,
+            long postId
+    ) {
+        long playlistId = createPlaylist(playlist);
+
+        int affectedRows = playlistPostRepository.add(
+                playlistId,
+                postId,
+                playlist.getMemberId()
+        );
+
+        if(affectedRows != 1) {
+            throw new IllegalStateException(
+                    "추가할 게시글을 찾을 수 없습니다."
+            );
+        }
+
+        return playlistId;
     }
 
     public Playlist getPlaylistById(long playlistId, long memberId) {

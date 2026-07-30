@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<body>
+
+<dialog
+    id="playlist-create-dialog"
+    th:fragment="playlistCreatePopup"
+    th:attr="
+        data-playlist-create-auto-open=
+        ${playlistCreateOpen == true}
+    "
+    class="
+        m-auto w[calc(100%-2rem)] max-w-lg
+        rounded-2xl border border-neutral-300
+        bg-white p-0 shadow-2xl
+        backdrop:bg-black/50
+    "
+>
+    <header class="
+        flex items-center justify-between
+        border-b border-neutral-200
+        px-6 py-5
+    ">
+        <div>
+            <h2 class="text-lg font-semibold">
+                새 플레이리스트
+            </h2>
+
+            <p class="mt-1 text-sm text-neutral-500">
+                플레이리스트 이름을 입력하세요.
+            </p>
+        </div>
+
+        <button
+            type="button"
+            data-playlist-create-close
+            aria-label="팝업 닫기"
+        >
+            X
+        </button>
+    </header>
+
+    <form
+        id="playlist-create-form"
+        th:action="@{/playlists}"
+        method="post"
+        class="p-6"
+    >
+        <input
+            type="hidden"
+            name="postId"
+            data-playlist-create-post-id
+            th:value="${playlistCreatePostId}"
+            th:disabled="${playlistCreatePostId == null}"
+        >
+
+        <input
+            type="hidden"
+            name="returnUrl"
+            value="/"
+            data-playlist-create-return-url
+        >
+
+        <label
+            for="playlist-create-name"
+            class="text-sm font-medium"
+        >
+            플레이리스트 이름
+        </label>
+
+        <input
+            id="playlist-create-name"
+            name="name"
+            type="text"
+            maxlength="255"
+            required
+            autocomplete="off"
+            th:value="${playlistCreateName}"
+            class="
+                mt-2 w-full rounded-md
+                border border-neutral-300
+                px-3 py-2
+                focus:border-neutral-900
+                focus:outline-none
+            "
+        >
+
+        <p
+            th:if="${playlistCreateError != null}"
+            th:text="${playlistCreateError}"
+            class="mt-2 text-sm text-red-600"
+        >
+            오류 메세지
+        </p>
+
+        <div class="
+            mt-6 flex justify-end gap-3
+            border-t border-neutral-200 pt-5
+        ">
+            <button
+                type="button"
+                data-playlist-create-close
+                class="
+                    rounded-md border border-neutral-300
+                    px-4 py-2 text-sm font-medium
+                "
+            >
+                취소
+            </button>
+
+            <button
+                type="submit"
+                class="
+                    rounded-md bg-neutral-900
+                    px-4 py-2 text-sm font-medium
+                    text-white
+                "
+            >
+                만들기
+            </button>
+        </div>
+    </form>
+</dialog>
+
+</body>
+</html>
