@@ -54,7 +54,7 @@ public class SecurityConfig {
 
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login")
+                        .logoutSuccessUrl("/?logout") //로그아웃 버튼을 눌렀을 때 루트 페이지로 이동
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
                 )
