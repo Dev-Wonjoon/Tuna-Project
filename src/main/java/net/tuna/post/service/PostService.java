@@ -12,4 +12,5 @@ public interface PostService {
     List<Map<String,Object>> getComments(long id);
     List<PostDto> getPostsByMemberId(long id);
     void deletePost(long id);
+    void addViewCount(long id);
 }

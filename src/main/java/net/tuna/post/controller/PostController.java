@@ -60,6 +60,7 @@ public class PostController {
     @GetMapping("/posts/{postId}")
     public String getDetail(@PathVariable("postId") int id, Model model
             ,@AuthenticationPrincipal CustomUserDetails userDetails){
+        postService.addViewCount(id);
         PostDto post = postService.getPost(id);
         model.addAttribute("post",post);
         //작성자 본인 검증
@@ -74,8 +75,6 @@ public class PostController {
             );
         }
         model.addAttribute("isAuthor", isAuthor);
-
-
         List<Map<String,Object>> comments = postService.getComments(id);
         model.addAttribute("comments",comments);
 
