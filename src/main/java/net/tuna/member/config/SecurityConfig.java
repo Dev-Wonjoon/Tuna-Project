@@ -23,7 +23,6 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-                .csrf(csrf -> csrf.disable())
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
@@ -57,6 +56,12 @@ public class SecurityConfig {
                         .logoutSuccessUrl("/?logout") //로그아웃 버튼을 눌렀을 때 루트 페이지로 이동
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID")
+                )
+
+                .sessionManagement(session -> session
+                        .invalidSessionUrl("/login?expired")
+                        .maximumSessions(1)
+                        .maxSessionsPreventsLogin(false)
                 )
 
                 .userDetailsService(customUserDetailsService);
