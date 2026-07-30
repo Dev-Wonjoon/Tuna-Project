@@ -9,4 +9,8 @@ public interface PlaylistPostRepository {
             long playlistId,
             long memberId
     );
+
+    int add(long playlistId, long postId, long memberId);
+
+    int remove(long playlistId, long postId, long memberId);
 }

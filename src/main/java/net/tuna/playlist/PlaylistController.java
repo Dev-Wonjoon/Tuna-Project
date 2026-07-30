@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -17,10 +18,16 @@ import java.util.List;
 public class PlaylistController {
 
     private final PlaylistService playlistService;
+    private final PlaylistPostService playlistPostService;
     private final PostService postService;
 
-    public PlaylistController(PlaylistService playlistService, PostService postService) {
+    public PlaylistController(
+            PlaylistService playlistService,
+            PlaylistPostService playlistPostService,
+            PostService postService
+    ) {
         this.playlistService = playlistService;
+        this.playlistPostService = playlistPostService;
         this.postService = postService;
     }
 
@@ -66,12 +73,15 @@ public class PlaylistController {
     ) {
         long memberId = userDetails.getMember().getId();
 
-        Playlist playlist =
-                playlistService.getPlaylistById(
-                        playlistId,
-                        memberId
-                );
-        List<PostDto> posts = postService.getPosts();
+        Playlist playlist = playlistService.getPlaylistById(
+                playlistId,
+                memberId
+        );
+
+        List<PostDto> posts = playlistPostService.getPosts(
+                playlistId,
+                memberId
+        );
 
         model.addAttribute("title", playlist.getName());
         model.addAttribute("playlist", playlist);
@@ -80,5 +90,38 @@ public class PlaylistController {
         model.addAttribute("currentPlaylistId", playlistId);
 
         return "pages/playlist-detail";
+    }
+
+    @PostMapping("/posts")
+    public String addPost(
+            @RequestParam long playlistId,
+            @RequestParam long postId,
+            @AuthenticationPrincipal
+            CustomUserDetails userDetails,
+            RedirectAttributes redirectAttributes
+    ) {
+        long memberId = userDetails.getMember().getId();
+
+        boolean added = playlistPostService.addPost(
+                playlistId,
+                postId,
+                memberId
+        );
+
+        redirectAttributes.addFlashAttribute(
+                "playlistMessage",
+                added
+                        ? "플레이리스트에 추가되었습니다."
+                        : "이미 추가된 게시글입니다."
+        );
+
+        if(!added) {
+            redirectAttributes.addFlashAttribute(
+                    "playlistAlert",
+                    "이미 이 플레이리스트에 추가된 노래입니다."
+            );
+        }
+
+        return "redirect:/";
     }
 }

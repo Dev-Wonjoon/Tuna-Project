@@ -8,6 +8,8 @@
         <th:block th:replace="~{fragments/post-card :: postCard(${post})}"/>
     </th:block>
 
+    <th:block th:replace="~{fragments/playlist-popup :: playlistPopup}"/>
+
     <p th:if="${#lists.isEmpty(posts)}" class="
             flex min-h-72 items-center justify-center
             border border-dashed border-neutral-300
@@ -15,6 +17,12 @@
         ">
         게시글이 없습니다.
     </p>
-</section>
 
+    <script
+            th:if="${playlistAlert != null}"
+            th:inline="javascript"
+    >
+        window.alert([[${playlistAlert}]])
+    </script>
+</section>
 </html>
