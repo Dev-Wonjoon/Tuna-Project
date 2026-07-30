@@ -14,6 +14,13 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public boolean hasEmail(String email) {
+        if (memberRepository.findByEmail(email) == null) {
+            return false;
+        }
+        return true;
+    }
+
     public int save(RequestSignUpDto requestSignUpDto) {
         String[] imgList = new String[]{
                 "/img/tuna-note-blurple.png",

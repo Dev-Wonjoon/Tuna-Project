@@ -4,8 +4,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.tuna.member.dto.RequestSignUpDto;
 import net.tuna.member.service.MemberService;
+import net.tuna.member.validation.ValidationSequence;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,7 +31,7 @@ public class MemberController {
 
     @PostMapping("/signup")
     public String signup(
-            @Valid @ModelAttribute("signUpForm") RequestSignUpDto requestSignUpDto,
+            @Validated(ValidationSequence.class) @ModelAttribute("signUpForm") RequestSignUpDto requestSignUpDto,
             BindingResult bindingResult
     ) {
         if (!requestSignUpDto.getPassword().equals(requestSignUpDto.getPasswordConfirm())) {
@@ -37,6 +39,14 @@ public class MemberController {
                     "passwordConfirm",
                     "password_not_matched",
                     "비밀번호 확인이 맞지 않습니다."
+            );
+        }
+
+        if (memberService.hasEmail(requestSignUpDto.getEmail())) {
+            bindingResult.rejectValue(
+                    "email",
+                    "email_already_exists",
+                    "해당 이메일은 이미 존재합니다."
             );
         }
 
