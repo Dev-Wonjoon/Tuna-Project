@@ -3,11 +3,13 @@ package net.tuna.playlist;
 import jakarta.validation.Valid;
 import net.tuna.member.security.CustomUserDetails;
 import net.tuna.post.dto.PostDto;
-import net.tuna.post.service.PostService;
+import net.tuna.utils.LocalRedirectUrl;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -19,49 +21,72 @@ public class PlaylistController {
 
     private final PlaylistService playlistService;
     private final PlaylistPostService playlistPostService;
-    private final PostService postService;
 
     public PlaylistController(
             PlaylistService playlistService,
-            PlaylistPostService playlistPostService,
-            PostService postService
+            PlaylistPostService playlistPostService
     ) {
         this.playlistService = playlistService;
         this.playlistPostService = playlistPostService;
-        this.postService = postService;
     }
 
-
-    @GetMapping("/new")
-    public String createForm(Model model) {
-        model.addAttribute("title", "플레이리스트 추가");
-        model.addAttribute("playlist", new Playlist());
-        model.addAttribute("currentMenu", null);
-        model.addAttribute("currentPlaylistId", null);
-
-        return "pages/playlist-create";
-    }
-
-    @PostMapping("/new")
+    @PostMapping
     public String createPlaylist(
-            @Valid @ModelAttribute("playlist") Playlist playlist,
+            @Valid @ModelAttribute("playlist")
+            Playlist playlist,
             BindingResult bindingResult,
-            @AuthenticationPrincipal CustomUserDetails userDetails,
-            Model model
+            @RequestParam(required = false)
+            Long postId,
+            @RequestParam(defaultValue = "/")
+            String returnUrl,
+            @AuthenticationPrincipal
+            CustomUserDetails userDetails,
+            RedirectAttributes redirectAttributes
     ) {
         if(bindingResult.hasErrors()) {
-            model.addAttribute("title", "플레이리스트 추가");
-            model.addAttribute("currentMenu", null);
-            model.addAttribute("currentPlaylistId", null);
-
-            return "pages/playlist-create";
+            return redirectWithCreateError(
+                    playlist,
+                    postId,
+                    returnUrl,
+                    getValidationMessage(bindingResult),
+                    redirectAttributes
+            );
         }
 
         long memberId = userDetails.getMember().getId();
-        playlist.setMemberId(memberId);
-        playlistService.createPlaylist(playlist);
 
-        return "redirect:/";
+        playlist.setMemberId(memberId);
+
+        try {
+            long playlistId;
+
+            if(postId == null) {
+                playlistId = playlistService.createPlaylist(playlist);
+            } else {
+                playlistId = playlistService.createPlaylistWithPost(
+                        playlist,
+                        postId
+                );
+            }
+
+            return "redirect:/playlists/" + playlistId;
+        } catch (DuplicateKeyException exception) {
+            return redirectWithCreateError(
+                    playlist,
+                    postId,
+                    returnUrl,
+                    "같은 이름의 플레이리스트가 이미 있습니다.",
+                    redirectAttributes
+            );
+        } catch (IllegalArgumentException exception) {
+            return redirectWithCreateError(
+                    playlist,
+                    postId,
+                    returnUrl,
+                    exception.getMessage(),
+                    redirectAttributes
+            );
+        }
     }
 
     @GetMapping("/{playlistId}")
@@ -123,5 +148,55 @@ public class PlaylistController {
         }
 
         return "redirect:/";
+    }
+
+    private String redirectWithCreateError(
+            Playlist playlist,
+            Long postId,
+            String returnUrl,
+            String errorMessage,
+            RedirectAttributes redirectAttributes
+    ) {
+        String safeReturnUrl = LocalRedirectUrl.sanitize(returnUrl, "/");
+
+        redirectAttributes.addFlashAttribute("playlistCreateOpen", true);
+
+        redirectAttributes.addFlashAttribute(
+                "playlistCreateName",
+                playlist.getName() == null
+                        ? ""
+                        : playlist.getName()
+        );
+
+        if(postId != null) {
+            redirectAttributes.addFlashAttribute(
+                    "playlistCreatePostId",
+                    postId
+            );
+        }
+
+        redirectAttributes.addAttribute(
+                "playlistCreateReturnUrl",
+                safeReturnUrl
+        );
+
+        redirectAttributes.addAttribute(
+                "playlistCreateError",
+                errorMessage
+        );
+
+        return "redirect:" + safeReturnUrl;
+    }
+
+    private String getValidationMessage(
+            BindingResult bindingResult
+    ) {
+        FieldError nameError = bindingResult.getFieldError("name");
+
+        if(nameError == null || nameError.getDefaultMessage() == null) {
+            return "입력값을 확인해주세요.";
+        }
+
+        return nameError.getDefaultMessage();
     }
 }

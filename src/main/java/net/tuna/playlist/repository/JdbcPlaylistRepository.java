@@ -3,8 +3,12 @@ package net.tuna.playlist.repository;
 import net.tuna.playlist.Playlist;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.List;
 
 @Repository
@@ -26,11 +30,33 @@ public class JdbcPlaylistRepository implements PlaylistRepository {
     }
 
     @Override
-    public void save(Playlist playlist) {
-        jdbcTemplate.update("""
+    public long save(Playlist playlist) {
+        String sql = """
             INSERT INTO playlists (name, member_id)
             VALUES (?, ?)
-        """, playlist.getName(), playlist.getMemberId());
+        """;
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement stmt = connection.prepareStatement(
+                    sql,
+                    Statement.RETURN_GENERATED_KEYS
+            );
+
+            stmt.setString(1, playlist.getName());
+            stmt.setLong(2, playlist.getMemberId());
+
+            return stmt;
+        }, keyHolder);
+
+        Number key = keyHolder.getKey();
+
+        if(key == null) {
+            throw new IllegalStateException("생성된 플레이리스트 ID를 가져올 수 없습니다.");
+        }
+
+        return key.longValue();
     }
 
     @Override

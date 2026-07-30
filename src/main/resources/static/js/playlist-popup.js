@@ -1,32 +1,60 @@
-document.addEventListener("click", (event) => {
-    const openButton = event.target.closest(
-        "[data-playlist-popup-open]"
+document.addEventListener("DOMContentLoaded", () => {
+    const createDialog = document.getElementById(
+        "playlist-create-dialog"
     );
 
-    if(openButton) {
+    if(createDialog?.dataset.playlistCreateAutoOpen === 'true') {
+        createDialog.showModal();
+
+        createDialog.querySelector("input[name='name']")?.focus();
+    }
+
+});
+
+document.addEventListener('click', (event) => {
+    const target = event.target;
+
+    if(!(target instanceof Element)) {
+        return;
+    }
+
+    const playlistOpenButton = target.closest(
+        '[data-playlist-popup-open]'
+    );
+
+    if(playlistOpenButton) {
         openPlaylistPopup(
-            openButton.dataset.postId
+            playlistOpenButton.dataset.postId
         );
 
         return;
     }
 
-    const closeButton = event.target.closest(
-        "[data-playlist-popup-close]"
+    const createOpenButton = target.closest(
+        '[data-playlist-create-open]'
     );
 
-    if(closeButton) {
-        closeButton.closest("dialog")?.close();
+    if(createOpenButton) {
+        openPlaylistCreatePopup(createOpenButton);
+        return;
+    }
+
+    const playlistCloseButton = target.closest(
+        '[data-playlist-popup-close]'
+    );
+
+    if(playlistCloseButton) {
+        document.getElementById('playlist-add-dialog')?.close();
     }
 });
 
 function openPlaylistPopup(postId) {
     const dialog = document.getElementById(
-        "playlist-add-dialog"
+        'playlist-add-dialog'
     );
 
     const postIdInput = dialog?.querySelector(
-        "[data-selected-post-id]"
+        '[data-selected-post-id]'
     );
 
     if(!dialog || !postIdInput || !postId) {
@@ -40,10 +68,55 @@ function openPlaylistPopup(postId) {
     }
 }
 
-const playlistDialog = document.getElementById("playlist-add-dialog");
+function openPlaylistCreatePopup(openButton) {
+    const createDialog = document.getElementById(
+        'playlist-create-dialog'
+    );
 
-playlistDialog?.addEventListener("click", (event) => {
-    if(event.target == playlistDialog) {
-        playlistDialog.close();
+    if(!createDialog) {
+        return;
     }
-})
+
+    const addDialog = openButton.closest(
+        '#playlist-add-dialog'
+    );
+
+    const selectedPostId = addDialog?.querySelector('[data-selected-post-id]')?.value;
+
+    const postIdInput = createDialog.querySelector(
+        '[data-playlist-create-post-id]'
+    );
+
+    const returnUrlInput = createDialog.querySelector(
+        '[data-playlist-create-return-url]'
+    );
+
+    if(postIdInput) {
+        postIdInput.value = selectedPostId ?? "";
+        postIdInput.disabled = !selectedPostId;
+    }
+
+    if(returnUrlInput) {
+        returnUrlInput.value =
+            window.location.pathname
+            + window.location.search;
+    }
+
+    addDialog?.close();
+
+    if(!createDialog.open) {
+        createDialog.showModal();
+    }
+
+    createDialog.querySelector("input[name='name']")?.focus();
+}
+
+for(const dialogId of ['playlist-add-dialog', 'playlist-create-dialog ']) {
+    const dialog = document.getElementById("dialogId");
+
+    dialog?.addEventListener("click", (event) => {
+        if(event.target === dialog) {
+            dialog.close();
+        }
+    });
+}

@@ -4,7 +4,9 @@ import java.net.URI;
 
 public final class LocalRedirectUrl {
 
-    public String sanitize(
+    private LocalRedirectUrl() {}
+
+    public static String sanitize(
             String returnUrl,
             String fallbackUrl
     ) {
