@@ -4,18 +4,12 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.tuna.member.security.CustomUserDetails;
 import net.tuna.post.dto.PostDto;
-import net.tuna.post.repository.JdbcTemplatePostRepository;
-import net.tuna.post.repository.PostRepository;
 import net.tuna.post.service.PostService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-
-import javax.naming.Binding;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
@@ -54,7 +48,6 @@ public class PostController {
         if(bindingResult.hasFieldErrors()){
             return "pages/post-create";
         }
-
         //멤버단에서 본인 아이디가져오기
         if(userDetails != null){
             post.setMemberId(userDetails.getMember().getId());
@@ -69,15 +62,32 @@ public class PostController {
             ,@AuthenticationPrincipal CustomUserDetails userDetails){
         PostDto post = postService.getPost(id);
         model.addAttribute("post",post);
-        if(userDetails != null){
+        //작성자 본인 검증
+        boolean isAuthor = false;
+        if (userDetails != null && post != null) {
             String name = userDetails.getMember().getName();
-            model.addAttribute("name",name);
+            model.addAttribute("name", name);
+
+            isAuthor = java.util.Objects.equals(
+                    userDetails.getMember().getId(),
+                    post.getMemberId()
+            );
         }
+        model.addAttribute("isAuthor", isAuthor);
+
 
         List<Map<String,Object>> comments = postService.getComments(id);
         model.addAttribute("comments",comments);
 
         return "pages/post-detail";
+    }
+
+    @PostMapping("/posts/{id}/delete")
+    public String deletePost(@PathVariable("id") long id,
+                             Model model,
+                             @AuthenticationPrincipal CustomUserDetails userDetails){
+        postService.deletePost(id);
+        return "redirect:/";
     }
 
 }
