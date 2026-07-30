@@ -45,4 +45,9 @@ public class PostServiceImpl implements PostService {
     public void deletePost(long id) {
         postRepository.deleteById(id);
     }
+
+    @Override
+    public void addViewCount(long id) {
+        postRepository.addViewCount(id);
+    }
 }
