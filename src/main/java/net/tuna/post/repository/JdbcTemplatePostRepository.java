@@ -24,6 +24,7 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 .id(rs.getLong("id"))
                 .name(rs.getString("name"))
                 .authorEmail(rs.getString("author_email"))
+                .memberId(rs.getLong("member_id"))
                 .title(rs.getString("title"))
                 .content(rs.getString("content"))
                 .musicUrl(rs.getString("music_url"))
@@ -84,4 +85,9 @@ public class JdbcTemplatePostRepository implements PostRepository{
     }
 
 
+    @Override
+    public void deleteById(long id) {
+        String sql = "DELETE FROM posts WHERE id = ?";
+        jdbcTemplate.update(sql, id);
+    }
 }
