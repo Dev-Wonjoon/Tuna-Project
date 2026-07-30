@@ -12,4 +12,5 @@ public interface PostRepository {
     List<Map<String, Object>> findCommentsById(long id);
     List<PostDto> findPostsByMemberId(long id);
     void deleteById(long id);
+    void addViewCount(long id);
 }

@@ -34,6 +34,7 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 .build();
     };
 
+    //전체 게시글 조회
     @Override
     public List<PostDto> findAll() {
         String sql = "SELECT p.*, m.name AS name , m.email AS author_email " +
@@ -43,6 +44,7 @@ public class JdbcTemplatePostRepository implements PostRepository{
         return jdbcTemplate.query(sql, postRowMapper);
     }
 
+    //게시물 상세보기
     @Override
     public PostDto findById(long id) {
         String sql = "SELECT p.*, m.name AS name , m.email AS author_email " +
@@ -52,6 +54,7 @@ public class JdbcTemplatePostRepository implements PostRepository{
         return jdbcTemplate.queryForObject(sql,postRowMapper,id);
     }
 
+    //멤버아이디로 게시글 찾기
     @Override
     public List<PostDto> findPostsByMemberId(long id) {
         String sql = "SELECT p.*, m.name AS name, m.email AS author_email " +
@@ -60,9 +63,7 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 "WHERE p.member_id = ?";
         return jdbcTemplate.query(sql, postRowMapper, id);
     }
-
-
-
+    //게시글 생성
     @Override
     public void createPost(PostDto post) {
         String sql = "INSERT INTO posts(title,content,music_url,member_id) VALUES (?,?,?,?)";
@@ -73,8 +74,7 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 , post.getMemberId());
     }
 
-
-
+    //게시글 내 댓글 조회
     @Override
     public List<Map<String, Object>> findCommentsById(long id) {
         String sql = "SELECT c.*, m.name AS name, m.email As author_email " +
@@ -85,9 +85,20 @@ public class JdbcTemplatePostRepository implements PostRepository{
     }
 
 
+    //게시글 삭제
     @Override
     public void deleteById(long id) {
         String sql = "DELETE FROM posts WHERE id = ?";
         jdbcTemplate.update(sql, id);
     }
+
+
+    //게시글 조회수 증가
+    @Override
+    public void addViewCount(long id) {
+        String sql = "UPDATE posts SET view_count = view_count + 1 WHERE id =?";
+        jdbcTemplate.update(sql,id);
+    }
+
+
 }
