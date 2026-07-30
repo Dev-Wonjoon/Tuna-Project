@@ -4,18 +4,12 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.tuna.member.security.CustomUserDetails;
 import net.tuna.post.dto.PostDto;
-import net.tuna.post.repository.JdbcTemplatePostRepository;
-import net.tuna.post.repository.PostRepository;
 import net.tuna.post.service.PostService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-
-
-import javax.naming.Binding;
-import java.time.LocalDateTime;
 import java.util.*;
 
 @Controller
