@@ -29,7 +29,7 @@
             </span>
 
             <a
-                th:href="@{playlists/{id}/edit(id=${playlist['id']})}"
+                th:href="@{/playlists/{id}/edit(id=${playlist.id})}"
                 class="
                     rounded-md border border-neutral-300
                     bg-white px-3 py-1.5
@@ -46,6 +46,7 @@
             >
                 <button
                     type="submit"
+                    onclick="return confirm('플레이리스트를 삭제하시겠습니까?');"
                     class="
                         rounded-md border border-red-200
                         bg-white px-3 py-1.5

@@ -84,4 +84,13 @@ public class JdbcMemberRepository implements MemberRepository {
                 memberDto.getId()
         );
     }
+
+    @Override
+    public void deleteById(Long id) {
+        String sql = """
+                DELETE FROM members
+                WHERE id = ?
+                """;
+        jdbcTemplate.update(sql, id);
+    }
 }

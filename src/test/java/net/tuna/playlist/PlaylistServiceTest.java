@@ -1,5 +1,6 @@
 package net.tuna.playlist;
 
+import net.tuna.playlist.dto.Playlist;
 import net.tuna.playlist.repository.PlaylistPostRepository;
 import net.tuna.playlist.repository.PlaylistRepository;
 import net.tuna.post.dto.PostDto;

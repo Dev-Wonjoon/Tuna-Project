@@ -6,6 +6,9 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -116,5 +119,64 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 playlistId,
                 memberId
         );
+    }
+
+    @Override
+    public int removeAll(long playlistId, long memberId) {
+        return jdbcTemplate.update("""
+                    DELETE FROM post_playlist_mapping ppm
+                    WHERE playlist_id = ?
+                        AND member_id = ?
+                        AND playlist_id IN (
+                            SELECT id
+                            FROM playlists
+                            WHERE id = ?
+                                AND member_id = ?
+                        )
+                    """,
+                playlistId,
+                memberId,
+                playlistId,
+                memberId
+        );
+    }
+
+    @Override
+    public int removeByPostIds(long playlistId, List<Long> postIds, long memberId) {
+        if(postIds == null || postIds.isEmpty()) {
+            return 0;
+        }
+
+        List<Long> distinctPostIds = postIds.stream()
+                .distinct()
+                .toList();
+
+        String placeholders = String.join(
+                ", ",
+                Collections.nCopies(distinctPostIds.size(), "?")
+        );
+
+        String sql = """
+            DELETE FROM post_playlist_mapping ppm
+            WHERE playlist_id = ?
+                AND member_id = ?
+                AND post_id IN (%s)
+                AND playlist_id IN (
+                    SELECT id
+                    FROM playlists
+                    WHERE id = ?
+                        AND member_id = ?
+                )
+        """.formatted(placeholders);
+
+        List<Object> paramaters = new ArrayList<>();
+
+        paramaters.add(playlistId);
+        paramaters.add(memberId);
+        paramaters.addAll(distinctPostIds);
+        paramaters.add(playlistId);
+        paramaters.add(memberId);
+
+        return jdbcTemplate.update(sql, paramaters.toArray());
     }
 }

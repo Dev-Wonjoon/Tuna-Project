@@ -1,6 +1,6 @@
 package net.tuna.playlist.repository;
 
-import net.tuna.playlist.Playlist;
+import net.tuna.playlist.dto.Playlist;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -60,6 +60,15 @@ public class JdbcPlaylistRepository implements PlaylistRepository {
     }
 
     @Override
+    public int deleteById(long playlistId, long memberId) {
+        return jdbcTemplate.update("""
+            DELETE FROM playlists
+            WHERE id = ?
+                AND member_id = ?
+        """, playlistId, memberId);
+    }
+
+    @Override
     public List<Playlist> findAll(long memberId) {
         List<Playlist> playlists = jdbcTemplate.query("""
             SELECT 
@@ -107,7 +116,38 @@ public class JdbcPlaylistRepository implements PlaylistRepository {
     }
 
     @Override
-    public void deleteById(long id, long memberId) {
+    public int updateName(long id, long memberId, String name) {
+        return jdbcTemplate.update("""
+            UPDATE playlists
+            SET name = ?
+            WHERE id = ?
+                AND member_id = ?
+        
+        """,
+                name,
+                id,
+                memberId
+        );
+    }
 
+    @Override
+    public int countByMemberId(long memberId) {
+        Integer count = jdbcTemplate.queryForObject("""
+            SELECT COUNT(*)
+            FROM playlists
+            WHERE member_id = ?
+        """, Integer.class, memberId);
+
+        return count == null ? 0 : count;
+    }
+
+    @Override
+    public void lockMember(long memberId) {
+        jdbcTemplate.queryForObject("""
+            SELECT id
+            FROM members
+            WHERE id = ?
+            FOR UPDATE
+        """, Long.class, memberId);
     }
 }
