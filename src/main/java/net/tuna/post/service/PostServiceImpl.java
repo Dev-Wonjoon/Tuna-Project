@@ -27,6 +27,11 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public void editPost(PostDto post) {
+        postRepository.updatePost(post);
+    }
+
+    @Override
     public PostDto getPost(long id) {
         return  postRepository.findById(id);
     }
