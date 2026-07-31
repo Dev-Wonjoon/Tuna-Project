@@ -9,4 +9,5 @@ public interface PlaylistRepository {
     public Playlist findById(long id, long memberId);
     public long save(Playlist playlist);
     public void deleteById(long id, long memberId);
+    int updateName(long id, long memberId, String name);
 }

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html
+    lang="ko"
+    xmlns:th="http://www.thymeleaf.org"
+    th:replace="~{layouts/base :: layout(${title}, ~{::section})}"
+>
+<section
+    class="w-full max-w-5xl"
+    data-playlist-edit
+>
+    <!-- 작업 결과 메세지 -->
+    <p
+        th:if="${playlistEditSuccess != null}"
+        th:text="${playlistEditSuccess}"
+        role="status"
+        class="
+            mb-4 rounded-lg border border-emerald-200
+            bg-emerald-50 px-4 py-3
+            text-sm text-emerald-700
+        "
+    >
+        작업을 완료했습니다.
+    </p>
+
+    <p
+        th:if="${playlistEditError != null}"
+        th:text="${playlistEditError}"
+        role="alert"
+        class="
+            mb-4 rounded-lg border border-red-200
+            bg-red-50 px-4 py-3
+            text-sm text-red-700
+        "
+    >
+        작업 중 오류가 발생했습니다.
+    </p>
+
+    <article class="
+        overflow-hidden rounded-[2rem]
+        border border-neutral-300
+        bg-neutral-100
+    ">
+        <header class="
+            flex flex-col gap-6
+            px-6 py-8
+            sm:flex-row sm:items-center
+            md:px-10
+        ">
+            <div class="
+                flex size-32 shrink-0
+                items-center justify-center
+                rounded-3xl border border-neutral-200
+                bg-white p-4
+            ">
+                <img
+                        th:src="@{/img/tuna-note-blurple.png}"
+                        alt=""
+                        class="size-full object-contain"
+                >
+            </div>
+
+            <div class="
+                min-w-0 flex-1 rounded-2xl
+                border border-neutral-200
+                bg-white px-6 py-5
+            ">
+                <form
+                        th:action="@{/playlists/{id}/edit(id=${playlist.id})}"
+                        th:object="${playlistForm}"
+                        method="post"
+                >
+                    <label
+                            for="playlist-name"
+                            class="text-sm font-semibold text-neutral-600"
+                    >
+                        플레이리스트 이름
+                    </label>
+
+                    <div class="
+                        mt-2 flex flex-col gap-2
+                        sm:flex-row
+                    ">
+                        <input
+                                id="playlist-name"
+                                type="text"
+                                th:field="*{name}"
+                                maxlength="30"
+                                pattern="[A-Za-z가-힣0-9]+"
+                                required
+                                autocomplete="off"
+                                class="
+                                min-w-0 flex-1 rounded-lg
+                                border border-neutral-300
+                                px-3 py-2
+                                text-lg font-semibold
+                                focus:border-neutral-900
+                                focus:outline-none
+                            "
+                        >
+
+                        <button
+                                type="submit"
+                                class="
+                                rounded-lg bg-neutral-900
+                                px-4 py-2
+                                text-sm font-medium text-white
+                                hover:bg-neutral-700
+                            "
+                        >
+                            이름 저장
+                        </button>
+                    </div>
+
+                    <p
+                            th:if="${#fields.hasErrors('name')}"
+                            th:errors="*{name}"
+                            class="mt-2 text-sm text-red-600"
+                    >
+                        플레이리스트 이름 오류
+                    </p>
+                </form>
+
+                <div class="
+                    mt-4 flex items-center justify-between
+                    border-t border-neutral-200 pt-4
+                ">
+                    <span
+                            class="text-sm text-neutral-500"
+                            th:text="|총 ${#lists.size(posts)}곡|"
+                    >
+                        총 0곡
+                    </span>
+
+                    <a
+                            th:href="@{/playlists/{id}(id=${playlist.id})}"
+                            class="
+                            text-sm font-medium text-neutral-600
+                            hover:text-neutral-950 hover:underline
+                        "
+                    >
+                        상세 페이지로 돌아가기
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <!-- 선택 삭제, 전체 삭제 -->
+        <div
+            th:if="${!#lists.isEmpty(posts)}"
+            class="
+                flex flex-col gap-3
+                border-y border-neutral-300
+                px-6 py-4
+                sm:flex-row sm:items-center
+                sm:justify-between
+                md:px-10
+            "
+        >
+            <label class="
+                flex cursor-pointer
+                items-center gap-2
+                text-sm font-medium
+            ">
+                <input
+                    type="checkbox"
+                    data-playlist-select-all
+                    class="size-4 accent-neutral-900">
+
+                전체 선택
+            </label>
+
+            <div class="flex flex-wrap gap-2">
+                <!-- 선택 삭제 -->
+                <form
+                    id="selected-delete-form"
+                    th:action="@{/playlists/{id}/posts/delete-selected(id=${playlist.id})}"
+                    method="POST"
+                    onsubmit="return confirm('선택한 곡을 플레이리스트에서 제거하시겠습니까?');"
+                >
+                    <button
+                        type="submit"
+                        data-playlist-selected-delete
+                        disabled
+                        class="
+                            rounded-lg border border-neutral-300
+                            bg-white px-4 py-2
+                            text-sm font-medium
+                            hover:bg-neutral-50
+                            disabled:cursor-not-allowed
+                            disabled:text-neutral-400
+                        "
+                    >
+                        선택 삭제
+                        (<span data-playlist-selected-count>0</span>)
+                    </button>
+                </form>
+
+                <!-- 전체 삭제 -->
+                <form
+                    th:action="@{/playlists/{id}/posts/delete-all(id=${playlist.id})}"
+                    method="POST"
+                    onsubmit="return confirm('모든 곡을 플레이리스트에서 제거하시겠습니까?');"
+                >
+                    <button
+                        type="submit"
+                        class="
+                            rounded-lg border border-red-200
+                            bg-white px-4 py-2
+                            text-sm font-medium text-red-600
+                            hover:bg-red-50
+                        "
+                    >
+                        전체 삭제
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <th:block
+            th:replace="
+                ~{fragments/playlist-edit-post-list :: playlistEditPostList(${posts}, ${playlist.id})}
+            "></th:block>
+    </article>
+    <script defer th:src="@{/js/playlist-edit.js}"></script>
+</section>
+</html>
