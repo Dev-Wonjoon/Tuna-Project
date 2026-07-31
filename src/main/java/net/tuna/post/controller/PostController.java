@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import net.tuna.member.dto.Role;
 import net.tuna.member.security.CustomUserDetails;
+import net.tuna.post.dto.PostDetailResponse;
 import net.tuna.post.dto.PostDto;
 import net.tuna.post.service.PostService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,22 +25,26 @@ public class PostController {
     }
 
     @GetMapping("/")
-    public String getPostList(Model model, @AuthenticationPrincipal CustomUserDetails userDetails){
+    public String getPostList(Model model){
+        List<PostDto> postDtos = postService.getPosts();
 
-        if(userDetails != null){
-            String name = userDetails.getMember().getName();
-            model.addAttribute("name",name);
-        }
-        List<PostDto> posts = postService.getPosts();
+        //시간정보가공
+        List<PostDetailResponse> posts = postDtos.stream()
+                        .map(PostDetailResponse::from).toList();
         model.addAttribute("posts", posts );
+
         return "pages/home";
     }
+
+
 
     //게시글 등록화면 요청
     @GetMapping("/posts/new")
     public String getCreateForm(@ModelAttribute("postForm") PostDto post){
         return "pages/post-create";
     }
+
+
 
     //게시글 등록 요청
     @PostMapping("/posts")
@@ -58,6 +63,8 @@ public class PostController {
         return "redirect:/";
     }
 
+
+
     //게시글 수정화면 요청
     @GetMapping("/posts/{postId}/edit")
     public String getEditForm(@PathVariable("postId") long id,
@@ -66,6 +73,8 @@ public class PostController {
         model.addAttribute("post",post);
         return "pages/post-edit";
     }
+
+
 
     // 게시글 수정 요청
     @PostMapping("/posts/{postId}/edit")
@@ -76,12 +85,18 @@ public class PostController {
         return "redirect:/posts/"+id;
     }
 
+
+    //게시글 상세보기
     @GetMapping("/posts/{postId}")
     public String getDetail(@PathVariable("postId") long id, Model model
             ,@AuthenticationPrincipal CustomUserDetails userDetails){
         postService.addViewCount(id);
         PostDto post = postService.getPost(id);
-        model.addAttribute("post",post);
+
+        //시간정보가공
+        PostDetailResponse response = PostDetailResponse.from(post);
+        model.addAttribute("post",response);
+
         //작성자 본인, 관리자 검증
         boolean isAuthor = false;
 
@@ -106,6 +121,8 @@ public class PostController {
 
         return "pages/post-detail";
     }
+
+
 
     @PostMapping("/posts/{id}/delete")
     public String deletePost(@PathVariable("id") long id,

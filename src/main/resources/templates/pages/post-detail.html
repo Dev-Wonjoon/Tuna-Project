@@ -114,6 +114,18 @@
                 조회수
                 <span th:text="${post['viewCount']}">0</span>
             </span>
+
+            <div class="text-sm text-neutral-500">
+                <time th:if="${post.postUpdate}"
+                      th:text="${post.formattedDateUpdate}">
+                    (수정됨) 방금 전
+                </time>
+
+                <time th:unless="${post.postUpdate}"
+                      th:text="${post.formattedDateCreate}">
+                    방금 전
+                </time>
+            </div>
         </div>
     </div>
 
