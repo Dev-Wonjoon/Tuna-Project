@@ -1,6 +1,6 @@
 package net.tuna.playlist.repository;
 
-import net.tuna.playlist.Playlist;
+import net.tuna.playlist.dto.Playlist;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -60,8 +60,12 @@ public class JdbcPlaylistRepository implements PlaylistRepository {
     }
 
     @Override
-    public void deleteById(long id, long memberId) {
-
+    public int deleteById(long playlistId, long memberId) {
+        return jdbcTemplate.update("""
+            DELETE FROM playlists
+            WHERE id = ?
+                AND member_id = ?
+        """, playlistId, memberId);
     }
 
     @Override

@@ -2,6 +2,7 @@ package net.tuna.playlist;
 
 import jakarta.validation.Valid;
 import net.tuna.member.security.CustomUserDetails;
+import net.tuna.playlist.dto.Playlist;
 import net.tuna.playlist.dto.PlaylistNameUpdateDto;
 import net.tuna.post.dto.PostDto;
 import net.tuna.utils.LocalRedirectUrl;
@@ -378,6 +379,24 @@ public class PlaylistController {
         );
 
         return "redirect:/playlists/" + playlistId + "/edit";
+    }
+
+    @PostMapping("/{playlistId}/delete")
+    public String deletePlaylist(
+            @PathVariable long playlistId,
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            RedirectAttributes redirectAttributes
+    ) {
+        long memberId = userDetails.getMember().getId();
+
+        playlistService.deletePlaylist(playlistId, memberId);
+
+        redirectAttributes.addFlashAttribute(
+                "playlistMessage",
+                "플레이리스트를 삭제했습니다."
+        );
+
+        return "redirect:/";
     }
 
     private String getValidationMessage(

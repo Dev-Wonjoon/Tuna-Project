@@ -1,5 +1,6 @@
 package net.tuna.playlist;
 
+import net.tuna.playlist.dto.Playlist;
 import net.tuna.playlist.repository.JdbcPlaylistRepository;
 import net.tuna.playlist.repository.PlaylistRepository;
 import org.junit.jupiter.api.AfterEach;
