@@ -12,7 +12,7 @@ import java.sql.Statement;
 import java.util.List;
 
 @Repository
-public class JdbcPlaylistRepository implements PlaylistRepository {
+public class    JdbcPlaylistRepository implements PlaylistRepository {
 
     private static final RowMapper<Playlist> PLAYLIST_ROW_MAPPER =
             (resultSet, rowNum) -> new Playlist(
@@ -20,7 +20,8 @@ public class JdbcPlaylistRepository implements PlaylistRepository {
                     resultSet.getLong("member_id"),
                     resultSet.getString("name"),
                     resultSet.getTimestamp("created_at").toLocalDateTime(),
-                    resultSet.getLong("post_count")
+                    resultSet.getLong("post_count"),
+                    resultSet.getString("image_url")
             );
 
     private final JdbcTemplate jdbcTemplate;
@@ -32,8 +33,8 @@ public class JdbcPlaylistRepository implements PlaylistRepository {
     @Override
     public long save(Playlist playlist) {
         String sql = """
-            INSERT INTO playlists (name, member_id)
-            VALUES (?, ?)
+        INSERT INTO playlists (name, image_url, member_id)
+        VALUES (?, ?, ?)
         """;
 
         KeyHolder keyHolder = new GeneratedKeyHolder();
@@ -45,7 +46,8 @@ public class JdbcPlaylistRepository implements PlaylistRepository {
             );
 
             stmt.setString(1, playlist.getName());
-            stmt.setLong(2, playlist.getMemberId());
+            stmt.setString(2, playlist.getImageUrl());
+            stmt.setLong(3, playlist.getMemberId());
 
             return stmt;
         }, keyHolder);
@@ -71,11 +73,12 @@ public class JdbcPlaylistRepository implements PlaylistRepository {
     @Override
     public List<Playlist> findAll(long memberId) {
         List<Playlist> playlists = jdbcTemplate.query("""
-            SELECT 
+            SELECT
                 pl.id,
                 pl.member_id,
                 pl.name,
                 pl.created_at,
+                pl.image_url,
                 COUNT(ppm.post_id) AS post_count
             FROM playlists pl
             LEFT JOIN post_playlist_mapping ppm
@@ -85,7 +88,8 @@ public class JdbcPlaylistRepository implements PlaylistRepository {
                 pl.id,
                 pl.member_id,
                 pl.name,
-                pl.created_at
+                pl.created_at,
+                pl.image_url
             ORDER BY pl.created_at DESC
         """, PLAYLIST_ROW_MAPPER, memberId);
 
@@ -100,6 +104,7 @@ public class JdbcPlaylistRepository implements PlaylistRepository {
                 pl.member_id,
                 pl.name,
                 pl.created_at,
+                pl.image_url,
                 COUNT(ppm.post_id) AS post_count
             FROM playlists pl
             LEFT JOIN post_playlist_mapping ppm
