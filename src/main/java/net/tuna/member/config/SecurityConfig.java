@@ -23,7 +23,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/admin/signup")
+                )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
                                 "/",
@@ -34,9 +36,8 @@ public class SecurityConfig {
                                 "/signup",
                                 "/admin/signup"
                         ).permitAll()
-
-//                        .requestMatchers("/admin/update-role")
-//                        .hasRole("ADMIN") // admin권한으로 로그인한 사용자만 사용자의 권한을 update가능하게 하는 코드
+                        .requestMatchers("/admin/**")
+                        .hasRole("ADMIN") // admin권한으로 로그인한 사용자만 사용자의 권한을 update가능하게 하는 코드
 
                         .anyRequest().authenticated()
                 )
