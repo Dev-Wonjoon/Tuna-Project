@@ -40,4 +40,8 @@ public class MemberService {
                         .build()
         );
     }
+
+    public void deleteById(Long id) {
+        memberRepository.deleteById(id);
+    }
 }
