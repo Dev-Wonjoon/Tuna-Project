@@ -10,4 +10,5 @@ public interface MemberRepository {
     MemberDto findById(Long id);
     int saveAdmin(MemberDto memberDto);
     int updateRole(MemberDto memberDto);
+    void deleteById(Long id);
 }

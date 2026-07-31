@@ -62,7 +62,6 @@ public class SecurityConfig {
                 )
 
                 .sessionManagement(session -> session
-                        .invalidSessionUrl("/login?expired")
                         .maximumSessions(1)
                         .maxSessionsPreventsLogin(false)
                 )
