@@ -20,6 +20,7 @@
         id="music-url"
         name="musicUrl"
         type="url"
+        th:value="${post != null ? post.musicUrl : ''}"
         maxlength="2048"
         inputmode="url"
         autocomplete="url"
