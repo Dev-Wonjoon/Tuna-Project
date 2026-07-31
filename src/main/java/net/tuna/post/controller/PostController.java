@@ -57,8 +57,26 @@ public class PostController {
         return "redirect:/";
     }
 
+    //게시글 수정화면 요청
+    @GetMapping("/posts/{postId}/edit")
+    public String getEditForm(@PathVariable("postId") long id,
+                              Model model){
+        PostDto post = postService.getPost(id);
+        model.addAttribute("post",post);
+        return "pages/post-edit";
+    }
+
+    // 게시글 수정 요청
+    @PostMapping("/posts/{postId}/edit")
+    public String eidtPost(@PathVariable("postId") long id,
+                           @ModelAttribute("postForm") PostDto post){
+        post.setId(id);
+        postService.editPost(post);
+        return "redirect:/posts/"+id;
+    }
+
     @GetMapping("/posts/{postId}")
-    public String getDetail(@PathVariable("postId") int id, Model model
+    public String getDetail(@PathVariable("postId") long id, Model model
             ,@AuthenticationPrincipal CustomUserDetails userDetails){
         postService.addViewCount(id);
         PostDto post = postService.getPost(id);

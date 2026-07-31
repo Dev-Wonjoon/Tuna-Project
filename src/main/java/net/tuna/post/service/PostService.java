@@ -8,6 +8,7 @@ import java.util.Map;
 public interface PostService {
     List<PostDto> getPosts();
     void writePost(PostDto post);
+    void editPost(PostDto post);
     PostDto getPost(long id);
     List<Map<String,Object>> getComments(long id);
     List<PostDto> getPostsByMemberId(long id);
