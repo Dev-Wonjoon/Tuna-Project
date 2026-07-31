@@ -25,7 +25,6 @@ public class PostDto {
     private int viewCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
     //게시글 등록화면 아이디 받아오기
     private Long memberId;
 
