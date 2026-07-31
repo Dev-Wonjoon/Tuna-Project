@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequiredArgsConstructor
@@ -32,7 +33,8 @@ public class MemberController {
     @PostMapping("/signup")
     public String signup(
             @Validated(ValidationSequence.class) @ModelAttribute("signUpForm") RequestSignUpDto requestSignUpDto,
-            BindingResult bindingResult
+            BindingResult bindingResult,
+            RedirectAttributes redirectAttributes
     ) {
         if (!requestSignUpDto.getPassword().equals(requestSignUpDto.getPasswordConfirm())) {
             bindingResult.rejectValue(
@@ -55,6 +57,8 @@ public class MemberController {
         }
 
         memberService.save(requestSignUpDto);
+        redirectAttributes.addFlashAttribute("message", "회원가입이 완료되었습니다.");
+
         return "redirect:/login";
     }
 }
