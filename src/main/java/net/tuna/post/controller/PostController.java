@@ -2,6 +2,7 @@ package net.tuna.post.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import net.tuna.member.dto.Role;
 import net.tuna.member.security.CustomUserDetails;
 import net.tuna.post.dto.PostDto;
 import net.tuna.post.service.PostService;
@@ -57,23 +58,48 @@ public class PostController {
         return "redirect:/";
     }
 
+    //게시글 수정화면 요청
+    @GetMapping("/posts/{postId}/edit")
+    public String getEditForm(@PathVariable("postId") long id,
+                              Model model){
+        PostDto post = postService.getPost(id);
+        model.addAttribute("post",post);
+        return "pages/post-edit";
+    }
+
+    // 게시글 수정 요청
+    @PostMapping("/posts/{postId}/edit")
+    public String eidtPost(@PathVariable("postId") long id,
+                           @ModelAttribute("postForm") PostDto post){
+        post.setId(id);
+        postService.editPost(post);
+        return "redirect:/posts/"+id;
+    }
+
     @GetMapping("/posts/{postId}")
-    public String getDetail(@PathVariable("postId") int id, Model model
+    public String getDetail(@PathVariable("postId") long id, Model model
             ,@AuthenticationPrincipal CustomUserDetails userDetails){
         postService.addViewCount(id);
         PostDto post = postService.getPost(id);
         model.addAttribute("post",post);
-        //작성자 본인 검증
+        //작성자 본인, 관리자 검증
         boolean isAuthor = false;
+
         if (userDetails != null && post != null) {
             String name = userDetails.getMember().getName();
             model.addAttribute("name", name);
 
-            isAuthor = java.util.Objects.equals(
+            boolean isWriter = Objects.equals(
                     userDetails.getMember().getId(),
                     post.getMemberId()
             );
+
+            boolean isAdmin = userDetails.getMember()
+                    .getRole() == Role.ADMIN;
+
+            isAuthor = isWriter || isAdmin;
         }
+
         model.addAttribute("isAuthor", isAuthor);
         List<Map<String,Object>> comments = postService.getComments(id);
         model.addAttribute("comments",comments);

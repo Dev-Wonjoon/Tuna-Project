@@ -63,6 +63,7 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 "WHERE p.member_id = ?";
         return jdbcTemplate.query(sql, postRowMapper, id);
     }
+
     //게시글 생성
     @Override
     public void createPost(PostDto post) {
@@ -72,6 +73,17 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 , post.getContent()
                 , post.getMusicUrl()
                 , post.getMemberId());
+    }
+
+    //게시글 수정
+    @Override
+    public void updatePost(PostDto post) {
+        String sql ="UPDATE posts SET title = ?, content = ?, music_url = ?, updated_at = NOW() WHERE id = ?";
+        jdbcTemplate.update(sql
+                , post.getTitle()
+                , post.getContent()
+                , post.getMusicUrl()
+                , post.getId());
     }
 
     //게시글 내 댓글 조회

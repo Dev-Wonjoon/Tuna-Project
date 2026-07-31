@@ -65,8 +65,8 @@ public class JdbcMemberRepository implements MemberRepository {
     @Override
     public int saveAdmin(MemberDto memberDto) {
         return jdbcTemplate.update(
-                "INSERT INTO members (email, password, role) VALUES (?, ? , ?)",
-                memberDto.getEmail(), memberDto.getPassword(), Role.ADMIN.name()
+                "INSERT INTO members (email, password, name, image_url, role) VALUES (?, ? , ?, ?, ?)",
+                memberDto.getEmail(), memberDto.getPassword(), memberDto.getName(), memberDto.getImageUrl(), Role.ADMIN.name()
         );
     }
 
