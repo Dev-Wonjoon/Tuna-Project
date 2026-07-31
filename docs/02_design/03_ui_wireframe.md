@@ -14,6 +14,7 @@
 | 로그인 (Login) | `GET` | `/login` | `pages/auth/login.html` | auth |
 | 회원가입 (Signup) | `GET` | `/signup` | `pages/auth/signup.html` | auth |
 | 마이페이지 (My Page) | `GET` | `/mypage` | `pages/mypage.html` | base |
+| 회원 관리 페이지 (Admin) | `GET` | `/admin` | `pages/admin.html` | base |
 
 ## 공통 조건
 
@@ -200,3 +201,15 @@
 - 화면 제어 및 권한 규칙(Behavior Rules):
     - 로그인 인증 세션 존재시에만 접근 허용
     - 무한 스크롤 방식: 커서 기반 페이지네이션
+
+## 회원 관리 페이지
+
+![admin](../images/15-admin-members.jpg)
+
+- 출력 항목
+    - 회원 목록 영역: 닉네임, 이메일, 권한등급, 가입일, 게시글 수
+- 입력 데이터 및 검증 규칙 (Input Data & Validation):
+    - 해당 없음
+- 화면 제어 및 권한 규칙(Behavior Rules):
+    - 회원탈퇴 버튼: “정말 탈퇴시키겠습니까?”라는 알림이 출력되고 확인 누르면 `/admin/members/{id}/delete` 경로로 POST로 실행되며 회원이 삭제된다.
+    - 회원수정 버튼: 회원 권한 수정 팝업이 출력되며 회원 권한에 대한 드롭다운 메뉴를 통해 “일반”,”관리자”를 선택한 뒤 확인 버튼을 눌러 회원 권한을 수정한다.

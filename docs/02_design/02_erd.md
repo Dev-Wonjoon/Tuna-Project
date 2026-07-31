@@ -22,7 +22,7 @@ erDiagram
         BIGINT member_id FK "NOT NULL"
         INT view_count "UNSIGNED, 기본값 0"
         DATETIME created_at "기본값 CURRENT_TIMESTAMP"
-        DATETIME updated_at "수정 시 자동 갱신"
+        DATETIME updated_at "기본값 CURRENT_TIMESTAMP"
     }
 
     COMMENTS {
@@ -80,7 +80,7 @@ erDiagram
 - member_id: BIGINT, NOT NULL, FOREIGN KEY(members - id), ON DELETE CASCADE (작성자 식별자)
 - view_count: INT UNSIGNED, NOT NULL, DEFAULT 0 (게시글 조회수)
 - created_at: DATETIME, NOT NULL, DEFAULT CURRENT_TIMESTAMP (작성 일시)
-- updated_at: DATETIME, NOT NULL, DEFAULT CURRENT_TIMESTAMP, ON UPDATE CURRENT_TIMESTAMP (수정 일시)
+- updated_at: DATETIME, NOT NULL, DEFAULT CURRENT_TIMESTAMP (수정 일시)
 
 ### comments (댓글 테이블)
 
@@ -130,7 +130,7 @@ CREATE TABLE IF NOT EXISTS posts (
     member_id BIGINT NOT NULL,
     view_count INT UNSIGNED NOT NULL DEFAULT 0,
     created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_posts_member
     FOREIGN KEY (member_id)
