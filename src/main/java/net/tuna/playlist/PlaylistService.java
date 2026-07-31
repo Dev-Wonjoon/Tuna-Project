@@ -73,4 +73,22 @@ public class PlaylistService {
     public List<Playlist> getPlaylists(long memberId) {
         return playlistRepository.findAll(memberId);
     }
+
+    public void updatePlaylistName(
+            long playlistId,
+            long memberId,
+            String name
+    ) {
+        int affectedRows = playlistRepository.updateName(
+                playlistId,
+                memberId,
+                name.trim()
+        );
+
+        if(affectedRows != 1) {
+            throw new IllegalArgumentException(
+                    "수정할 플레이리스트를 찾을 수 없습니다."
+            );
+        }
+    }
 }
