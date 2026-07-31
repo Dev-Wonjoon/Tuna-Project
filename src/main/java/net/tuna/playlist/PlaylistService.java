@@ -15,6 +15,8 @@ public class PlaylistService {
     private final PlaylistRepository playlistRepository;
     private final PlaylistPostRepository playlistPostRepository;
 
+    private static final int MAX_PLAYLIST_LIMIT = 10;
+
     public PlaylistService(
             PlaylistRepository playlistRepository,
             PlaylistPostRepository playlistPostRepository
@@ -23,12 +25,9 @@ public class PlaylistService {
         this.playlistPostRepository = playlistPostRepository;
     }
 
-
-    public long createPlaylist(
-            Playlist playlist
-    ) {
-        playlist.setName(playlist.getName().trim());
-        return playlistRepository.save(playlist);
+    @Transactional
+    public long createPlaylist(Playlist playlist) {
+        return createPlaylistInternal(playlist);
     }
 
     @Transactional
@@ -36,7 +35,7 @@ public class PlaylistService {
             Playlist playlist,
             long postId
     ) {
-        long playlistId = createPlaylist(playlist);
+        long playlistId = createPlaylistInternal(playlist);
 
         int affectedRows = playlistPostRepository.add(
                 playlistId,
@@ -100,5 +99,19 @@ public class PlaylistService {
                     "삭제할 플레이리스트가 없습니다."
             );
         }
+    }
+
+    private long createPlaylistInternal(Playlist playlist) {
+        long memberId = playlist.getMemberId();
+
+        playlistRepository.lockMember(memberId);
+
+        if(playlistRepository.countByMemberId(memberId) >= MAX_PLAYLIST_LIMIT) {
+            throw new IllegalArgumentException("플레이리스트는 최대 10개까지 만들 수 있습니다.");
+        }
+
+        playlist.setName(playlist.getName().trim());
+
+        return playlistRepository.save(playlist);
     }
 }
