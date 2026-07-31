@@ -17,4 +17,10 @@ public class RequestAdminCreateDto {
     @NotBlank(message = "비밀번호는 필수 입력 항목입니다.")
     @Size(max = 50, message = "비밀번호는 50자 이하로 입력해야 합니다.")
     private String password;
+
+    @NotBlank(message = "닉네임은 필수 입력 항목입니다.")
+    @Size(min=2, max = 10, message = "닉네임은 2자 이상 10자 이하로 입력해야 합니다.")
+    private String name;
+
+    private String image_url;
 }
