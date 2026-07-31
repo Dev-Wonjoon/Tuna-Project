@@ -27,6 +27,7 @@ public class SecurityConfig {
                         .ignoringRequestMatchers("/admin/signup")
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/posts/new").authenticated()
                         .requestMatchers(
                                 "/",
                                 "/login",
