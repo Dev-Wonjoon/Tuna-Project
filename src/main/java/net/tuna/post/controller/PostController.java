@@ -97,7 +97,7 @@ public class PostController {
         PostDetailResponse response = PostDetailResponse.from(post);
         model.addAttribute("post",response);
 
-        //작성자 본인 검증
+        //작성자 본인, 관리자 검증
         boolean isAuthor = false;
 
         if (userDetails != null && post != null) {

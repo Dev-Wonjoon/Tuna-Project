@@ -1,26 +1,31 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener("DOMContentLoaded", () => {
     const createDialog = document.getElementById(
-        'playlist-create-dialog'
+        "playlist-create-dialog"
     );
 
-    if(!createDialog) { return; }
-
-    if(createDialog.dataset.playlistCreateAutoOpen === 'true') {
-        setReturnedUrl(createDialog);
-        showPlaylistCreatePopup(createDialog);
+    if(!createDialog) {
+        return;
     }
 
-    createDialog.addEventListener('click', (event) => {
+    if(createDialog.dataset.playlistCreateAutoOpen === 'true') {
+        createDialog.showModal();
+
+        createDialog.querySelector("input[name='name']")?.focus();
+    }
+
+    createDialog.addEventListener("click", event => {
         if(event.target === createDialog) {
             createDialog.close();
         }
     });
 });
 
-document.addEventListener('click', (event) => {
+document.addEventListener("click", event => {
     const target = event.target;
 
-    if(!(target instanceof Element)) { return; }
+    if(!(target instanceof Element)) {
+        return;
+    }
 
     const openButton = target.closest(
         '[data-playlist-create-open]'
@@ -36,57 +41,48 @@ document.addEventListener('click', (event) => {
     );
 
     if(closeButton) {
-        document.getElementById('playlist-create-dialog')?.close();
+        closeButton.closest("dialog")?.close();
     }
 });
 
 function openPlaylistCreatePopup(openButton) {
-    const createDialog = document.getElementById("playlist-create-dialog");
+    const createDialog = document.getElementById(
+        "playlist-create-dialog"
+    );
 
-    if(!createDialog) { return; }
+    if(!createDialog) {
+        return;
+    }
 
-    const addDialog = openButton.closest('#playlist-add-dialog');
+    const addDialog = createDialog.querySelector(
+        '#playlist-add-dialog'
+    );
 
     const selectedPostId = addDialog
-        ?.querySelectorAll('[data-selected-post-id]')
+        ?.querySelector('[data-selected-post-id]')
         ?.value;
 
-    setPostId(createDialog, selectedPostId);
-    setReturnedUrl(createDialog);
-
-    addDialog?.close();
-
-    showPlaylistCreatePopup(createDialog);
-}
-
-function setPostId(createDialog, postId) {
     const postIdInput = createDialog.querySelector(
         '[data-playlist-create-post-id]'
     );
 
-    if(!postIdInput) {
-        return;
-    }
-
-    postIdInput.value = postId ?? "";
-    postIdInput.disabled = !postId;
-}
-
-function setReturnedUrl(createDialog) {
     const returnUrlInput = createDialog.querySelector(
         '[data-playlist-create-return-url]'
     );
 
-    if(!returnUrlInput) {
-        return;
+    if(postIdInput) {
+        postIdInput.value = selectedPostId ?? "";
+        postIdInput.disabled = !selectedPostId;
     }
 
-    returnUrlInput.value =
-        window.location.pathname
-        + window.location.search;
-}
+    if(returnUrlInput) {
+        returnUrlInput.value =
+            window.location.pathname
+            + window.location.search;
+    }
 
-function showPlaylistCreatePopup(createDialog) {
+    addDialog?.close();
+
     if(!createDialog.open) {
         createDialog.showModal();
     }
