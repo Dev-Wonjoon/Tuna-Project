@@ -4,6 +4,7 @@ import net.tuna.playlist.repository.PlaylistPostRepository;
 import net.tuna.post.dto.PostDto;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -37,5 +38,29 @@ public class PlaylistPostService {
         int affectedRows = playlistPostRepository.remove(playlistId, postId, memberId);
 
         return affectedRows == 1;
+    }
+
+    @Transactional
+    public int removePosts(
+            long playlistId,
+            List<Long> postIds,
+            long memberId
+    ) {
+        return playlistPostRepository.removeByPostIds(
+                playlistId,
+                postIds,
+                memberId
+        );
+    }
+
+    @Transactional
+    public int removeAllPosts(
+            long playlistId,
+            long memberId
+    ) {
+        return playlistPostRepository.removeAll(
+                playlistId,
+                memberId
+        );
     }
 }

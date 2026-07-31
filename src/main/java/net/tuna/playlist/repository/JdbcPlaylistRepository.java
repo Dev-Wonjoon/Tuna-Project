@@ -60,6 +60,11 @@ public class JdbcPlaylistRepository implements PlaylistRepository {
     }
 
     @Override
+    public void deleteById(long id, long memberId) {
+
+    }
+
+    @Override
     public List<Playlist> findAll(long memberId) {
         List<Playlist> playlists = jdbcTemplate.query("""
             SELECT 
@@ -107,7 +112,17 @@ public class JdbcPlaylistRepository implements PlaylistRepository {
     }
 
     @Override
-    public void deleteById(long id, long memberId) {
-
+    public int updateName(long id, long memberId, String name) {
+        return jdbcTemplate.update("""
+            UPDATE playlists
+            SET name = ?
+            WHERE id = ?
+                AND member_id = ?
+        
+        """,
+                name,
+                id,
+                memberId
+        );
     }
 }
