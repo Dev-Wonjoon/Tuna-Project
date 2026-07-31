@@ -129,4 +129,25 @@ public class JdbcPlaylistRepository implements PlaylistRepository {
                 memberId
         );
     }
+
+    @Override
+    public int countByMemberId(long memberId) {
+        Integer count = jdbcTemplate.queryForObject("""
+            SELECT COUNT(*)
+            FROM playlists
+            WHERE member_id = ?
+        """, Integer.class, memberId);
+
+        return count == null ? 0 : count;
+    }
+
+    @Override
+    public void lockMember(long memberId) {
+        jdbcTemplate.queryForObject("""
+            SELECT id
+            FROM members
+            WHERE id = ?
+            FOR UPDATE
+        """, Long.class, memberId);
+    }
 }

@@ -182,7 +182,7 @@ public class PlaylistController {
                 safeReturnUrl
         );
 
-        redirectAttributes.addAttribute(
+        redirectAttributes.addFlashAttribute(
                 "playlistCreateError",
                 errorMessage
         );
