@@ -24,5 +24,68 @@
     >
         window.alert([[${playlistAlert}]])
     </script>
+
+    <div th:if="${param.login}"
+         id="loginToast"
+         class="
+        fixed top-5 right-5 z-50
+        flex items-center gap-3
+        rounded-xl
+        border border-neutral-200
+        bg-white
+        px-5 py-3
+        text-sm
+        text-neutral-700
+        shadow-lg
+     ">
+
+    <span class="
+        flex h-6 w-6 items-center justify-center
+        rounded-full
+        bg-green-100
+        text-green-600
+        text-xs
+        font-bold
+    ">
+        ✓
+    </span>
+
+        <span>
+        로그인되었습니다.
+    </span>
+
+    </div>
+
+    <div th:if="${param.logout}"
+         id="logoutToast"
+         class="
+        fixed top-5 right-5 z-50
+        flex items-center gap-3
+        rounded-xl
+        border border-neutral-200
+        bg-white
+        px-5 py-3
+        text-sm
+        text-neutral-700
+        shadow-lg
+     ">
+
+    <span class="
+        flex h-6 w-6 items-center justify-center
+        rounded-full
+        bg-red-100
+        text-red-600
+        text-xs
+        font-bold
+    ">
+        ✓
+    </span>
+
+        <span>
+        로그아웃되었습니다.
+    </span>
+
+    </div>
+
 </section>
 </html>
