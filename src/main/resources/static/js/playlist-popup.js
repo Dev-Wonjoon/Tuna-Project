@@ -112,7 +112,7 @@ function openPlaylistCreatePopup(openButton) {
 }
 
 for(const dialogId of ['playlist-add-dialog', 'playlist-create-dialog ']) {
-    const dialog = document.getElementById("dialogId");
+    const dialog = document.getElementById(dialogId);
 
     dialog?.addEventListener("click", (event) => {
         if(event.target === dialog) {
