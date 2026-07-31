@@ -2,6 +2,7 @@ package net.tuna.post.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import net.tuna.member.dto.Role;
 import net.tuna.member.security.CustomUserDetails;
 import net.tuna.post.dto.PostDetailResponse;
 import net.tuna.post.dto.PostDto;
@@ -98,15 +99,22 @@ public class PostController {
 
         //작성자 본인 검증
         boolean isAuthor = false;
+
         if (userDetails != null && post != null) {
             String name = userDetails.getMember().getName();
             model.addAttribute("name", name);
 
-            isAuthor = java.util.Objects.equals(
+            boolean isWriter = Objects.equals(
                     userDetails.getMember().getId(),
                     post.getMemberId()
             );
+
+            boolean isAdmin = userDetails.getMember()
+                    .getRole() == Role.ADMIN;
+
+            isAuthor = isWriter || isAdmin;
         }
+
         model.addAttribute("isAuthor", isAuthor);
         List<Map<String,Object>> comments = postService.getComments(id);
         model.addAttribute("comments",comments);
