@@ -132,4 +132,15 @@ public class PostController {
         return "redirect:/";
     }
 
+    @GetMapping("/search")
+    public String searchPosts(
+            @RequestParam("searchType") String type,
+            @RequestParam("keyword") String keyword,
+            Model model
+    ) {
+        List<PostDto> posts = postService.getSearchPosts(type, keyword);
+        model.addAttribute("posts", posts);
+        return "pages/home";
+    }
+
 }

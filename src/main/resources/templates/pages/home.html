@@ -4,6 +4,8 @@
             ~{::section}
         )}">
 <section class="flex w-full max-w-2xl flex-col gap-6">
+    <script th:src="@{/js/search.js}" defer></script>
+
     <th:block th:each="post : ${posts}">
         <th:block th:replace="~{fragments/post-card :: postCard(${post})}"/>
     </th:block>
@@ -17,6 +19,66 @@
         ">
         게시글이 없습니다.
     </p>
+
+    <button id="searchOpen"
+            type="button"
+            class="fixed right-8 top-8 z-40
+                   flex size-14 items-center justify-center
+                   rounded-full bg-neutral-900 text-white
+                   shadow-lg hover:bg-neutral-700">
+
+        <svg class="size-6"
+             viewBox="0 0 24 24"
+             fill="none"
+             stroke="currentColor"
+             stroke-width="2">
+            <circle cx="11" cy="11" r="7"/>
+            <path d="m20 20-4-4"/>
+        </svg>
+    </button>
+
+    <div id="searchModal"
+         class="fixed inset-0 z-50 hidden bg-black/30">
+
+        <div class="absolute left-1/2 top-1/2
+                    w-[calc(100%-2rem)] max-w-xl
+                    -translate-x-1/2 -translate-y-1/2
+                    rounded-xl bg-white p-6 shadow-xl">
+
+            <button id="searchClose"
+                    type="button"
+                    class="absolute right-4 top-3 text-xl text-neutral-500">
+                x
+            </button>
+
+            <form th:action="@{/search}"
+                  method="get"
+                  class="mt-4 flex flex-col gap-3 sm:flex-row">
+
+                <select name="searchType"
+                        class="h-11 rounded-lg border border-neutral-300
+                               bg-white px-3 text-sm">
+                    <option value="searchTitleContent">제목 + 내용</option>
+                    <option value="searchTitle">제목</option>
+                    <option value="searchContent">내용</option>
+                    <option value="searchAuthor">글쓴이</option>
+                </select>
+
+                <input type="search"
+                       name="keyword"
+                       placeholder="검색어를 입력하세요"
+                       class="h-11 min-w-0 flex-1 rounded-lg
+                              border border-neutral-300 px-4 text-sm">
+
+                <button type="submit"
+                        class="h-11 rounded-lg bg-neutral-900
+                               px-5 text-sm font-medium text-white
+                               hover:bg-neutral-700">
+                    검색
+                </button>
+            </form>
+        </div>
+    </div>
 
     <script
             th:if="${playlistAlert != null}"

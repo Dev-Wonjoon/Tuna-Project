@@ -55,4 +55,21 @@ public class PostServiceImpl implements PostService {
     public void addViewCount(long id) {
         postRepository.addViewCount(id);
     }
+
+    @Override
+    public List<PostDto> getSearchPosts(String type, String value) {
+        if (type.equals("searchTitleContent")) {
+            return postRepository.findByKeywordFromTitleContent(value);
+        }
+        if (type.equals("searchTitle")) {
+            return postRepository.findByKeywordFromTitle(value);
+        }
+        if (type.equals("searchContent")) {
+            return postRepository.findByKeywordFromContent(value);
+        }
+        if (type.equals("searchAuthor")) {
+            return postRepository.findByKeywordFromAuthor(value);
+        }
+        return null;
+    }
 }
