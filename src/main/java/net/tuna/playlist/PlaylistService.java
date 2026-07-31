@@ -1,9 +1,9 @@
 package net.tuna.playlist;
 
+import net.tuna.playlist.dto.Playlist;
 import net.tuna.playlist.repository.PlaylistPostRepository;
 import net.tuna.playlist.repository.PlaylistRepository;
 import net.tuna.post.dto.PostDto;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,6 +88,16 @@ public class PlaylistService {
         if(affectedRows != 1) {
             throw new IllegalArgumentException(
                     "수정할 플레이리스트를 찾을 수 없습니다."
+            );
+        }
+    }
+
+    public void deletePlaylist(long playlistId, long memberId) {
+        int affectedRows = playlistRepository.deleteById(playlistId, memberId);
+
+        if(affectedRows != 1) {
+            throw new IllegalArgumentException(
+                    "삭제할 플레이리스트가 없습니다."
             );
         }
     }
