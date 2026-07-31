@@ -112,5 +112,55 @@ public class JdbcTemplatePostRepository implements PostRepository{
         jdbcTemplate.update(sql,id);
     }
 
+    @Override
+    public List<PostDto> findByKeywordFromTitle(String keyword) {
+        String sql = """
+                SELECT p.*, m.name AS name , m.email AS author_email
+                FROM posts p
+                LEFT JOIN members m ON p.member_id = m.id
+                WHERE p.title LIKE ?
+                ORDER BY p.created_at DESC
+                """;
+        String searchPattern = "%" + keyword.trim() + "%";
+        return jdbcTemplate.query(sql, postRowMapper, searchPattern);
+    }
 
+    @Override
+    public List<PostDto> findByKeywordFromContent(String keyword) {
+        String sql = """
+                SELECT p.*, m.name AS name , m.email AS author_email
+                FROM posts p
+                LEFT JOIN members m ON p.member_id = m.id
+                WHERE p.content LIKE ?
+                ORDER BY p.created_at DESC
+                """;
+        String searchPattern = "%" + keyword.trim() + "%";
+        return jdbcTemplate.query(sql, postRowMapper, searchPattern);
+    }
+
+    @Override
+    public List<PostDto> findByKeywordFromTitleContent(String keyword) {
+        String sql = """
+                SELECT p.*, m.name AS name , m.email AS author_email
+                FROM posts p
+                LEFT JOIN members m ON p.member_id = m.id
+                WHERE p.title LIKE ? OR p.content LIKE ?
+                ORDER BY p.created_at DESC
+                """;
+        String searchPattern = "%" + keyword.trim() + "%";
+        return jdbcTemplate.query(sql, postRowMapper, searchPattern, searchPattern);
+    }
+
+    @Override
+    public List<PostDto> findByKeywordFromAuthor(String keyword) {
+        String sql = """
+                SELECT p.*, m.name AS name , m.email AS author_email
+                FROM posts p
+                LEFT JOIN members m ON p.member_id = m.id
+                WHERE name LIKE ?
+                ORDER BY p.created_at DESC
+                """;
+        String searchPattern = "%" + keyword.trim() + "%";
+        return jdbcTemplate.query(sql, postRowMapper, searchPattern);
+    }
 }

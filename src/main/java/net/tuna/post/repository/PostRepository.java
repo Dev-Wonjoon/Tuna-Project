@@ -14,4 +14,8 @@ public interface PostRepository {
     List<PostDto> findPostsByMemberId(long id);
     void deleteById(long id);
     void addViewCount(long id);
+    List<PostDto> findByKeywordFromTitle(String keyword);
+    List<PostDto> findByKeywordFromContent(String keyword);
+    List<PostDto> findByKeywordFromTitleContent(String keyword);
+    List<PostDto> findByKeywordFromAuthor(String keyword);
 }

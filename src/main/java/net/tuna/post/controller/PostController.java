@@ -23,12 +23,7 @@ public class PostController {
     }
 
     @GetMapping("/")
-    public String getPostList(Model model, @AuthenticationPrincipal CustomUserDetails userDetails){
-
-        if(userDetails != null){
-            String name = userDetails.getMember().getName();
-            model.addAttribute("name",name);
-        }
+    public String getPostList(Model model){
         List<PostDto> posts = postService.getPosts();
         model.addAttribute("posts", posts );
         return "pages/home";
@@ -105,6 +100,17 @@ public class PostController {
                              @AuthenticationPrincipal CustomUserDetails userDetails){
         postService.deletePost(id);
         return "redirect:/";
+    }
+
+    @GetMapping("/search")
+    public String searchPosts(
+            @RequestParam("searchType") String type,
+            @RequestParam("keyword") String keyword,
+            Model model
+    ) {
+        List<PostDto> posts = postService.getSearchPosts(type, keyword);
+        model.addAttribute("posts", posts);
+        return "pages/home";
     }
 
 }

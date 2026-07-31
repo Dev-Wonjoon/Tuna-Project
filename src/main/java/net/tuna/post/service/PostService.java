@@ -14,4 +14,5 @@ public interface PostService {
     List<PostDto> getPostsByMemberId(long id);
     void deletePost(long id);
     void addViewCount(long id);
+    List<PostDto> getSearchPosts(String type, String keyword);
 }
