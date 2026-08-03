@@ -117,13 +117,13 @@
 
             <div class="text-sm text-neutral-500">
                 <time th:if="${post.postUpdate}"
-                      th:text="${post.formattedDateUpdate}">
-                    (수정됨) 방금 전
+                      th:text="${post.fullDateUpdate}">
+                    0
                 </time>
 
                 <time th:unless="${post.postUpdate}"
-                      th:text="${post.formattedDateCreate}">
-                    방금 전
+                      th:text="${post.fullDateCreate}">
+                    0
                 </time>
             </div>
         </div>

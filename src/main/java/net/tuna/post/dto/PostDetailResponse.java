@@ -48,7 +48,7 @@ public class PostDetailResponse {
         return this.updatedAt.isAfter(this.createdAt);
     }
 
-    //수정되었는지 확인후 수정 X
+    //수정되었는지 확인후 수정 X (게시물 리스트)
     public String getFormattedDateCreate(){
         if(this.createdAt == null) return "";
 
@@ -63,7 +63,7 @@ public class PostDetailResponse {
         return this.createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 
-    //수정되었는지 확인후 수정 O
+    //수정되었는지 확인후 수정 O (게시물 리스트)
     public String getFormattedDateUpdate(){
         if(this.updatedAt == null) return "";
 
@@ -76,5 +76,17 @@ public class PostDetailResponse {
         if (seconds < 86400) return "(수정됨)"+ (seconds/3600) + "시간 전";
 
         return "(수정됨)" + this.updatedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
+
+    public String getFullDateCreate(){
+        if(this.createdAt == null) return "";
+        return this.createdAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
+    }
+
+    public String getFullDateUpdate(){
+        if(this.createdAt == null) return "";
+        return "(수정됨)" + this.updatedAt.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
     }
 }
