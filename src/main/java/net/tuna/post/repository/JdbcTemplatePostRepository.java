@@ -3,9 +3,13 @@ package net.tuna.post.repository;
 import net.tuna.post.dto.PostDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -66,13 +70,27 @@ public class JdbcTemplatePostRepository implements PostRepository{
 
     //게시글 생성
     @Override
-    public void createPost(PostDto post) {
+    public long createPost(PostDto post) {
         String sql = "INSERT INTO posts(title,content,music_url,member_id) VALUES (?,?,?,?)";
-        jdbcTemplate.update(sql
-                , post.getTitle()
-                , post.getContent()
-                , post.getMusicUrl()
-                , post.getMemberId());
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+                    pstmt.setString(1, post.getTitle());
+                    pstmt.setString(2, post.getContent());
+                    pstmt.setString(3, post.getMusicUrl());
+                    pstmt.setLong(4, post.getMemberId());
+                    return pstmt;
+                }, keyHolder);
+
+        if(keyHolder.getKey() != null ){
+            return keyHolder.getKey().longValue();
+        }
+        throw new RuntimeException("게시글을 저장하지 못했습니다..");
+//        jdbcTemplate.update(sql
+//                , post.getTitle()
+//                , post.getContent()
+//                , post.getMusicUrl()
+//                , post.getMemberId());
     }
 
     //게시글 수정

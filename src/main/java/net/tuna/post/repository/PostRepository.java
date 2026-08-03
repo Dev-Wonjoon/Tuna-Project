@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface PostRepository {
     List<PostDto> findAll();
-    void createPost(PostDto post);
+    long createPost(PostDto post);
     void updatePost(PostDto post);
     PostDto findById(long id);
     List<Map<String, Object>> findCommentsById(long id);
