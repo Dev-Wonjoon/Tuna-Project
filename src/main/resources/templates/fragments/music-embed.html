@@ -1,0 +1,24 @@
+<div
+    xmlns:th="http://www.thymeleaf.org"
+    th:fragment="musicEmbed(musicUrl)"
+    th:if="${musicUrl != null and !#strings.isEmpty(musicUrl)}"
+    th:attr="data-music-url=${musicUrl}"
+    data-music-embed
+    hidden
+    class="overflow-hidden rounded-lg bg-black"
+>
+    <iframe
+        data-music-embed-frame
+        title="음악 플레이어"
+        class="aspect-video w-full"
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="
+            autoplay;
+            clipboard-write;
+            encrypted-media;
+            fullscreen;
+            picture-in-picture;
+        "
+    ></iframe>
+</div>
