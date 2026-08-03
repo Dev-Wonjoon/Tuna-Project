@@ -5,7 +5,7 @@ import net.tuna.comment.dto.CommentDto;
 import java.util.List;
 
 public interface CommentRepository {
-    List<CommentDto> findByPostId(Long postId);
+    List<CommentDto> findByPostId(long postId);
     int createComment(CommentDto comment);
     int updateComment(CommentDto comment);
     CommentDto findById(long id);

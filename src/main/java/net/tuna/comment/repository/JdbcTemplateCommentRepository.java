@@ -18,6 +18,7 @@ public class JdbcTemplateCommentRepository implements CommentRepository{
         return CommentDto.builder()
                 .id(rs.getLong("id"))
                 .content(rs.getString("content"))
+                .name((rs.getString("name")))
                 .memberId(rs.getLong("member_id"))
                 .postId(rs.getLong("post_id"))
                 .createdAt(rs.getObject("created_at", LocalDateTime.class))
@@ -26,8 +27,14 @@ public class JdbcTemplateCommentRepository implements CommentRepository{
     };
 
     @Override
-    public List<CommentDto> findByPostId(Long postId) {
-        return List.of();
+    public List<CommentDto> findByPostId(long postId) {
+        String sql = """
+                SELECT c.*, m.name AS name
+                FROM comments c
+                LEFT JOIN members m ON c.member_id = m.id
+                WHERE c.post_id = ?
+                """;
+        return jdbcTemplate.query(sql, commentDtoRowMapper, postId);
     }
 
     @Override
