@@ -8,6 +8,6 @@ public interface CommentService {
     List<CommentDto> findByPostId(Long postId);
     int writeComment(CommentDto comment);
     int editComment(CommentDto comment);
-    CommentDto findById(Long id);
-    int deleteById(Long id);
+    CommentDto findById(long id);
+    int deleteById(long id);
 }
