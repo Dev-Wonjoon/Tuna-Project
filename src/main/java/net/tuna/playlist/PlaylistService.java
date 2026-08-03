@@ -17,6 +17,15 @@ public class PlaylistService {
 
     private static final int MAX_PLAYLIST_LIMIT = 10;
 
+    private static final List<String> PLAYLIST_IMAGE_URLS = List.of(
+            "/img/tuna-note-blurple.png",
+            "/img/tuna-note-coral.png",
+            "/img/tuna-note-gold.png",
+            "/img/tuna-note-mint.png",
+            "/img/tuna-note-pink.png",
+            "/img/tuna-note-sky-blue.png"
+    );
+
     public PlaylistService(
             PlaylistRepository playlistRepository,
             PlaylistPostRepository playlistPostRepository
@@ -102,6 +111,8 @@ public class PlaylistService {
     }
 
     private long createPlaylistInternal(Playlist playlist) {
+        int index = (int) (Math.random() * PLAYLIST_IMAGE_URLS.size());
+
         long memberId = playlist.getMemberId();
 
         playlistRepository.lockMember(memberId);
@@ -111,7 +122,12 @@ public class PlaylistService {
         }
 
         playlist.setName(playlist.getName().trim());
+        playlist.setImageUrl(getRandomImageUrl());
 
         return playlistRepository.save(playlist);
+    }
+
+    private String getRandomImageUrl() {
+        return PLAYLIST_IMAGE_URLS.get((int)(Math.random() * PLAYLIST_IMAGE_URLS.size()));
     }
 }

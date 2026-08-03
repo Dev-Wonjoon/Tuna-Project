@@ -31,12 +31,15 @@ public class Playlist {
 
     private long postCount;
 
+    @Setter
+    private String imageUrl;
+
     public Playlist(
             long id,
             long memberId,
             String name,
             LocalDateTime createdAt
     ) {
-        this(id, memberId, name, createdAt, 0L);
+        this(id, memberId, name, createdAt, 0L, null);
     }
 }
