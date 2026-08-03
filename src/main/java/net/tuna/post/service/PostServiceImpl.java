@@ -22,8 +22,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public void writePost(PostDto post) {
-        postRepository.createPost(post);
+    public long writePost(PostDto post) {
+        return postRepository.createPost(post);
     }
 
     @Override

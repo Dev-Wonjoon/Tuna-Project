@@ -54,13 +54,14 @@ public class PostController {
         if(bindingResult.hasFieldErrors()){
             return "pages/post-create";
         }
-        //멤버단에서 본인 아이디가져오기
+
+        //멤버에서 로그인된 유저 ID 아이디가져오기
         if(userDetails != null){
             post.setMemberId(userDetails.getMember().getId());
         }
 
-        postService.writePost(post);
-        return "redirect:/";
+        long redirectId = postService.writePost(post);
+        return "redirect:/posts/" + redirectId;
     }
 
 
