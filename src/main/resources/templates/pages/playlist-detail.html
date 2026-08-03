@@ -23,7 +23,7 @@
 
             <span
                 class="shrink-0 text-sm text-neutral-500"
-                th:text="|${#lists.size(posts)}곡|"
+                th:text="|${playlist.postCount}곡|"
             >
                 0곡
             </span>
@@ -60,12 +60,45 @@
         </div>
     </header>
 
-    <th:block th:if="${!#lists.isEmpty(youtubeSlice.content}"
+    <th:block th:if="${!#lists.isEmpty(youtubeSlice.content)}"
               th:replace="~{fragments/youtube-playlist-player :: youtubePlaylistPlayer(${youtubeSlice}, ${playlist.id})}"/>
 
-    <th:block th:each="post : ${posts}">
-        <th:block th:replace="~{fragments/post-card :: postCard(${post})}"/>
-    </th:block>
+    <div
+        th:if="${!#lists.isEmpty(posts)}"
+        data-playlist-post-pagination
+        th:attr="
+            data-playlist-id=${playlist.id},
+            data-next-cursor=${postNextCursor}
+        "
+    >
+        <div
+            data-playlist-post-list
+            class="flex flex-col gap-6"
+        >
+            <th:block th:each="post : ${posts}">
+                <th:block th:replace="~{fragments/post-card :: postCard(${post})}"></th:block>
+            </th:block>
+        </div>
+        <div
+            data-playlist-post-sentinel
+            class="h-1"
+            aria-hidden="true"
+        >
+            <p hidden
+               data-playlist-post-loading
+               class="py-4 text-center text-sm text-neutral-500"
+            >
+                다음 게시글을 불러오는 중입니다.
+            </p>
+
+            <p hidden
+               data-playlist-post-error
+               class="py-4 text-center text-sm text-red-500"
+            >
+                다음 게시글을 불러오지 못했습니다.
+            </p>
+        </div>
+    </div>
 
     <p
         th:if="${#lists.isEmpty(posts)}"
@@ -78,5 +111,6 @@
         이 플레이리스트에 담긴 게시글이 없습니다.
     </p>
 <script defer th:src="@{/js/youtube-playlist-player.js}"></script>
+<script defer th:src="@{/js/playlist-post-infinite-scroll.js}"></script>
 </section>
 </html>

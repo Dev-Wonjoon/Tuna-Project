@@ -129,12 +129,16 @@ public class PlaylistController {
 
         Playlist playlist = playlistService.getPlaylistById(playlistId, memberId);
 
-        List<PostDetailResponse> posts = playlistPostService
-                .getPosts(playlistId, memberId)
-                .stream()
-                .map(PostDetailResponse::from)
-                .toList();
+        // 하단 게시글 로드용
+        CursorSlice<PostDto> postSlice = playlistPostService.getPostSlice(
+                playlistId, memberId, null);
 
+        List<PostDetailResponse> posts =
+                postSlice.getContent().stream()
+                        .map(PostDetailResponse::from)
+                        .toList();
+
+        // 임베드용
         CursorSlice<YoutubeTrack> youtubeSlice =
                 youtubePlaylistService.getTracks(
                         playlistId,
@@ -145,11 +149,39 @@ public class PlaylistController {
         model.addAttribute("title", playlist.getName());
         model.addAttribute("playlist", playlist);
         model.addAttribute("posts", posts);
+        model.addAttribute("postNextCursor", postSlice.getNextCursor());
         model.addAttribute("youtubeSlice", youtubeSlice);
         model.addAttribute("currentMenu", null);
         model.addAttribute("currentPlaylistId", playlistId);
 
         return "pages/playlist-detail";
+    }
+
+    @GetMapping("/{playlistId}/posts/page")
+    public String playlistPostPage(
+            @PathVariable long playlistId,
+            @RequestParam(required = false)
+            String cursor,
+            @AuthenticationPrincipal
+            CustomUserDetails userDetails,
+            Model model
+    ) {
+        long memberId = userDetails.getMember().getId();
+
+        playlistService.getPlaylistById(playlistId, memberId);
+
+        CursorSlice<PostDto> postSlice =
+                playlistPostService.getPostSlice(playlistId, memberId, cursor);
+
+        List<PostDetailResponse> posts =
+                postSlice.getContent().stream()
+                        .map(PostDetailResponse::from)
+                        .toList();
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("postNextCursor", postSlice.getNextCursor());
+
+        return "fragments/playlist-post-page :: postPage";
     }
 
     @PostMapping("/posts")

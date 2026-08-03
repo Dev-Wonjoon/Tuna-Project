@@ -3,6 +3,7 @@ package net.tuna.playlist.repository;
 import net.tuna.playlist.cursor.CursorDirection;
 import net.tuna.playlist.cursor.CursorKey;
 import net.tuna.playlist.dto.PlaylistMusicCandidate;
+import net.tuna.playlist.dto.PlaylistPostCandidate;
 import net.tuna.post.dto.PostDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -33,6 +34,14 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 post.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
 
                 return post;
+            };
+
+    private static final RowMapper<PlaylistPostCandidate> POST_CANDIDATE_ROW_MAPPER =
+            (resultSet, rowNum) -> {
+                PostDto post = POST_ROW_MAPPER.mapRow(resultSet, rowNum);
+                LocalDateTime addedAt = resultSet.getObject("added_at", LocalDateTime.class);
+
+                return new PlaylistPostCandidate(post, addedAt);
             };
 
     private static final RowMapper<PlaylistMusicCandidate> MUSIC_CANDIDATE_ROW_MAPPER =
@@ -198,10 +207,10 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
 
         String cursorCondition = "";
 
-        List<Object> paramaters = new ArrayList<>();
+        List<Object> parameters = new ArrayList<>();
 
-        paramaters.add(playlistId);
-        paramaters.add(memberId);
+        parameters.add(playlistId);
+        parameters.add(memberId);
 
         if(cursor != null) {
             String comparison = previous ? ">" : "<";
@@ -219,9 +228,9 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                     comparison
             );
 
-            paramaters.add(cursor.getCreatedAt());
-            paramaters.add(cursor.getCreatedAt());
-            paramaters.add(cursor.getPostId());
+            parameters.add(cursor.getCreatedAt());
+            parameters.add(cursor.getCreatedAt());
+            parameters.add(cursor.getPostId());
         }
 
         String order = previous ? "ASC" : "DESC";
@@ -269,12 +278,86 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 order
         );
 
-        paramaters.add(limit);
+        parameters.add(limit);
 
         return jdbcTemplate.query(
                 sql,
                 MUSIC_CANDIDATE_ROW_MAPPER,
-                paramaters.toArray()
+                parameters.toArray()
+        );
+    }
+
+    @Override
+    public List<PlaylistPostCandidate> findPostCandidates(long playlistId, long memberId, CursorKey cursor, CursorDirection direction, int limit) {
+        if(limit <= 0) {
+            throw new IllegalArgumentException("limit은 1 이상이어야 합니다.");
+        }
+
+        boolean previous = direction == CursorDirection.PREVIOUS;
+
+        String cursorCondition = "";
+
+        List<Object> parameters = new ArrayList<>();
+
+        parameters.add(playlistId);
+        parameters.add(memberId);
+
+        if(cursor != null) {
+            String comparison = previous ? ">" : "<";
+
+            cursorCondition = """
+                AND (
+                    ppm.created_at < ?
+                    OR (
+                        ppm.created_at = ?
+                        AND ppm.post_id < ?
+                    )
+                )
+            """.formatted(comparison, comparison);
+
+            parameters.add(cursor.getCreatedAt());
+            parameters.add(cursor.getCreatedAt());
+            parameters.add(cursor.getPostId());
+        }
+
+        String order = previous ? "ASC" : "DESC";
+
+        String sql = """
+            SELECT
+                p.id,
+                p.member_id,
+                p.title,
+                p.content,
+                p.music_url,
+                p.view_count,
+                p.created_at,
+                p.updated_at,
+                m.name,
+                m.email AS author_email,
+                ppm.created_at AS added_at
+            FROM post_playlist_mapping ppm
+            JOIN playlists pl
+                ON pl.id = ppm.playlist_id
+            JOIN posts p
+                ON p.id = ppm.post_id
+            JOIN members m
+                ON m.id = p.member_id
+            WHERE ppm.playlist_id = ?
+                AND pl.member_id = ?
+                AND ppm.member_id = pl.member_id
+                %s
+            ORDER BY
+                ppm.created_at %s,
+                ppm.post_id %s
+            LIMIT ?
+        """.formatted(cursorCondition, order, order);
+
+        parameters.add(limit);
+
+        return jdbcTemplate.query(
+                sql,
+                POST_CANDIDATE_ROW_MAPPER,
+                parameters.toArray()
         );
     }
 }
