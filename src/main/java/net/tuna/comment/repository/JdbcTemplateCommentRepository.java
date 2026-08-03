@@ -33,7 +33,6 @@ public class JdbcTemplateCommentRepository implements CommentRepository{
     @Override
     public int createComment(CommentDto comment) {
         String sql = "INSERT INTO comments (content, member_id, post_id) VALUES (?, ?, ?)";
-
         return jdbcTemplate.update(sql,
                 comment.getContent(),
                 comment.getMemberId(),
@@ -43,7 +42,10 @@ public class JdbcTemplateCommentRepository implements CommentRepository{
 
     @Override
     public int updateComment(CommentDto comment) {
-        return 0;
+        String sql = "UPDATE comments SET content = ? WHERE id = ?";
+        return jdbcTemplate.update(sql
+                , comment.getContent()
+                , comment.getId());
     }
 
     @Override

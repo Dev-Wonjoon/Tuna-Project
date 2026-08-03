@@ -35,6 +35,23 @@ public class CommentController {
         return "redirect:/posts/" + postId + "#comments";
     }
 
+    @PostMapping("/{postId}/comments/{commentId}/edit")
+    public String editComment(
+            @PathVariable("postId") long postId,
+            @ModelAttribute("commentForm") CommentDto comment,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long commentMemberId = commentService.findById(comment.getId()).getMemberId();
+        Long memberId = userDetails.getMember().getId();
+
+        // 일단 조건에 맞으면 수정 동작을 하게 짰는데, 왠만하면 조건 안되면 에러페이지를 띄우고 싶다.
+        if (commentMemberId.equals(memberId) || userDetails.getMember().getRole() == Role.ADMIN) {
+            commentService.editComment(comment);
+        }
+
+        return "redirect:/posts/" + postId + "#comments";
+    }
+
     @PostMapping("/{postId}/comments/{commentId}/delete")
     public String deleteComment(
             @PathVariable("postId") long postId,
