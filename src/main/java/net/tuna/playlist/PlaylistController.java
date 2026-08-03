@@ -2,8 +2,13 @@ package net.tuna.playlist;
 
 import jakarta.validation.Valid;
 import net.tuna.member.security.CustomUserDetails;
+import net.tuna.playlist.dto.CursorSlice;
 import net.tuna.playlist.dto.Playlist;
 import net.tuna.playlist.dto.PlaylistNameUpdateDto;
+import net.tuna.playlist.dto.YoutubeTrack;
+import net.tuna.playlist.service.PlaylistPostService;
+import net.tuna.playlist.service.PlaylistService;
+import net.tuna.playlist.service.YoutubePlaylistService;
 import net.tuna.post.dto.PostDetailResponse;
 import net.tuna.post.dto.PostDto;
 import net.tuna.utils.LocalRedirectUrl;
@@ -24,13 +29,16 @@ public class PlaylistController {
 
     private final PlaylistService playlistService;
     private final PlaylistPostService playlistPostService;
+    private final YoutubePlaylistService youtubePlaylistService;
 
     public PlaylistController(
             PlaylistService playlistService,
-            PlaylistPostService playlistPostService
+            PlaylistPostService playlistPostService,
+            YoutubePlaylistService youtubePlaylistService
     ) {
         this.playlistService = playlistService;
         this.playlistPostService = playlistPostService;
+        this.youtubePlaylistService = youtubePlaylistService;
     }
 
     @PostMapping
@@ -92,33 +100,88 @@ public class PlaylistController {
         }
     }
 
+    @GetMapping("/{playlistId}/youtube-tracks")
+    @ResponseBody
+    public CursorSlice<YoutubeTrack> youtubeTracks(
+            @PathVariable long playlistId,
+            @RequestParam(required = false)
+            String cursor,
+            @AuthenticationPrincipal
+            CustomUserDetails userDetails
+    ) {
+        long memberId = userDetails.getMember().getId();
+
+        playlistService.getPlaylistById(playlistId, memberId);
+
+        return youtubePlaylistService.getTracks(playlistId, memberId, cursor);
+    }
+
     @GetMapping("/{playlistId}")
     public String playlistDetail(
             @PathVariable long playlistId,
+            @RequestParam(required = false)
+            String youtubeCursor,
             @AuthenticationPrincipal
             CustomUserDetails userDetails,
             Model model
     ) {
         long memberId = userDetails.getMember().getId();
 
-        Playlist playlist = playlistService.getPlaylistById(
-                playlistId,
-                memberId
-        );
+        Playlist playlist = playlistService.getPlaylistById(playlistId, memberId);
 
-        List<PostDetailResponse> posts = playlistPostService
-                .getPosts(playlistId, memberId)
-                .stream()
-                .map(PostDetailResponse::from)
-                .toList();
+        // 하단 게시글 로드용
+        CursorSlice<PostDto> postSlice = playlistPostService.getPostSlice(
+                playlistId, memberId, null);
+
+        List<PostDetailResponse> posts =
+                postSlice.getContent().stream()
+                        .map(PostDetailResponse::from)
+                        .toList();
+
+        // 임베드용
+        CursorSlice<YoutubeTrack> youtubeSlice =
+                youtubePlaylistService.getTracks(
+                        playlistId,
+                        memberId,
+                        youtubeCursor
+                );
 
         model.addAttribute("title", playlist.getName());
         model.addAttribute("playlist", playlist);
         model.addAttribute("posts", posts);
+        model.addAttribute("postNextCursor", postSlice.getNextCursor());
+        model.addAttribute("youtubeSlice", youtubeSlice);
         model.addAttribute("currentMenu", null);
         model.addAttribute("currentPlaylistId", playlistId);
 
         return "pages/playlist-detail";
+    }
+
+    @GetMapping("/{playlistId}/posts/page")
+    public String playlistPostPage(
+            @PathVariable long playlistId,
+            @RequestParam(required = false)
+            String cursor,
+            @AuthenticationPrincipal
+            CustomUserDetails userDetails,
+            Model model
+    ) {
+        long memberId = userDetails.getMember().getId();
+
+        playlistService.getPlaylistById(playlistId, memberId);
+
+        CursorSlice<PostDto> postSlice =
+                playlistPostService.getPostSlice(playlistId, memberId, cursor);
+
+        List<PostDetailResponse> posts =
+                postSlice.getContent().stream()
+                        .map(PostDetailResponse::from)
+                        .toList();
+
+        model.addAttribute("posts", posts);
+        model.addAttribute("postNextCursor", postSlice.getNextCursor());
+
+        return "fragments/playlist-post-page :: postPage";
     }
 
     @PostMapping("/posts")

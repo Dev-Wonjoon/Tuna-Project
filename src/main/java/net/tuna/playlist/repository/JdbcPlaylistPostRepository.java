@@ -1,11 +1,16 @@
 package net.tuna.playlist.repository;
 
+import net.tuna.playlist.cursor.CursorDirection;
+import net.tuna.playlist.cursor.CursorKey;
+import net.tuna.playlist.dto.PlaylistMusicCandidate;
+import net.tuna.playlist.dto.PlaylistPostCandidate;
 import net.tuna.post.dto.PostDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +35,22 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
 
                 return post;
             };
+
+    private static final RowMapper<PlaylistPostCandidate> POST_CANDIDATE_ROW_MAPPER =
+            (resultSet, rowNum) -> {
+                PostDto post = POST_ROW_MAPPER.mapRow(resultSet, rowNum);
+                LocalDateTime addedAt = resultSet.getObject("added_at", LocalDateTime.class);
+
+                return new PlaylistPostCandidate(post, addedAt);
+            };
+
+    private static final RowMapper<PlaylistMusicCandidate> MUSIC_CANDIDATE_ROW_MAPPER =
+            (resultSet, rowNum) -> new PlaylistMusicCandidate(
+                    resultSet.getLong("post_id"),
+                    resultSet.getString("title"),
+                    resultSet.getString("music_url"),
+                    resultSet.getObject("added_at", LocalDateTime.class)
+            );
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -178,5 +199,165 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
         paramaters.add(memberId);
 
         return jdbcTemplate.update(sql, paramaters.toArray());
+    }
+
+    @Override
+    public List<PlaylistMusicCandidate> findYoutubeCandidate(long playlistId, long memberId, CursorKey cursor, CursorDirection direction, int limit) {
+        boolean previous = direction == CursorDirection.PREVIOUS;
+
+        String cursorCondition = "";
+
+        List<Object> parameters = new ArrayList<>();
+
+        parameters.add(playlistId);
+        parameters.add(memberId);
+
+        if(cursor != null) {
+            String comparison = previous ? ">" : "<";
+
+            cursorCondition = """
+                AND (
+                    ppm.created_at %s ?
+                    OR (
+                        ppm.created_at = ?
+                        AND ppm.post_id %s ?
+                    )
+                )
+            """.formatted(
+                    comparison,
+                    comparison
+            );
+
+            parameters.add(cursor.getCreatedAt());
+            parameters.add(cursor.getCreatedAt());
+            parameters.add(cursor.getPostId());
+        }
+
+        String order = previous ? "ASC" : "DESC";
+
+        String sql = """
+            SELECT
+                p.id AS post_id,
+                p.title,
+                p.music_url,
+                ppm.created_at AS added_at
+            FROM post_playlist_mapping ppm
+            JOIN playlists pl
+                ON pl.id = ppm.playlist_id
+            JOIN posts p
+                ON p.id = ppm.post_id
+            WHERE ppm.playlist_id = ?
+                AND ppm.member_id = ?
+                AND ppm.member_id = pl.member_id
+                AND p.music_url IS NOT NULL
+                AND TRIM(p.music_url) <> ''
+                AND (
+                    LOWER(TRIM(p.music_url))
+                        LIKE 'http%%://youtube.com/%%'
+                    OR LOWER(TRIM(p.music_url))
+                        LIKE 'http%%://youtube.com/%%'
+                    OR LOWER(TRIM(p.music_url))
+                        LIKE 'http%%://m.youtube.com/%%'
+                    OR LOWER(TRIM(p.music_url))
+                        LIKE 'http%%://music.youtube.com/%%'
+                    OR LOWER(TRIM(p.music_url))
+                        LIKE 'http%%://youtu.be/%%'
+                    OR LOWER(TRIM(p.music_url))
+                        LIKE 'http%%://youtube-nocookie.com/%%'
+                    OR LOWER(TRIM(p.music_url))
+                        LIKE 'http%%://www.youtube-nocookie.com/%%'
+                )
+                %s
+            ORDER BY
+                ppm.created_at %s,
+                ppm.post_id %s
+            LIMIT ?
+        """.formatted(
+                cursorCondition,
+                order,
+                order
+        );
+
+        parameters.add(limit);
+
+        return jdbcTemplate.query(
+                sql,
+                MUSIC_CANDIDATE_ROW_MAPPER,
+                parameters.toArray()
+        );
+    }
+
+    @Override
+    public List<PlaylistPostCandidate> findPostCandidates(long playlistId, long memberId, CursorKey cursor, CursorDirection direction, int limit) {
+        if(limit <= 0) {
+            throw new IllegalArgumentException("limit은 1 이상이어야 합니다.");
+        }
+
+        boolean previous = direction == CursorDirection.PREVIOUS;
+
+        String cursorCondition = "";
+
+        List<Object> parameters = new ArrayList<>();
+
+        parameters.add(playlistId);
+        parameters.add(memberId);
+
+        if(cursor != null) {
+            String comparison = previous ? ">" : "<";
+
+            cursorCondition = """
+                AND (
+                    ppm.created_at < ?
+                    OR (
+                        ppm.created_at = ?
+                        AND ppm.post_id < ?
+                    )
+                )
+            """.formatted(comparison, comparison);
+
+            parameters.add(cursor.getCreatedAt());
+            parameters.add(cursor.getCreatedAt());
+            parameters.add(cursor.getPostId());
+        }
+
+        String order = previous ? "ASC" : "DESC";
+
+        String sql = """
+            SELECT
+                p.id,
+                p.member_id,
+                p.title,
+                p.content,
+                p.music_url,
+                p.view_count,
+                p.created_at,
+                p.updated_at,
+                m.name,
+                m.email AS author_email,
+                ppm.created_at AS added_at
+            FROM post_playlist_mapping ppm
+            JOIN playlists pl
+                ON pl.id = ppm.playlist_id
+            JOIN posts p
+                ON p.id = ppm.post_id
+            JOIN members m
+                ON m.id = p.member_id
+            WHERE ppm.playlist_id = ?
+                AND pl.member_id = ?
+                AND ppm.member_id = pl.member_id
+                %s
+            ORDER BY
+                ppm.created_at %s,
+                ppm.post_id %s
+            LIMIT ?
+        """.formatted(cursorCondition, order, order);
+
+        parameters.add(limit);
+
+        return jdbcTemplate.query(
+                sql,
+                POST_CANDIDATE_ROW_MAPPER,
+                parameters.toArray()
+        );
     }
 }

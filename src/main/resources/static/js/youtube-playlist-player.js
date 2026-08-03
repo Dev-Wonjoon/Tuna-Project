@@ -11,17 +11,93 @@ function initializeYoutubePlaylist(root) {
 
     const statusElement = root.querySelector('[data-youtube-status]');
 
-    const videoIds = [
+    let videoIds = [
         ...new Set(
-            [...root.querySelectorAll('[data-music-url]')]
-                .map(element =>
-                    extractYoutubeVideoId(
-                        element.dataset.musicUrl
-                    )
-                )
+            [...root.querySelectorAll('[data-youtube-video-id]')]
+                .map(element => element.dataset.youtubeVideoId)
                 .filter(Boolean)
         )
     ];
+
+    let nextCursor = root.dataset.nextCursor || null;
+
+    let nextBatchPromise = null;
+
+    let lastKnownIndex = -1;
+
+    function requestNextBatch() {
+        if(nextBatchPromise) {
+            return nextBatchPromise;
+        }
+
+        if(!nextCursor) {
+            return Promise.resolve([]);
+        }
+
+        const url = new URL(`/playlists/${root.dataset.playlistId}/youtube-tracks`, window.location.origin);
+
+        url.searchParams.set('cursor', nextCursor);
+
+        nextBatchPromise = fetch(url, {
+            headers: {
+                Accept: 'application/json',
+            }
+        })
+            .then(response => {
+                if(!response.ok) {
+                    throw new Error(
+                        '다음 YouTube 목록을 불러오지 못했습니다.'
+                    );
+                }
+
+                return response.json();
+            })
+            .then(slice => {
+                nextCursor = slice.nextCursor || null;
+
+                root.dataset.nextCursor = nextCursor || '';
+
+                return [
+                    ...new Set(
+                        slice.content
+                            .map(track => track.videoId)
+                            .filter(Boolean)
+                    )
+                ];
+            })
+            .catch(error => {
+                nextBatchPromise = null;
+                throw error;
+            });
+
+        return nextBatchPromise;
+    }
+
+    function playNextBatch(player) {
+        requestNextBatch()
+            .then(nextVideoIds => {
+                if(nextVideoIds.length === 0) {
+                    statusElement.textContent =
+                        '모든 YouTube곡을 재생했습니다.';
+
+                    return;
+                }
+
+                videoIds = nextVideoIds;
+                nextBatchPromise = null;
+
+                player.loadPlaylist(
+                    videoIds,
+                    0, 0
+                );
+
+                statusElement.textContent = `다음 ${videoIds.length}곡을 불러왔습니다.`;
+            })
+            .catch(() => {
+                statusElement.textContent =
+                    '다음 재생목록을 불러오지 못했습니다.';
+            });
+    }
 
     if(videoIds.length === 0) {
         return;
@@ -58,12 +134,28 @@ function initializeYoutubePlaylist(root) {
                 },
 
                 onStateChange(event) {
-                    const index =
-                        event.target.getPlaylistIndex();
+                    const player = event.target;
 
-                    if(index >= 0) {
+                    const currentIndex = player.getPlaylistIndex();
+
+                    if(currentIndex >= 0) {
+                        lastKnownIndex = currentIndex;
+
                         statusElement.textContent =
-                            `${index + 1} / ${videoIds.length}곡 재생 중`;
+                            `${currentIndex + 1} / ${videoIds.length}곡 재생 중`;
+                    }
+
+                    if(nextCursor && lastKnownIndex >= videoIds.length - 2) {
+                        requestNextBatch().catch(() => {
+                            statusElement.textContent = '다음 재생목록을 불러오지 못했습니다.';
+                        });
+                    }
+
+                    const finishedCurrentBatch = event.data === YT.PlayerState.ENDED
+                        && lastKnownIndex === videoIds.length -1;
+
+                    if(finishedCurrentBatch) {
+                        playNextBatch(player);
                     }
                 },
 
@@ -74,61 +166,6 @@ function initializeYoutubePlaylist(root) {
             }
         });
     });
-}
-
-function extractYoutubeVideoId(rawUrl) {
-    if(!rawUrl) {
-        return null;
-    }
-
-    try {
-        const url = new URL(rawUrl.trim());
-
-        if(
-            url.protocol !== 'https:'
-            && url.protocol !== 'http:'
-        ) {
-            return null;
-        }
-
-        const host = url.hostname
-            .toLowerCase()
-            .replace(/^www\./, "");
-
-        let videoId = null;
-
-        if(host === 'youtu.be') {
-            videoId = url.pathname
-                .split("/")
-                .filter(Boolean)[0] ?? null;
-        } else if (
-            host === 'youtube.com'
-            || host === 'm.youtube.com'
-            || host === 'music.youtube.com'
-        ) {
-            if(url.pathname === '/watch') {
-                videoId = url.searchParams.get('v');
-            } else {
-                const match = url.pathname.match(
-                    /^\/(?:shorts|embed|live)\/([^/?#]+)/
-                );
-
-                videoId = match?.[1] ?? null;
-            }
-        } else if(host === 'youtube-nocookie.com') {
-            const match = url.pathname.match(
-                /^\/embed\/([^/?#]+)/
-            );
-
-            videoId = match?.[1] ?? null;
-        }
-
-        return /^[A-Za-z0-9_-]{11}$/.test(videoId ?? "")
-            ? videoId
-            : null;
-    } catch {
-        return null;
-    }
 }
 
 function loadYoutubeApi() {
