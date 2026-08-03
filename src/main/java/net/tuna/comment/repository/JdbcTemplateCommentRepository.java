@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,12 +47,14 @@ public class JdbcTemplateCommentRepository implements CommentRepository{
     }
 
     @Override
-    public CommentDto findById(Long id) {
-        return null;
+    public CommentDto findById(long id) {
+        String sql = "SELECT * FROM comments WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, commentDtoRowMapper, id);
     }
 
     @Override
-    public int deleteById(Long id) {
-        return 0;
+    public int deleteById(long id) {
+        String sql = "DELETE FROM comments WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
     }
 }

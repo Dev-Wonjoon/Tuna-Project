@@ -29,12 +29,12 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public CommentDto findById(Long id) {
+    public CommentDto findById(long id) {
         return commentRepository.findById(id);
     }
 
     @Override
-    public int deleteById(Long id) {
+    public int deleteById(long id) {
         return commentRepository.deleteById(id);
     }
 }

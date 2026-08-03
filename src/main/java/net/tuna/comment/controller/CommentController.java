@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.tuna.comment.dto.CommentDto;
 import net.tuna.comment.service.CommentService;
+import net.tuna.member.dto.Role;
 import net.tuna.member.security.CustomUserDetails;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -31,6 +32,23 @@ public class CommentController {
         }
         comment.setPostId(postId);
         commentService.writeComment(comment);
+        return "redirect:/posts/" + postId + "#comments";
+    }
+
+    @PostMapping("/{postId}/comments/{commentId}/delete")
+    public String deleteComment(
+            @PathVariable("postId") long postId,
+            @PathVariable("commentId") long commentId,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long commentMemberId = commentService.findById(commentId).getMemberId();
+        Long memberId = userDetails.getMember().getId();
+
+        // 일단 조건에 맞으면 삭제 동작을 하게 짰는데, 왠만하면 조건 안되면 에러페이지를 띄우고 싶다.
+        if (commentMemberId.equals(memberId) || userDetails.getMember().getRole() == Role.ADMIN) {
+            commentService.deleteById(commentId);
+        }
+
         return "redirect:/posts/" + postId + "#comments";
     }
 }
