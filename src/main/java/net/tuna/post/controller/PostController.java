@@ -138,7 +138,10 @@ public class PostController {
             @RequestParam("keyword") String keyword,
             Model model
     ) {
-        List<PostDto> posts = postService.getSearchPosts(type, keyword);
+        List<PostDto> postDtos = postService.getSearchPosts(type, keyword);
+        //시간정보가공
+        List<PostDetailResponse> posts = postDtos.stream()
+                .map(PostDetailResponse::from).toList();
         model.addAttribute("posts", posts);
         return "pages/home";
     }
