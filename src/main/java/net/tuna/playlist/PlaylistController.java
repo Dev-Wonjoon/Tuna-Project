@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import net.tuna.member.security.CustomUserDetails;
 import net.tuna.playlist.dto.Playlist;
 import net.tuna.playlist.dto.PlaylistNameUpdateDto;
+import net.tuna.post.dto.PostDetailResponse;
 import net.tuna.post.dto.PostDto;
 import net.tuna.utils.LocalRedirectUrl;
 import org.springframework.dao.DuplicateKeyException;
@@ -105,10 +106,11 @@ public class PlaylistController {
                 memberId
         );
 
-        List<PostDto> posts = playlistPostService.getPosts(
-                playlistId,
-                memberId
-        );
+        List<PostDetailResponse> posts = playlistPostService
+                .getPosts(playlistId, memberId)
+                .stream()
+                .map(PostDetailResponse::from)
+                .toList();
 
         model.addAttribute("title", playlist.getName());
         model.addAttribute("playlist", playlist);
