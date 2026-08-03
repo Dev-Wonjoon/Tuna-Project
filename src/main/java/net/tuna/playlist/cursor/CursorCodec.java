@@ -34,7 +34,7 @@ public class CursorCodec {
 
         try {
             String payload = new String(
-                    Base64.getDecoder().decode(token),
+                    Base64.getUrlDecoder().decode(token),
                     StandardCharsets.UTF_8
             );
 

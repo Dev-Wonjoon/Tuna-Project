@@ -100,6 +100,22 @@ public class PlaylistController {
         }
     }
 
+    @GetMapping("/{playlistId}/youtube-tracks")
+    @ResponseBody
+    public CursorSlice<YoutubeTrack> youtubeTracks(
+            @PathVariable long playlistId,
+            @RequestParam(required = false)
+            String cursor,
+            @AuthenticationPrincipal
+            CustomUserDetails userDetails
+    ) {
+        long memberId = userDetails.getMember().getId();
+
+        playlistService.getPlaylistById(playlistId, memberId);
+
+        return youtubePlaylistService.getTracks(playlistId, memberId, cursor);
+    }
+
     @GetMapping("/{playlistId}")
     public String playlistDetail(
             @PathVariable long playlistId,
@@ -130,35 +146,6 @@ public class PlaylistController {
         model.addAttribute("playlist", playlist);
         model.addAttribute("posts", posts);
         model.addAttribute("youtubeSlice", youtubeSlice);
-        model.addAttribute("currentMenu", null);
-        model.addAttribute("currentPlaylistId", playlistId);
-
-        return "pages/playlist-detail";
-    }
-
-    @GetMapping("/{playlistId}")
-    public String playlistDetail(
-            @PathVariable long playlistId,
-            @AuthenticationPrincipal
-            CustomUserDetails userDetails,
-            Model model
-    ) {
-        long memberId = userDetails.getMember().getId();
-
-        Playlist playlist = playlistService.getPlaylistById(
-                playlistId,
-                memberId
-        );
-
-        List<PostDetailResponse> posts = playlistPostService
-                .getPosts(playlistId, memberId)
-                .stream()
-                .map(PostDetailResponse::from)
-                .toList();
-
-        model.addAttribute("title", playlist.getName());
-        model.addAttribute("playlist", playlist);
-        model.addAttribute("posts", posts);
         model.addAttribute("currentMenu", null);
         model.addAttribute("currentPlaylistId", playlistId);
 

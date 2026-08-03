@@ -61,7 +61,39 @@ public class YoutubePlaylistService {
 
         boolean hasExtra = youtubeItems.size() > PAGE_SIZE;
 
-        List<CursorItem> visibleItems = get
+        List<CursorItem> visibleItems = getVisibleItems(youtubeItems, direction);
+
+        if(visibleItems.isEmpty()) {
+            return CursorSlice.empty();
+        }
+
+        boolean hasPrevious;
+        boolean hasNext;
+
+        if(firstRequest) {
+            hasPrevious = false;
+            hasNext = hasExtra;
+        } else if(direction == CursorDirection.NEXT) {
+            hasPrevious = true;
+            hasNext = hasExtra;
+        } else {
+            hasPrevious = hasExtra;
+            hasNext = true;
+        }
+
+        CursorItem firstItem = visibleItems.get(0);
+        CursorItem lastItem = visibleItems.get(visibleItems.size() - 1);
+        String previousCursor = hasPrevious
+                ? cursorCodec.encode(CursorDirection.PREVIOUS, firstItem.getCursorKey())
+                : null;
+        String nextCursor = hasNext
+                ? cursorCodec.encode(
+                CursorDirection.NEXT, lastItem.getCursorKey())
+                : null;
+        List<YoutubeTrack> content = visibleItems.stream().map(CursorItem::getTrack).toList();
+
+        return new CursorSlice<>(content, previousCursor, nextCursor);
+
     }
 
     private List<CursorItem> collectYoutubeItems(

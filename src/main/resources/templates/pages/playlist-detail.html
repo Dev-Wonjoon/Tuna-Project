@@ -60,11 +60,8 @@
         </div>
     </header>
 
-    <th:block
-        th:replace="
-            ~{fragments/youtube-playlist-player
-            :: youtubePlaylistPlayer(${posts}, ${playlist['id']})}"
-    />
+    <th:block th:if="${!#lists.isEmpty(youtubeSlice.content}"
+              th:replace="~{fragments/youtube-playlist-player :: youtubePlaylistPlayer(${youtubeSlice}, ${playlist.id})}"/>
 
     <th:block th:each="post : ${posts}">
         <th:block th:replace="~{fragments/post-card :: postCard(${post})}"/>
