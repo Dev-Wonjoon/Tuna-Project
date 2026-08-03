@@ -1,4 +1,4 @@
-package net.tuna.playlist;
+package net.tuna.playlist.service;
 
 import net.tuna.playlist.repository.PlaylistPostRepository;
 import net.tuna.post.dto.PostDto;

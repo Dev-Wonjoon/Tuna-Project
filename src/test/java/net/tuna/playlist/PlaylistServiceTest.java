@@ -3,6 +3,7 @@ package net.tuna.playlist;
 import net.tuna.playlist.dto.Playlist;
 import net.tuna.playlist.repository.PlaylistPostRepository;
 import net.tuna.playlist.repository.PlaylistRepository;
+import net.tuna.playlist.service.PlaylistService;
 import net.tuna.post.dto.PostDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

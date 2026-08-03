@@ -2,6 +2,7 @@ package net.tuna.playlist;
 
 import net.tuna.member.security.CustomUserDetails;
 import net.tuna.playlist.dto.Playlist;
+import net.tuna.playlist.service.PlaylistService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
