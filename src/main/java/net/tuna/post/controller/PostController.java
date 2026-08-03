@@ -125,9 +125,7 @@ public class PostController {
 
 
     @PostMapping("/posts/{id}/delete")
-    public String deletePost(@PathVariable("id") long id,
-                             Model model,
-                             @AuthenticationPrincipal CustomUserDetails userDetails){
+    public String deletePost(@PathVariable("id") long id){
         postService.deletePost(id);
         return "redirect:/";
     }
