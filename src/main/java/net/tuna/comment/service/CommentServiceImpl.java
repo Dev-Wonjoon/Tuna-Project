@@ -14,7 +14,7 @@ public class CommentServiceImpl implements CommentService{
     private final CommentRepository commentRepository;
 
     @Override
-    public List<CommentDto> findByPostId(Long postId) {
+    public List<CommentDto> findByPostId(long postId) {
         return commentRepository.findByPostId(postId);
     }
 

@@ -2,6 +2,8 @@ package net.tuna.post.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
+import net.tuna.comment.dto.CommentDto;
+import net.tuna.comment.service.CommentService;
 import net.tuna.member.dto.Role;
 import net.tuna.member.security.CustomUserDetails;
 import net.tuna.post.dto.PostDetailResponse;
@@ -19,9 +21,11 @@ import java.util.*;
 @RequestMapping("/")
 public class PostController {
     private final PostService postService;
+    private final CommentService commentService;
 
-    public PostController(PostService postService) {
+    public PostController(PostService postService, CommentService commentService) {
         this.postService = postService;
+        this.commentService = commentService;
     }
 
     @GetMapping("/")
@@ -117,7 +121,7 @@ public class PostController {
         }
 
         model.addAttribute("isAuthor", isAuthor);
-        List<Map<String,Object>> comments = postService.getComments(id);
+        List<CommentDto> comments = commentService.findByPostId(id);
         model.addAttribute("comments",comments);
 
         return "pages/post-detail";
