@@ -1,5 +1,7 @@
 package net.tuna.post.repository;
 
+import net.tuna.cursor.CursorDirection;
+import net.tuna.cursor.CursorKey;
 import net.tuna.post.dto.PostDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -11,6 +13,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -180,5 +183,61 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 """;
         String searchPattern = "%" + keyword.trim() + "%";
         return jdbcTemplate.query(sql, postRowMapper, searchPattern);
+    }
+
+    @Override
+    public List<PostDto> findSlice(CursorKey cursor, CursorDirection direction, int limit) {
+        if(limit < 1) {
+            throw new IllegalArgumentException("limit은 1 이상이어야 합니다.");
+        }
+
+        boolean previous = direction == CursorDirection.PREVIOUS;
+
+        String comparison = previous ? ">" : "<";
+        String order = previous ? "ASC" : "DESC";
+
+        String cursorCondition = "";
+
+        List<Object> parameters = new ArrayList<>();
+
+        if(cursor != null) {
+            cursorCondition = """
+                WHERE (
+                    p.created_at %s ?
+                    OR (
+                        p.created_at = ?
+                        AND p.id %s ?
+                    )
+                )
+            """.formatted(comparison, comparison);
+
+            parameters.add(cursor.getCreatedAt());
+            parameters.add(cursor.getCreatedAt());
+            parameters.add(cursor.getId());
+        }
+
+
+        String sql = """
+            SELECT
+                p.*,
+                m.name AS name,
+                m.email AS author_email
+            FROM posts p
+            LEFT JOIN members m
+                ON m.id = p.member_id
+            %s
+            ORDER BY
+                p.created_at %s,
+                p.id %s
+            LIMIT ?
+        """.formatted(cursorCondition, order, order);
+
+        parameters.add(limit);
+
+        return jdbcTemplate.query(
+                sql,
+                postRowMapper,
+                parameters.toArray()
+        );
     }
 }

@@ -37,6 +37,7 @@ public class SecurityConfig {
                                 "/signup",
                                 "/admin/signup",
                                 "/posts/{id:[0-9]+}",
+                                "/posts/page",
                                 "/search"
                         ).permitAll()
                         .requestMatchers("/posts/**").authenticated()

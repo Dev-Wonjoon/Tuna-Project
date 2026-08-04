@@ -1,10 +1,10 @@
 package net.tuna.playlist.service;
 
-import net.tuna.playlist.cursor.CursorCodec;
-import net.tuna.playlist.cursor.CursorDirection;
-import net.tuna.playlist.cursor.CursorKey;
-import net.tuna.playlist.cursor.CursorRequest;
-import net.tuna.playlist.dto.CursorSlice;
+import net.tuna.cursor.CursorCodec;
+import net.tuna.cursor.CursorDirection;
+import net.tuna.cursor.CursorKey;
+import net.tuna.cursor.CursorRequest;
+import net.tuna.cursor.CursorSlice;
 import net.tuna.playlist.dto.PlaylistPostCandidate;
 import net.tuna.playlist.repository.PlaylistPostRepository;
 import net.tuna.post.dto.PostDto;

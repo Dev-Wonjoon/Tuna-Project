@@ -1,7 +1,7 @@
 package net.tuna.playlist.repository;
 
-import net.tuna.playlist.cursor.CursorDirection;
-import net.tuna.playlist.cursor.CursorKey;
+import net.tuna.cursor.CursorDirection;
+import net.tuna.cursor.CursorKey;
 import net.tuna.playlist.dto.PlaylistMusicCandidate;
 import net.tuna.playlist.dto.PlaylistPostCandidate;
 import net.tuna.post.dto.PostDto;

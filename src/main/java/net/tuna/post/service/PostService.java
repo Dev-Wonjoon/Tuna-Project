@@ -1,5 +1,6 @@
 package net.tuna.post.service;
 
+import net.tuna.cursor.CursorSlice;
 import net.tuna.post.dto.PostDto;
 
 import java.util.List;
@@ -15,4 +16,5 @@ public interface PostService {
     void deletePost(long id);
     void addViewCount(long id);
     List<PostDto> getSearchPosts(String type, String keyword);
+    CursorSlice<PostDto> getPostSlice(String cursorToken, int size);
 }
