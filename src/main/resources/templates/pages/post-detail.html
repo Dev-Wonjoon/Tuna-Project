@@ -156,14 +156,14 @@
                 <div class="flex items-center justify-between">
                     <strong
                             class="text-sm"
-                            th:text="${comment['name']}"
+                            th:text="${comment.name}"
                     >
                         작성자
                     </strong>
 
                     <time
                             class="text-xs text-neutral-500"
-                            th:text="${#temporals.format(comment['created_at'],'yyyy-MM-dd HH:mm:ss')}"
+                            th:text="${#temporals.format(comment.createdAt,'yyyy-MM-dd HH:mm:ss')}"
                     >
                         작성일
                     </time>
@@ -171,7 +171,7 @@
 
                 <p
                         class="mt-2 whitespace-pre-line text-sm"
-                        th:text="${comment['content']}"
+                        th:text="${comment.content}"
                 >
                     댓글 내용
                 </p>

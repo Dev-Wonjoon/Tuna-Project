@@ -107,16 +107,6 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 , post.getId());
     }
 
-    //게시글 내 댓글 조회
-    @Override
-    public List<Map<String, Object>> findCommentsById(long id) {
-        String sql = "SELECT c.*, m.name AS name, m.email As author_email " +
-                "FROM comments c " +
-                "LEFT JOIN members m ON c.member_id = m.id " +
-                "WHERE c.post_id = ?";
-        return jdbcTemplate.queryForList(sql,id);
-    }
-
 
     //게시글 삭제
     @Override

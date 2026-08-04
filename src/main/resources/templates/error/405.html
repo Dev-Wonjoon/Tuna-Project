@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>405 - 올바르지 않은 요청방식 | Tuna</title>
+    <!-- Tailwind CSS (CDN 사용 중이시라면 맞춰 적용) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 min-h-screen flex items-center justify-center p-4">
+
+<!-- 에러 카드 컨테이너 -->
+<div class="max-w-md w-full bg-white rounded-2xl border border-gray-200 shadow-sm p-8 text-center space-y-6">
+
+    <!-- 아이콘 영역 -->
+    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto text-gray-700">
+        <!-- 자물쇠 / 접근 제한 아이콘 (Heroicons) -->
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-8 h-8">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+        </svg>
+    </div>
+
+    <!-- 텍스트 영역 -->
+    <div class="space-y-2">
+        <span class="text-xs font-semibold tracking-wider text-gray-400 uppercase">405 Method Not Allowed</span>
+        <h1 class="text-2xl font-bold text-gray-900">올바르지 않은 요청방식 입니다.</h1>
+
+    </div>
+
+    <!-- 버튼 영역 -->
+    <div class="pt-2 flex flex-col sm:flex-row gap-2 justify-center">
+        <!-- 이전 페이지로 -->
+        <button onclick="history.back()"
+                class="w-full sm:w-auto px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors duration-150">
+            이전 페이지
+        </button>
+
+        <!-- 홈으로 가기 -->
+        <a href="/"
+           class="w-full sm:w-auto px-5 py-2.5 text-sm font-medium text-white bg-gray-900 hover:bg-gray-800 rounded-xl transition-colors duration-150">
+            홈으로 이동
+        </a>
+    </div>
+
+</div>
+
+</body>
+</html>
