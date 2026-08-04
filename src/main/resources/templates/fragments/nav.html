@@ -1,8 +1,6 @@
 <nav th:fragment="nav" class="flex h-full flex-col px-4 py-5"
      xmlns:th="https://www.thymeleaf.org"
      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-    <script th:src="@{/js/logout.js}"></script>
-
     <a
             th:href="@{/}"
             class="px-2 text-2xl font-semibold tracking-tight"
@@ -188,39 +186,47 @@
     </div>
 
     <!-- 로그아웃 -->
-    <div id="logoutModal"
-         class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <dialog
+        id="logoutModal"
+        class="
+            m-auto w-full max-w-sm
+            rounded-xl bg-white p-6 shadow-xl
+            backdrop:bg-black/50
+        "
+    >
+        <h2 class="text-lg font-semibold">
+            로그아웃
+        </h2>
 
-        <div class="w-full max-w-sm rounded-xl bg-white p-6 shadow-xl">
+        <p class="mt-3 text-sm text-neutral-600">
+            로그아웃 하시겠습니까?
+        </p>
 
-            <h2 class="text-lg font-semibold">
-                로그아웃
-            </h2>
+        <div class="mt-6 flex justify-end gap-2">
+            <button
+                type="button"
+                onclick="closeLogoutModal()"
+                class="
+                    rounded-md border border-neutral-200
+                    px-4 py-2 text-sm
+                    hover:bg-neutral-100
+                ">
+                아니요
+            </button>
 
-            <p class="mt-3 text-sm text-neutral-600">
-                로그아웃 하시겠습니까?
-            </p>
-
-            <div class="mt-6 flex justify-end gap-2">
-
+            <form th:action="@{/logout}" method="POST">
                 <button
-                        type="button"
-                        onclick="closeLogoutModal()"
-                        class="rounded-md border border-neutral-200 px-4 py-2 text-sm hover:bg-neutral-100">
-                    아니요
+                    type="submit"
+                    class="
+                        rounded-md bg-red-500
+                        px-4 py-2 text-sm text-white
+                        hover:bg-red-600
+                    "
+                >
+                    예
                 </button>
-
-                <form th:action="@{/logout}" method="post">
-                    <button
-                            type="submit"
-                            class="rounded-md bg-red-500 px-4 py-2 text-sm text-white hover:bg-red-600">
-                        예
-                    </button>
-                </form>
-
-            </div>
-
+            </form>
         </div>
-    </div>
+    </dialog>
 
 </nav>
