@@ -47,9 +47,10 @@ public class CommentController {
         // 일단 조건에 맞으면 수정 동작을 하게 짰는데, 왠만하면 조건 안되면 에러페이지를 띄우고 싶다.
         if (commentMemberId.equals(memberId) || userDetails.getRole() == Role.ADMIN) {
             commentService.editComment(comment);
+            return "redirect:/posts/" + postId + "#comments";
         }
 
-        return "redirect:/posts/" + postId + "#comments";
+        return "error/403";
     }
 
     @PostMapping("/{postId}/comments/{commentId}/delete")
@@ -64,8 +65,9 @@ public class CommentController {
         // 일단 조건에 맞으면 삭제 동작을 하게 짰는데, 왠만하면 조건 안되면 에러페이지를 띄우고 싶다.
         if (commentMemberId.equals(memberId) || userDetails.getRole() == Role.ADMIN) {
             commentService.deleteById(commentId);
+            return "redirect:/posts/" + postId + "#comments";
         }
 
-        return "redirect:/posts/" + postId + "#comments";
+        return "error/403";
     }
 }

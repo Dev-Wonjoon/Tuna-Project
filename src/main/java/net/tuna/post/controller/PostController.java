@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.tuna.cursor.CursorSlice;
 import net.tuna.comment.dto.CommentDto;
 import net.tuna.comment.service.CommentService;
+import net.tuna.member.dto.Role;
 import net.tuna.member.security.CustomUserDetails;
 import net.tuna.post.dto.PostDetailResponse;
 import net.tuna.post.dto.PostDto;
@@ -63,15 +64,11 @@ public class PostController {
         return "fragments/post-page :: postPage";
     }
 
-
-
     //게시글 등록화면 요청
     @GetMapping("/posts/new")
     public String getCreateForm(@ModelAttribute("postForm") PostDto post){
         return "pages/post-create";
     }
-
-
 
     //게시글 등록 요청
     @PostMapping("/posts")
@@ -91,26 +88,40 @@ public class PostController {
         return "redirect:/posts/" + redirectId;
     }
 
-
-
     //게시글 수정화면 요청
     @GetMapping("/posts/{postId}/edit")
-    public String getEditForm(@PathVariable("postId") long id,
-                              Model model){
+    public String getEditForm(
+            @PathVariable("postId") long id,
+            Model model,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
         PostDto post = postService.getPost(id);
-        model.addAttribute("post",post);
-        return "pages/post-edit";
+        Long memberId = userDetails.getMemberId();
+
+        if (memberId.equals(post.getMemberId()) || userDetails.getRole() == Role.ADMIN) {
+            model.addAttribute("post",post);
+            return "pages/post-edit";
+        }
+
+        return "error/403";
     }
-
-
 
     // 게시글 수정 요청
     @PostMapping("/posts/{postId}/edit")
-    public String eidtPost(@PathVariable("postId") long id,
-                           @ModelAttribute("postForm") PostDto post){
-        post.setId(id);
-        postService.editPost(post);
-        return "redirect:/posts/"+id;
+    public String editPost(
+            @PathVariable("postId") long id,
+            @ModelAttribute("postForm") PostDto post,
+            @AuthenticationPrincipal CustomUserDetails userDetails){
+        Long postMemberId = postService.getPost(id).getMemberId();
+        Long memberId = userDetails.getMemberId();
+
+        // 일단 조건에 맞으면 삭제 동작을 하게 짰는데, 왠만하면 조건 안되면 에러페이지를 띄우고 싶다.
+        if (postMemberId.equals(memberId) || userDetails.getRole() == Role.ADMIN) {
+            postService.editPost(post);
+            return "redirect:/posts/"+id;
+        }
+
+        return "error/403";
     }
 
 
@@ -135,9 +146,20 @@ public class PostController {
 
 
     @PostMapping("/posts/{id}/delete")
-    public String deletePost(@PathVariable("id") long id){
-        postService.deletePost(id);
-        return "redirect:/";
+    public String deletePost(
+            @PathVariable("id") long id,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        Long postMemberId = postService.getPost(id).getMemberId();
+        Long memberId = userDetails.getMemberId();
+
+        // 일단 조건에 맞으면 삭제 동작을 하게 짰는데, 왠만하면 조건 안되면 에러페이지를 띄우고 싶다.
+        if (postMemberId.equals(memberId) || userDetails.getRole() == Role.ADMIN) {
+            postService.deletePost(id);
+            return "redirect:/";
+        }
+
+        return "error/403";
     }
 
     @GetMapping("/search")
