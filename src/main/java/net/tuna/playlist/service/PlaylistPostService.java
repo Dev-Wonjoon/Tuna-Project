@@ -8,6 +8,7 @@ import net.tuna.cursor.CursorSlice;
 import net.tuna.playlist.dto.PlaylistPostCandidate;
 import net.tuna.playlist.repository.PlaylistPostRepository;
 import net.tuna.post.dto.PostDto;
+import net.tuna.utils.MusicThumbnailResolver;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,20 +24,23 @@ public class PlaylistPostService {
 
     private final PlaylistPostRepository playlistPostRepository;
     private final CursorCodec cursorCodec;
+    private final MusicThumbnailResolver musicThumbnailResolver;
 
     public PlaylistPostService(
             PlaylistPostRepository playlistPostRepository,
-            CursorCodec cursorCodec
+            CursorCodec cursorCodec,
+            MusicThumbnailResolver musicThumbnailResolver
     ) {
         this.playlistPostRepository = playlistPostRepository;
         this.cursorCodec = cursorCodec;
+        this.musicThumbnailResolver = musicThumbnailResolver;
     }
 
     public List<PostDto> getPosts(long playlistId, long memberId) {
         return playlistPostRepository.findAllByPlaylistId(
                 playlistId,
                 memberId
-        );
+        ).stream().map(this::attachThumbnail).toList();
     }
 
     public boolean addPost(long playlistId, long postId, long memberId) {
@@ -138,8 +142,18 @@ public class PlaylistPostService {
                 : null;
 
         List<PostDto> content = visibleItems.stream()
-                .map(PlaylistPostCandidate::getPost).toList();
+                .map(PlaylistPostCandidate::getPost)
+                .map(this::attachThumbnail)
+                .toList();
 
         return new CursorSlice<>(content, previousCursor, nextCursor);
+    }
+
+    private PostDto attachThumbnail(PostDto post) {
+        post.setThumbnailUrl(
+                musicThumbnailResolver.resolve(post.getMusicUrl())
+        );
+
+        return post;
     }
 }
