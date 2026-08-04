@@ -2,7 +2,7 @@ package net.tuna.playlist.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import net.tuna.playlist.cursor.CursorKey;
+import net.tuna.cursor.CursorKey;
 
 import java.time.LocalDateTime;
 

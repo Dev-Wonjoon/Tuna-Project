@@ -6,9 +6,41 @@
 <section class="flex w-full max-w-2xl flex-col gap-6">
     <script th:src="@{/js/search.js}" defer></script>
 
-    <th:block th:each="post : ${posts}">
-        <th:block th:replace="~{fragments/post-card :: postCard(${post})}"/>
-    </th:block>
+    <div data-post-pagination
+         th:attr="
+            data-next-cursor=${postNextCursor},
+            data-page-size=${pageSize}
+         "
+    >
+        <div data-post-list
+             class="flex flex-col gap-6">
+            <th:block th:each="post : ${posts}">
+                <th:block th:replace="~{fragments/post-card :: postCard(${post})}"/>
+            </th:block>
+        </div>
+
+        <!-- 가까워지면 다음 게시글 요청 -->
+        <div data-post-sentinel
+             class="min-h-1">
+            <p hidden
+               data-post-loading
+               role="status"
+               class="py-5 text-center text-sm text-neutral-500">
+                다음 게시글을 불러오는 중입니다.
+            </p>
+
+            <button hidden
+                    type="button"
+                    data-post-error
+                    class="
+                        w-full py-5 text-center
+                        text-sm text-red-500
+                        hover:text-red-700
+                    ">
+                게시글을 불러오지 못했습니다. 다시 시도
+            </button>
+        </div>
+    </div>
 
     <th:block th:replace="~{fragments/playlist-popup :: playlistPopup}"/>
 
@@ -149,5 +181,6 @@
 
     </div>
 
+<script defer th:src="@{/js/post-infinite-scroll.js}"></script>
 </section>
 </html>

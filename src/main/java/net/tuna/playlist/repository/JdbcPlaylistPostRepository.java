@@ -1,7 +1,7 @@
 package net.tuna.playlist.repository;
 
-import net.tuna.playlist.cursor.CursorDirection;
-import net.tuna.playlist.cursor.CursorKey;
+import net.tuna.cursor.CursorDirection;
+import net.tuna.cursor.CursorKey;
 import net.tuna.playlist.dto.PlaylistMusicCandidate;
 import net.tuna.playlist.dto.PlaylistPostCandidate;
 import net.tuna.post.dto.PostDto;
@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -230,7 +229,7 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
 
             parameters.add(cursor.getCreatedAt());
             parameters.add(cursor.getCreatedAt());
-            parameters.add(cursor.getPostId());
+            parameters.add(cursor.getId());
         }
 
         String order = previous ? "ASC" : "DESC";
@@ -317,7 +316,7 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
 
             parameters.add(cursor.getCreatedAt());
             parameters.add(cursor.getCreatedAt());
-            parameters.add(cursor.getPostId());
+            parameters.add(cursor.getId());
         }
 
         String order = previous ? "ASC" : "DESC";

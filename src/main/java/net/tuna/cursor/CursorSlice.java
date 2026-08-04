@@ -1,8 +1,10 @@
-package net.tuna.playlist.dto;
+package net.tuna.cursor;
 
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
 @Getter
 public class CursorSlice<T> {
@@ -38,5 +40,15 @@ public class CursorSlice<T> {
 
     public boolean hasNext() {
         return nextCursor != null;
+    }
+
+    public <R> CursorSlice<R> map(Function<T, R> mapper) {
+        Objects.requireNonNull(mapper, "mapper는 null일 수 없습니다.");
+
+        return new CursorSlice<>(
+                content.stream().map(mapper).toList(),
+                previousCursor,
+                nextCursor
+        );
     }
 }
