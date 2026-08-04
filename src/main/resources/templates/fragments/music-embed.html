@@ -5,12 +5,73 @@
     th:attr="data-music-url=${musicUrl}"
     data-music-embed
     hidden
-    class="overflow-hidden rounded-lg bg-black"
+    class="overflow-hidden rounded-lg bg-neutral-900"
 >
+    <button
+        data-music-embed-trigger
+        type="button"
+        class="
+            group relative flex aspect-video w-full
+            items-center justify-center overflow-hidden
+            bg-neutral-900 text-white
+        "
+    >
+        <img
+            data-music-embed-thumbnail
+            hidden
+            alt=""
+            loading="lazy"
+            decoding="async"
+            fetchpriority="low"
+            class="
+                absolute inset-0 size-full object-cover
+                transition-transform duration-300
+                group-hover:scale-105
+            "
+        >
+        <span
+            class="absolute inset-0 bg-black/40"
+            aria-hidden="true"
+        ></span>
+
+        <span
+            data-music-embed-provider
+            class="
+                absolute left-3 top-3 z-10
+                rounded-full bg-black/60 px-3 py-1
+                text-xs font-medium text-white
+            "
+        >
+            음악
+        </span>
+
+        <span
+            class="
+                relative z-10 flex size-14
+                items-center justify-center rounded-full
+                bg-white/95 text-neutral-900 shadow-lg
+                transition-transform group-hover:scale-110
+            "
+            aria-hidden="true"
+        >
+            <svg
+                viewBox="0 0 24 24"
+                file="currentColor"
+                class="ml-1 size-7"
+            >
+                <path d="M8 5v14l11-7z"/>
+            </svg>
+        </span>
+
+        <span class="sr-only">
+            음악 플레이어 불러오기
+        </span>
+    </button>
+
     <iframe
         data-music-embed-frame
         title="음악 플레이어"
-        class="aspect-video w-full"
+        class="hidden aspect-video w-full rounded-lg"
         loading="lazy"
         referrerpolicy="strict-origin-when-cross-origin"
         allow="

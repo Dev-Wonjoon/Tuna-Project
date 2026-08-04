@@ -1,6 +1,7 @@
 const embedProviders = [
     {
         name: 'youtube',
+        label: 'YouTube',
 
         resolve(url) {
             const videoId = extractYoutubeVideoId(url);
@@ -11,13 +12,16 @@ const embedProviders = [
 
             return {
                 title: 'YouTube 동영상 플레이어',
-                src: `https://www.youtube-nocookie.com/embed/${videoId}?rel=0`,
-                className: 'aspect-video w-full rounded-lg'
+                src: `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0`,
+                thumbnailUrl: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+                frameClassName: 'aspect-video w-full rounded-lg',
+                previewClassName: 'aspect-video',
             };
         },
     },
     {
         name: 'spotify',
+        label: 'Spotify',
 
         resolve(rawUrl) {
             const spotify = extractSpotifyContent(rawUrl);
@@ -29,10 +33,12 @@ const embedProviders = [
             return {
                 title: 'Spotify 음악 플레이어',
                 src: `https://open.spotify.com/embed/${spotify.type}/${spotify.id}`,
-                className: 'h-[152px] w-full rounded-lg',
-            }
-        }
-    }
+                thumbnailUrl: null,
+                frameClassName: 'h-[152px] w-full rounded-lg',
+                previewClassName: 'h-[152px]',
+            };
+        },
+    },
 ];
 
 function extractYoutubeVideoId(rawUrl) {
@@ -103,22 +109,99 @@ function extractSpotifyContent(rawUrl) {
     }
 }
 
-document.querySelectorAll('[data-music-embed]')
-    .forEach(initializeMusicEmbed);
+document.querySelectorAll('[data-music-embed]').forEach(initializeMusicEmbed);
 
 function initializeMusicEmbed(root) {
-    const embed = embedProviders
-        .map(provider => provider.resolve(root.dataset.musicUrl))
-        .find(Boolean);
-
-    const iframe = root.querySelector('[data-music-embed-frame]');
-
-    if(!embed || !iframe) {
+    if(root.dataset.musicEmbedInitialized === 'true') {
         return;
     }
 
-    iframe.src = embed.src;
-    iframe.title = embed.title;
-    iframe.className = embed.className;
+    const resolved = embedProviders
+        .map(provider => {
+            const embed = provider.resolve(root.dataset.musicUrl);
+
+            if(!embed) {
+                return null;
+            }
+
+            return {
+                ...embed,
+                providerName: provider.name,
+                providerLabel: provider.label
+            };
+        }).find(Boolean);
+
+    const trigger = root.querySelector(
+        '[data-music-embed-trigger]'
+    );
+
+    const iframe = root.querySelector(
+        '[data-music-embed-frame]'
+    );
+
+    const thumbnail = root.querySelector(
+        '[data-music-embed-thumbnail]'
+    );
+
+    const providerLabel = root.querySelector(
+        '[data-music-embed-provider]'
+    );
+
+    if(!resolved || !trigger || !iframe) {
+        return;
+    }
+
+    root.dataset.musicEmbedInitialized = 'true';
+
+    trigger.classList.remove(
+        'aspect-video',
+        'h-[152px]'
+    );
+
+    trigger.classList.add(resolved.previewClassName);
+
+    iframe.title = resolved.title;
+    iframe.className = `hidden ${resolved.frameClassName}`;
+
+    trigger.setAttribute('aria-label', `${resolved.providerLabel} 플레이어 불러오기`);
+
+    if(providerLabel) {
+        providerLabel.textContent = resolved.providerLabel;
+    }
+
+    if(thumbnail && resolved.thumbnailUrl) {
+        thumbnail.src = resolved.thumbnailUrl;
+        thumbnail.hidden = false;
+    }
+
     root.hidden = false;
+
+    if(resolved.providerName === 'spotify') {
+        root.dataset.musicEmbedLoaded = 'true';
+
+        trigger.hidden = true;
+        trigger.classList.add('hidden');
+
+        iframe.src = resolved.src;
+        iframe.hidden = false;
+        iframe.classList.remove('hidden');
+
+        return;
+    }
+
+    trigger.addEventListener('click', () => {
+        if(root.dataset.musicEmbedLoaded === 'true') {
+            return;
+        }
+
+        root.dataset.musicEmbedLoaded = 'true';
+
+        iframe.src = resolved.src;
+
+        iframe.hidden = false;
+        trigger.classList.add('hidden');
+
+        iframe.hidden = false;
+        iframe.classList.remove('hidden');
+    }, { once: true });
 }
