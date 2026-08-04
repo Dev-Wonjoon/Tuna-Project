@@ -1,9 +1,8 @@
 <!DOCTYPE html>
 <html lang="ko"
       xmlns:th="https://www.thymeleaf.org"
-      th:replace="~{layouts/base :: layout(
-        ${title},
-        ~{::detail})}"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{layouts/base :: layout(${title}, ~{::detail})}"
 >
 <body>
 <article th:fragment="detail"
@@ -13,6 +12,7 @@
             bg-neutral-100
             border border-neutral-200 border-t
     ">
+    <script th:src="@{/js/comment-edit.js}" defer></script>
     <div class="min-h-80 p-6">
         <header class="flex items-center justify-between">
             <h1 class="text-xl font-semibold"
@@ -22,7 +22,9 @@
             </h1>
 
             <div
-                    th:if="${isAuthor}"
+                    sec:authorize="isAuthenticated()
+                                and (hasRole('ADMIN')
+                                or principal.memberId == #vars.post['memberId'])"
                     class="flex shrink-0 items-center gap-2"
             >
                 <a
@@ -151,30 +153,76 @@
         >
             <li
                     th:each="comment : ${comments}"
+                    data-comment-item
                     class="border-b border-neutral-300 pb-4"
             >
-                <div class="flex items-center justify-between">
-                    <strong
-                            class="text-sm"
-                            th:text="${comment.name}"
-                    >
-                        작성자
-                    </strong>
+                <!-- 기존 댓글 표시 영역 -->
+                <div data-comment-view>
+                    <div class="flex items-start justify-between">
+                        <strong
+                                class="text-sm"
+                                th:text="${comment.name}"
+                        >
+                            작성자
+                        </strong>
 
-                    <time
-                            class="text-xs text-neutral-500"
-                            th:text="${#temporals.format(comment.createdAt,'yyyy-MM-dd HH:mm:ss')}"
+                        <div class="relative">
+                            <time
+                                    class="text-xs text-neutral-500"
+                                    th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm:ss')}"
+                            >
+                                작성일
+                            </time>
+
+                            <div
+                                    sec:authorize="isAuthenticated()
+                                                and (hasRole('ADMIN')
+                                                or principal.memberId == #vars.comment['memberId'])"
+                                    class="absolute right-0 top-full mt-2 flex gap-2"
+                            >
+                                <button
+                                        type="button"
+                                        data-comment-edit-open
+                                        class="
+                                                rounded-md border border-neutral-300
+                                                bg-white px-3 py-1 text-xs
+                                                hover:bg-neutral-50
+                                            "
+                                >
+                                    수정
+                                </button>
+
+                                <form
+                                        th:action="@{/posts/{postId}/comments/{commentId}/delete(postId=${post.id},commentId=${comment.id})}"
+                                        method="POST"
+                                        onsubmit="return confirm('정말 삭제하시겠습니까?');"
+                                >
+                                    <button
+                                            type="submit"
+                                            class="
+                                                    rounded-md border border-red-200
+                                                    bg-white px-3 py-1 text-xs text-red-600
+                                                    hover:bg-red-50
+                                                "
+                                    >
+                                        삭제
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p
+                            class="mt-2 whitespace-pre-line pr-24 text-sm"
+                            th:text="${comment.content}"
                     >
-                        작성일
-                    </time>
+                        댓글 내용
+                    </p>
                 </div>
 
-                <p
-                        class="mt-2 whitespace-pre-line text-sm"
-                        th:text="${comment.content}"
-                >
-                    댓글 내용
-                </p>
+                <th:block
+                        th:replace="~{fragments/comment-edit :: commentForm(${post['id']})}"
+                />
             </li>
         </ul>
 
