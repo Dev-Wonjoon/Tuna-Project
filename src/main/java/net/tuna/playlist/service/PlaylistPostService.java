@@ -5,6 +5,7 @@ import net.tuna.cursor.CursorDirection;
 import net.tuna.cursor.CursorKey;
 import net.tuna.cursor.CursorRequest;
 import net.tuna.cursor.CursorSlice;
+import net.tuna.playlist.PlaylistMusicUrlChecker;
 import net.tuna.playlist.dto.PlaylistPostCandidate;
 import net.tuna.playlist.repository.PlaylistPostRepository;
 import net.tuna.post.dto.PostDto;
@@ -22,18 +23,20 @@ public class PlaylistPostService {
 
     private static final int PAGE_SIZE = 2;
 
+    private final PlaylistMusicUrlChecker playlistMusicUrlChecker;
     private final PlaylistPostRepository playlistPostRepository;
-    private final CursorCodec cursorCodec;
     private final MusicThumbnailResolver musicThumbnailResolver;
+    private final CursorCodec cursorCodec;
 
     public PlaylistPostService(
-            PlaylistPostRepository playlistPostRepository,
+            PlaylistMusicUrlChecker playlistMusicUrlChecker, PlaylistPostRepository playlistPostRepository,
             CursorCodec cursorCodec,
             MusicThumbnailResolver musicThumbnailResolver
     ) {
+        this.playlistMusicUrlChecker = playlistMusicUrlChecker;
         this.playlistPostRepository = playlistPostRepository;
-        this.cursorCodec = cursorCodec;
         this.musicThumbnailResolver = musicThumbnailResolver;
+        this.cursorCodec = cursorCodec;
     }
 
     public List<PostDto> getPosts(long playlistId, long memberId) {
@@ -44,6 +47,7 @@ public class PlaylistPostService {
     }
 
     public boolean addPost(long playlistId, long postId, long memberId) {
+        playlistMusicUrlChecker.validate(postId);
         try {
             int affectedRows = playlistPostRepository.add(playlistId, postId, memberId);
 

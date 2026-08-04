@@ -1,5 +1,6 @@
 package net.tuna.playlist.service;
 
+import net.tuna.playlist.PlaylistMusicUrlChecker;
 import net.tuna.playlist.dto.Playlist;
 import net.tuna.playlist.repository.PlaylistPostRepository;
 import net.tuna.playlist.repository.PlaylistRepository;
@@ -12,6 +13,7 @@ import java.util.List;
 @Service
 public class PlaylistService {
 
+    private final PlaylistMusicUrlChecker playlistMusicUrlChecker;
     private final PlaylistRepository playlistRepository;
     private final PlaylistPostRepository playlistPostRepository;
 
@@ -27,9 +29,10 @@ public class PlaylistService {
     );
 
     public PlaylistService(
-            PlaylistRepository playlistRepository,
+            PlaylistMusicUrlChecker playlistMusicUrlChecker, PlaylistRepository playlistRepository,
             PlaylistPostRepository playlistPostRepository
     ) {
+        this.playlistMusicUrlChecker = playlistMusicUrlChecker;
         this.playlistRepository = playlistRepository;
         this.playlistPostRepository = playlistPostRepository;
     }
@@ -44,6 +47,8 @@ public class PlaylistService {
             Playlist playlist,
             long postId
     ) {
+        playlistMusicUrlChecker.validate(postId);
+
         long playlistId = createPlaylistInternal(playlist);
 
         int affectedRows = playlistPostRepository.add(

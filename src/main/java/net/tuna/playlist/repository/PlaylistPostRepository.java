@@ -7,6 +7,7 @@ import net.tuna.playlist.dto.PlaylistPostCandidate;
 import net.tuna.post.dto.PostDto;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface PlaylistPostRepository {
     List<PostDto> findAllByPlaylistId(
@@ -37,4 +38,6 @@ public interface PlaylistPostRepository {
             CursorDirection direction,
             int limit
     );
+
+    Optional<String> findMusicUrlByPostId(long postId);
 }
