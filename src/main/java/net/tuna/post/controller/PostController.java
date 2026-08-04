@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import net.tuna.cursor.CursorSlice;
 import net.tuna.comment.dto.CommentDto;
 import net.tuna.comment.service.CommentService;
-import net.tuna.member.dto.Role;
 import net.tuna.member.security.CustomUserDetails;
 import net.tuna.post.dto.PostDetailResponse;
 import net.tuna.post.dto.PostDto;
@@ -85,7 +84,7 @@ public class PostController {
 
         //멤버에서 로그인된 유저 ID 아이디가져오기
         if(userDetails != null){
-            post.setMemberId(userDetails.getMember().getId());
+            post.setMemberId(userDetails.getMemberId());
         }
 
         long redirectId = postService.writePost(post);
@@ -118,7 +117,7 @@ public class PostController {
     //게시글 상세보기
     @GetMapping("/posts/{postId}")
     public String getDetail(@PathVariable("postId") long id, Model model
-            ,@AuthenticationPrincipal CustomUserDetails userDetails){
+            ,@AuthenticationPrincipal() CustomUserDetails userDetails){
         postService.addViewCount(id);
         PostDto post = postService.getPost(id);
 
@@ -126,25 +125,7 @@ public class PostController {
         PostDetailResponse response = PostDetailResponse.from(post);
         model.addAttribute("post",response);
 
-        //작성자 본인, 관리자 검증
-        boolean isAuthor = false;
-
-        if (userDetails != null && post != null) {
-            String name = userDetails.getMember().getName();
-            model.addAttribute("name", name);
-
-            boolean isWriter = Objects.equals(
-                    userDetails.getMember().getId(),
-                    post.getMemberId()
-            );
-
-            boolean isAdmin = userDetails.getMember()
-                    .getRole() == Role.ADMIN;
-
-            isAuthor = isWriter || isAdmin;
-        }
-
-        model.addAttribute("isAuthor", isAuthor);
+        // 댓글 조회
         List<CommentDto> comments = commentService.findByPostId(id);
         model.addAttribute("comments",comments);
 

@@ -28,7 +28,7 @@ public class PlaylistModelAdvice {
         }
 
         long memberId =
-                userDetails.getMember().getId();
+                userDetails.getMemberId();
 
         return playlistService.getPlaylists(memberId);
     }

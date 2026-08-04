@@ -53,7 +53,7 @@ public class MypageController {
                 authentication
         );
 
-        memberService.deleteById(userDetails.getMember().getId());
+        memberService.deleteById(userDetails.getMemberId());
 
         return "redirect:/";
     }

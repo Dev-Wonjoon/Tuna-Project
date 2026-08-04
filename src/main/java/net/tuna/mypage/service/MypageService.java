@@ -18,7 +18,7 @@ public class MypageService {
     private final PostRepository postRepository;
 
     public MemberDto getMypage(CustomUserDetails user) {
-        return memberRepository.findById(user.getMember().getId());
+        return memberRepository.findById(user.getMemberId());
     }
 
     public List<PostDto> getMyPosts(long memberId) {
