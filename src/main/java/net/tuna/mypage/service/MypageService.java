@@ -37,6 +37,9 @@ public class MypageService {
                                 + "/maxresdefault.jpg" //최대화질 이미지 불러오기
                 );
             }
+            else {
+                post.setThumbnailUrl("/img/tuna-note-chromatic.png");
+            }
         }
 
         return posts;
