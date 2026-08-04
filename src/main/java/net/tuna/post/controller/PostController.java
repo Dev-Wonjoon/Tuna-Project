@@ -2,8 +2,7 @@ package net.tuna.post.controller;
 
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import net.tuna.comment.dto.CommentDto;
-import net.tuna.comment.service.CommentService;
+import net.tuna.cursor.CursorSlice;
 import net.tuna.member.dto.Role;
 import net.tuna.member.security.CustomUserDetails;
 import net.tuna.post.dto.PostDetailResponse;
@@ -20,6 +19,8 @@ import java.util.*;
 @Slf4j
 @RequestMapping("/")
 public class PostController {
+    private static final String DEFAULT_PAGE_SIZE = "10";
+
     private final PostService postService;
     private final CommentService commentService;
 
@@ -29,15 +30,36 @@ public class PostController {
     }
 
     @GetMapping("/")
-    public String getPostList(Model model){
-        List<PostDto> postDtos = postService.getPosts();
+    public String getPostList(
+            @RequestParam(required = false) String cursor,
+            @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) int size,
+            Model model
+    ) {
+        CursorSlice<PostDetailResponse> postSlice =
+                postService.getPostSlice(cursor, size).map(PostDetailResponse::from);
 
-        //시간정보가공
-        List<PostDetailResponse> posts = postDtos.stream()
-                        .map(PostDetailResponse::from).toList();
-        model.addAttribute("posts", posts );
+        model.addAttribute("posts", postSlice.getContent());
+        model.addAttribute("postNextCursor", postSlice.getNextCursor());
+        model.addAttribute("pageSize", size);
 
         return "pages/home";
+    }
+
+    @GetMapping("/posts/page")
+    public String getPostPage(
+            @RequestParam String cursor,
+            @RequestParam(defaultValue = DEFAULT_PAGE_SIZE)
+            int size,
+            Model model
+    ) {
+        CursorSlice<PostDetailResponse> postSlice =
+                postService.getPostSlice(cursor, size)
+                        .map(PostDetailResponse::from);
+
+        model.addAttribute("posts", postSlice.getContent());
+        model.addAttribute("postNextCursor", postSlice.getNextCursor());
+
+        return "fragments/post-page :: postPage";
     }
 
 

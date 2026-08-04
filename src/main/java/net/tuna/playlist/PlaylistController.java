@@ -2,7 +2,7 @@ package net.tuna.playlist;
 
 import jakarta.validation.Valid;
 import net.tuna.member.security.CustomUserDetails;
-import net.tuna.playlist.dto.CursorSlice;
+import net.tuna.cursor.CursorSlice;
 import net.tuna.playlist.dto.Playlist;
 import net.tuna.playlist.dto.PlaylistNameUpdateDto;
 import net.tuna.playlist.dto.YoutubeTrack;

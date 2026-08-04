@@ -1,4 +1,4 @@
-package net.tuna.playlist.cursor;
+package net.tuna.cursor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -7,6 +7,9 @@ import org.springframework.web.server.ResponseStatusException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.List;
+import java.util.Objects;
+import java.util.function.Function;
 
 @Component
 public class CursorCodec {
@@ -19,7 +22,7 @@ public class CursorCodec {
                 VERSION,
                 direction.name(),
                 key.getCreatedAt().toString(),
-                String.valueOf(key.getPostId())
+                String.valueOf(key.getId())
         );
 
         return Base64.getUrlEncoder()

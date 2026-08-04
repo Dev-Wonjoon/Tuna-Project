@@ -1,4 +1,4 @@
-package net.tuna.playlist.cursor;
+package net.tuna.cursor;
 
 public enum CursorDirection {
     PREVIOUS,
