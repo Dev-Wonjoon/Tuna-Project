@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import net.tuna.member.dto.MemberDto;
 import net.tuna.member.repository.MemberRepository;
 import net.tuna.member.security.CustomUserDetails;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

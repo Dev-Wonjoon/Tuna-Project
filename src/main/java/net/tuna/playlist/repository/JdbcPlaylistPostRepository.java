@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
@@ -357,6 +358,21 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 sql,
                 POST_CANDIDATE_ROW_MAPPER,
                 parameters.toArray()
+        );
+    }
+
+    @Override
+    public Optional<String> findMusicUrlByPostId(long postId) {
+        return jdbcTemplate.query(
+                "SELECT music_url FROM posts WHERE id = ?",
+                resultSet -> {
+                    if(!resultSet.next()) {
+                        return Optional.empty();
+                    }
+
+                    return Optional.ofNullable(resultSet.getString("music_url"));
+                },
+                postId
         );
     }
 }
