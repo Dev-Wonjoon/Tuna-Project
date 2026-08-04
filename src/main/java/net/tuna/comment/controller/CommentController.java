@@ -28,7 +28,7 @@ public class CommentController {
         }
 
         if (userDetails != null) {
-            comment.setMemberId(userDetails.getMember().getId());
+            comment.setMemberId(userDetails.getMemberId());
         }
         comment.setPostId(postId);
         commentService.writeComment(comment);
@@ -42,10 +42,10 @@ public class CommentController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long commentMemberId = commentService.findById(comment.getId()).getMemberId();
-        Long memberId = userDetails.getMember().getId();
+        Long memberId = userDetails.getMemberId();
 
         // 일단 조건에 맞으면 수정 동작을 하게 짰는데, 왠만하면 조건 안되면 에러페이지를 띄우고 싶다.
-        if (commentMemberId.equals(memberId) || userDetails.getMember().getRole() == Role.ADMIN) {
+        if (commentMemberId.equals(memberId) || userDetails.getRole() == Role.ADMIN) {
             commentService.editComment(comment);
         }
 
@@ -59,10 +59,10 @@ public class CommentController {
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         Long commentMemberId = commentService.findById(commentId).getMemberId();
-        Long memberId = userDetails.getMember().getId();
+        Long memberId = userDetails.getMemberId();
 
         // 일단 조건에 맞으면 삭제 동작을 하게 짰는데, 왠만하면 조건 안되면 에러페이지를 띄우고 싶다.
-        if (commentMemberId.equals(memberId) || userDetails.getMember().getRole() == Role.ADMIN) {
+        if (commentMemberId.equals(memberId) || userDetails.getRole() == Role.ADMIN) {
             commentService.deleteById(commentId);
         }
 

@@ -64,7 +64,7 @@ public class PlaylistController {
             );
         }
 
-        long memberId = userDetails.getMember().getId();
+        long memberId = userDetails.getMemberId();
 
         playlist.setMemberId(memberId);
 
@@ -109,7 +109,7 @@ public class PlaylistController {
             @AuthenticationPrincipal
             CustomUserDetails userDetails
     ) {
-        long memberId = userDetails.getMember().getId();
+        long memberId = userDetails.getMemberId();
 
         playlistService.getPlaylistById(playlistId, memberId);
 
@@ -125,7 +125,7 @@ public class PlaylistController {
             CustomUserDetails userDetails,
             Model model
     ) {
-        long memberId = userDetails.getMember().getId();
+        long memberId = userDetails.getMemberId();
 
         Playlist playlist = playlistService.getPlaylistById(playlistId, memberId);
 
@@ -166,7 +166,7 @@ public class PlaylistController {
             CustomUserDetails userDetails,
             Model model
     ) {
-        long memberId = userDetails.getMember().getId();
+        long memberId = userDetails.getMemberId();
 
         playlistService.getPlaylistById(playlistId, memberId);
 
@@ -192,7 +192,7 @@ public class PlaylistController {
             CustomUserDetails userDetails,
             RedirectAttributes redirectAttributes
     ) {
-        long memberId = userDetails.getMember().getId();
+        long memberId = userDetails.getMemberId();
 
         try {
             boolean added = playlistPostService.addPost(
@@ -270,7 +270,7 @@ public class PlaylistController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             RedirectAttributes redirectAttributes
     ) {
-        long memberId = userDetails.getMember().getId();
+        long memberId = userDetails.getMemberId();
 
         boolean removed = playlistPostService.removePost(
                 playlistId,
@@ -310,7 +310,7 @@ public class PlaylistController {
             return "redirect:/playlists/" + playlistId + "/edit";
         }
 
-        long memberId = userDetails.getMember().getId();
+        long memberId = userDetails.getMemberId();
 
         int removedCount = playlistPostService.removePosts(
                 playlistId,
@@ -339,7 +339,7 @@ public class PlaylistController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             RedirectAttributes redirectAttributes
     ) {
-        long memberId = userDetails.getMember().getId();
+        long memberId = userDetails.getMemberId();
 
         int removedCount = playlistPostService.removeAllPosts(
                 playlistId,
@@ -367,7 +367,7 @@ public class PlaylistController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             Model model
     ) {
-        long memberId = userDetails.getMember().getId();
+        long memberId = userDetails.getMemberId();
 
         Playlist playlist = playlistService.getPlaylistById(
                 playlistId,
@@ -405,7 +405,7 @@ public class PlaylistController {
             Model model,
             RedirectAttributes redirectAttributes
     ) {
-        long memberId = userDetails.getMember().getId();
+        long memberId = userDetails.getMemberId();
 
         if(!bindingResult.hasErrors()) {
             try {
@@ -460,7 +460,7 @@ public class PlaylistController {
             @AuthenticationPrincipal CustomUserDetails userDetails,
             RedirectAttributes redirectAttributes
     ) {
-        long memberId = userDetails.getMember().getId();
+        long memberId = userDetails.getMemberId();
 
         playlistService.deletePlaylist(playlistId, memberId);
 

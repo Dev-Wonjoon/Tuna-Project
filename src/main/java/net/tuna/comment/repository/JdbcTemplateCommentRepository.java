@@ -26,6 +26,15 @@ public class JdbcTemplateCommentRepository implements CommentRepository{
                 .build();
     };
 
+    private final RowMapper<CommentDto> findByIdRowMapper = (rs, rowNum) -> {
+        return CommentDto.builder()
+                .id(rs.getLong("id"))
+                .content(rs.getString("content"))
+                .memberId(rs.getLong("member_id"))
+                .postId(rs.getLong("post_id"))
+                .build();
+    };
+
     @Override
     public List<CommentDto> findByPostId(long postId) {
         String sql = """
@@ -58,7 +67,7 @@ public class JdbcTemplateCommentRepository implements CommentRepository{
     @Override
     public CommentDto findById(long id) {
         String sql = "SELECT * FROM comments WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, commentDtoRowMapper, id);
+        return jdbcTemplate.queryForObject(sql, findByIdRowMapper, id);
     }
 
     @Override

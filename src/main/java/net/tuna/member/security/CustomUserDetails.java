@@ -3,6 +3,7 @@ package net.tuna.member.security;
 import lombok.Getter;
 import net.tuna.member.dto.MemberDto;
 import net.tuna.member.dto.Role;
+import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,14 +14,22 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-public class CustomUserDetails implements UserDetails {
+public class CustomUserDetails implements UserDetails, CredentialsContainer {
 
-    private final MemberDto member;
+    private final Long memberId;
+    private final String name;
+    private final String email;
+    private String password;
+    private Role role;
     private Map<String, Object> attributes;
 
     /* 일반 로그인 생성자 */
     public CustomUserDetails(MemberDto member) {
-        this.member = member;
+        this.memberId = member.getId();
+        this.name = member.getName();
+        this.email = member.getEmail();
+        this.role = member.getRole();
+        this.password = member.getPassword();
     }
 
     private GrantedAuthority getAuthority(Role role) {
@@ -31,19 +40,19 @@ public class CustomUserDetails implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         List<GrantedAuthority> authorityList = new ArrayList<>();
 
-        authorityList.add(getAuthority(member.getRole()));
+        authorityList.add(getAuthority(this.role));
 
         return authorityList;
     }
 
     @Override
     public String getPassword() {
-        return member.getPassword();
+        return this.password;
     }
 
     @Override
     public String getUsername() {
-        return member.getEmail();
+        return this.email;
     }
 
     @Override
@@ -64,5 +73,10 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+
+    @Override
+    public void eraseCredentials() {
+        this.password = null;
     }
 }
