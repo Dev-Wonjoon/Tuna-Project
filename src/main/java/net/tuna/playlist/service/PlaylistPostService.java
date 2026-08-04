@@ -27,7 +27,6 @@ public class PlaylistPostService {
     private final PlaylistPostRepository playlistPostRepository;
     private final MusicThumbnailResolver musicThumbnailResolver;
     private final CursorCodec cursorCodec;
-    private final MusicThumbnailResolver musicThumbnailResolver;
 
     public PlaylistPostService(
             PlaylistMusicUrlChecker playlistMusicUrlChecker, PlaylistPostRepository playlistPostRepository,
@@ -38,7 +37,6 @@ public class PlaylistPostService {
         this.playlistPostRepository = playlistPostRepository;
         this.musicThumbnailResolver = musicThumbnailResolver;
         this.cursorCodec = cursorCodec;
-        this.musicThumbnailResolver = musicThumbnailResolver;
     }
 
     public List<PostDto> getPosts(long playlistId, long memberId) {
