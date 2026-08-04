@@ -1,13 +1,15 @@
 function openLogoutModal() {
     const modal = document.getElementById("logoutModal");
 
-    modal.classList.remove("hidden");
-    modal.classList.add("flex");
+    if(modal && !modal.open) {
+        modal.showModal();
+    }
 }
 
 function closeLogoutModal() {
     const modal = document.getElementById("logoutModal");
 
-    modal.classList.remove("flex");
-    modal.classList.add("hidden");
+    if(modal?.open) {
+        modal.close();
+    }
 }
