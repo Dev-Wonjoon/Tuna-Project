@@ -194,23 +194,31 @@ public class PlaylistController {
     ) {
         long memberId = userDetails.getMember().getId();
 
-        boolean added = playlistPostService.addPost(
-                playlistId,
-                postId,
-                memberId
-        );
+        try {
+            boolean added = playlistPostService.addPost(
+                    playlistId,
+                    postId,
+                    memberId
+            );
 
-        redirectAttributes.addFlashAttribute(
-                "playlistMessage",
-                added
-                        ? "플레이리스트에 추가되었습니다."
-                        : "이미 추가된 게시글입니다."
-        );
 
-        if(!added) {
+            redirectAttributes.addFlashAttribute(
+                    "playlistMessage",
+                    added
+                            ? "플레이리스트에 추가되었습니다."
+                            : "이미 추가된 게시글입니다."
+            );
+
+            if(!added) {
+                redirectAttributes.addFlashAttribute(
+                        "playlistAlert",
+                        "이미 이 플레이리스트에 추가된 노래입니다."
+                );
+            }
+        } catch (UnsupportedPlaylistMusicUrlException exception) {
             redirectAttributes.addFlashAttribute(
                     "playlistAlert",
-                    "이미 이 플레이리스트에 추가된 노래입니다."
+                    exception.getMessage()
             );
         }
 
