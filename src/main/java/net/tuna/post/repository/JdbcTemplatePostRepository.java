@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 @Repository
-public class JdbcTemplatePostRepository implements PostRepository{
+public class JdbcTemplatePostRepository implements PostRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public JdbcTemplatePostRepository(JdbcTemplate jdbcTemplate) {
@@ -56,7 +56,7 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 ) cc ON cc.post_id = p.id
                 WHERE p.id = ?
                 """;
-        return jdbcTemplate.queryForObject(sql,postRowMapper,id);
+        return jdbcTemplate.queryForObject(sql, postRowMapper, id);
     }
 
     //멤버아이디로 게시글 찾기
@@ -263,5 +263,10 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 postRowMapper,
                 parameters.toArray()
         );
+    }
+
+    @Override
+    public long findAllByCommentCount(long postId) {
+        return 0;
     }
 }

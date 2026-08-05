@@ -11,6 +11,7 @@ import net.tuna.playlist.service.PlaylistService;
 import net.tuna.playlist.service.YoutubePlaylistService;
 import net.tuna.post.dto.PostDetailResponse;
 import net.tuna.post.dto.PostDto;
+import net.tuna.post.service.PostService;
 import net.tuna.utils.LocalRedirectUrl;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,7 +35,7 @@ public class PlaylistController {
     public PlaylistController(
             PlaylistService playlistService,
             PlaylistPostService playlistPostService,
-            YoutubePlaylistService youtubePlaylistService
+            YoutubePlaylistService youtubePlaylistService, PostService postService
     ) {
         this.playlistService = playlistService;
         this.playlistPostService = playlistPostService;
