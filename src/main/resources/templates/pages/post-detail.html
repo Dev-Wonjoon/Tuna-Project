@@ -141,7 +141,7 @@
     >
         <h2 class="font-semibold">
             댓글
-            <span th:text="|${#lists.size(comments)}개|">0개</span>
+            <span th:text="|${post.commentCount}개|">0개</span>
         </h2>
 
         <th:block

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 public interface PostRepository {
-    List<PostDto> findAll();
     long createPost(PostDto post);
     void updatePost(PostDto post);
     PostDto findById(long id);
