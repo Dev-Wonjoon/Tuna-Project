@@ -20,7 +20,7 @@ public class RequestSignUpDto {
     @Size(
             min = 5, max = 50,
             message = "이메일은 5 ~ 50 글자로 입력해야 합니다.",
-            groups = ValidationGroups.SizeGroup.class
+            groups = ValidationGroups.EmailGroup.class
     )
     private String email;
 
