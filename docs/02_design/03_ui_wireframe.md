@@ -13,6 +13,7 @@
 | 플레이리스트 수정 (Playlist Edit) | `GET` | `/playlists/{playlistId}/edit` | `pages/playlist-edit.html` | base |
 | 로그인 (Login) | `GET` | `/login` | `pages/auth/login.html` | auth |
 | 회원가입 (Signup) | `GET` | `/signup` | `pages/auth/signup.html` | auth |
+| 관리자 계정 생성 (Admin Signup) | `GET` | `/admin/signup` | `pages/admin-signup.html` | `auth` |
 | 마이페이지 (My Page) | `GET` | `/mypage` | `pages/mypage.html` | base |
 | 회원 관리 페이지 (Admin) | `GET` | `/admin` | `pages/admin.html` | base |
 
@@ -169,8 +170,24 @@
     - 이메일 : 필수 입력 항목, 이메일 형식의 영문/숫자/”@”,”.” 조합 5~50자
     - 비밀번호 : 필수 입력 항목, 최소 8자 ~ 최대 50자 이하
 - 화면 제어 및 권한 규칙(Behavior Rules):
+    - Tuna 버튼: 메인화면으로 리다이렉트 된다
     - 로그인 버튼 클릭 시 루트 페이지로 이동
     - 회원가입 버튼 클릭 시 회원가입 페이지로 이동
+
+## 관리자 계정 생성 (Admin-Signin)
+
+![admin-signup](../images/12-admin-signup.png)
+
+- 출력 항목
+    - 없음
+- 입력 데이터 및 검증 규칙 (Input Data & Validation):
+    - 회원가입과 동일
+- 화면 제어 및 권한 규칙(Behavior Rules):
+    - Tuna 버튼: 메인화면으로 리다이렉트 된다
+    - 계정 생성 버튼 (`POST`, `/admin/signup`)
+        - 유효성 성립: 관리자 계정 정보 등록, 로그인 페이지로 리다이렉트
+        - 유효성 불가: 계정 생성 페이지 새로고침(리다이렉트), 에러메세지 출력
+    - 로그인 버튼: 로그인 페이지(`/login`)로 이동
 
 ## 회원가입 (Signin)
 
@@ -184,6 +201,7 @@
     - 비밀번호: 필수 입력 항목, 8~50자
     - 비밀번호 확인: 필수 입력 항목, 8~50자, 비밀번호와 같아야 함
 - 화면 제어 및 권한 규칙(Behavior Rules):
+    - Tuna 버튼: 메인화면으로 리다이렉트 된다
     - 회원가입 버튼 (`POST`, `/signup`)
         - 유효성 성립: 회원 정보 등록, 로그인 페이지로 리다이렉트
         - 유효성 불가: 회원가입 페이지 새로고침(리다이렉트), 에러메세지 출력
