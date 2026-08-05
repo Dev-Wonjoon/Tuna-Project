@@ -26,11 +26,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public List<PostDto> getPosts() {
-        return postRepository.findAll();
-    }
-
-    @Override
     public long writePost(PostDto post) {
         return postRepository.createPost(post);
     }

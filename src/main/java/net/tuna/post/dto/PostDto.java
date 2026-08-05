@@ -23,6 +23,7 @@ public class PostDto {
     private String thumbnailUrl; // 추가
     private String authorEmail;
     private int viewCount;
+    private int commentCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     //게시글 등록화면 아이디 받아오기

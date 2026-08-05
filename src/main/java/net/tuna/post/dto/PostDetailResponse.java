@@ -18,6 +18,7 @@ public class PostDetailResponse {
     private String musicUrl;
     private String name;
     private int viewCount;
+    private int commentCount;
     private Long memberId;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -34,6 +35,7 @@ public class PostDetailResponse {
                 .musicUrl(postDto.getMusicUrl())
                 .name(postDto.getName())
                 .viewCount(postDto.getViewCount())
+                .commentCount(postDto.getCommentCount())
                 .memberId(postDto.getMemberId())
                 .createdAt(postDto.getCreatedAt())
                 .updatedAt(postDto.getUpdatedAt())

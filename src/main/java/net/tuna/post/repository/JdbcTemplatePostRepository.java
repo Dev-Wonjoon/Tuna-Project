@@ -36,38 +36,43 @@ public class JdbcTemplatePostRepository implements PostRepository{
                 .content(rs.getString("content"))
                 .musicUrl(rs.getString("music_url"))
                 .viewCount(rs.getInt("view_count"))
+                .commentCount((rs.getInt("comment_count")))
                 .createdAt(rs.getObject("created_at", LocalDateTime.class))
                 .updatedAt(rs.getObject("updated_at", LocalDateTime.class))
                 .build();
     };
 
-    //전체 게시글 조회
-    @Override
-    public List<PostDto> findAll() {
-        String sql = "SELECT p.*, m.name AS name , m.email AS author_email " +
-                "FROM posts p " +
-                "LEFT JOIN members m ON p.member_id = m.id " +
-                "ORDER BY p.created_at DESC";
-        return jdbcTemplate.query(sql, postRowMapper);
-    }
-
     //게시물 상세보기
     @Override
     public PostDto findById(long id) {
-        String sql = "SELECT p.*, m.name AS name , m.email AS author_email " +
-                "FROM posts p " +
-                "LEFT JOIN members m ON p.member_id = m.id " +
-                "WHERE p.id = ?";
+        String sql = """
+                SELECT p.*, m.name AS name, m.email AS author_email, COALESCE(cc.comment_count, 0) AS comment_count
+                FROM posts p
+                LEFT JOIN members m ON m.id = p.member_id
+                LEFT JOIN (
+                    SELECT post_id, COUNT(*) AS comment_count
+                    FROM comments
+                    GROUP BY post_id
+                ) cc ON cc.post_id = p.id
+                WHERE p.id = ?
+                """;
         return jdbcTemplate.queryForObject(sql,postRowMapper,id);
     }
 
     //멤버아이디로 게시글 찾기
     @Override
     public List<PostDto> findPostsByMemberId(long id) {
-        String sql = "SELECT p.*, m.name AS name, m.email AS author_email " +
-                "FROM posts p " +
-                "LEFT JOIN members m ON p.member_id = m.id " +
-                "WHERE p.member_id = ?";
+        String sql = """
+                SELECT p.*, m.name AS name, m.email AS author_email, COALESCE(cc.comment_count, 0) AS comment_count
+                FROM posts p
+                LEFT JOIN members m ON m.id = p.member_id
+                LEFT JOIN (
+                    SELECT post_id, COUNT(*) AS comment_count
+                    FROM comments
+                    GROUP BY post_id
+                ) cc ON cc.post_id = p.id
+                WHERE p.member_id = ?
+                """;
         return jdbcTemplate.query(sql, postRowMapper, id);
     }
 
@@ -126,9 +131,14 @@ public class JdbcTemplatePostRepository implements PostRepository{
     @Override
     public List<PostDto> findByKeywordFromTitle(String keyword) {
         String sql = """
-                SELECT p.*, m.name AS name , m.email AS author_email
+                SELECT p.*, m.name AS name , m.email AS author_email, COALESCE(cc.comment_count, 0) AS comment_count
                 FROM posts p
                 LEFT JOIN members m ON p.member_id = m.id
+                LEFT JOIN (
+                    SELECT post_id, COUNT(*) AS comment_count
+                    FROM comments
+                    GROUP BY post_id
+                ) cc ON cc.post_id = p.id
                 WHERE p.title LIKE ?
                 ORDER BY p.created_at DESC
                 """;
@@ -139,9 +149,14 @@ public class JdbcTemplatePostRepository implements PostRepository{
     @Override
     public List<PostDto> findByKeywordFromContent(String keyword) {
         String sql = """
-                SELECT p.*, m.name AS name , m.email AS author_email
+                SELECT p.*, m.name AS name , m.email AS author_email, COALESCE(cc.comment_count, 0) AS comment_count
                 FROM posts p
                 LEFT JOIN members m ON p.member_id = m.id
+                LEFT JOIN (
+                    SELECT post_id, COUNT(*) AS comment_count
+                    FROM comments
+                    GROUP BY post_id
+                ) cc ON cc.post_id = p.id
                 WHERE p.content LIKE ?
                 ORDER BY p.created_at DESC
                 """;
@@ -152,9 +167,14 @@ public class JdbcTemplatePostRepository implements PostRepository{
     @Override
     public List<PostDto> findByKeywordFromTitleContent(String keyword) {
         String sql = """
-                SELECT p.*, m.name AS name , m.email AS author_email
+                SELECT p.*, m.name AS name , m.email AS author_email, COALESCE(cc.comment_count, 0) AS comment_count
                 FROM posts p
                 LEFT JOIN members m ON p.member_id = m.id
+                LEFT JOIN (
+                    SELECT post_id, COUNT(*) AS comment_count
+                    FROM comments
+                    GROUP BY post_id
+                ) cc ON cc.post_id = p.id
                 WHERE p.title LIKE ? OR p.content LIKE ?
                 ORDER BY p.created_at DESC
                 """;
@@ -165,9 +185,14 @@ public class JdbcTemplatePostRepository implements PostRepository{
     @Override
     public List<PostDto> findByKeywordFromAuthor(String keyword) {
         String sql = """
-                SELECT p.*, m.name AS name , m.email AS author_email
+                SELECT p.*, m.name AS name , m.email AS author_email, COALESCE(cc.comment_count, 0) AS comment_count
                 FROM posts p
                 LEFT JOIN members m ON p.member_id = m.id
+                LEFT JOIN (
+                    SELECT post_id, COUNT(*) AS comment_count
+                    FROM comments
+                    GROUP BY post_id
+                ) cc ON cc.post_id = p.id
                 WHERE name LIKE ?
                 ORDER BY p.created_at DESC
                 """;
@@ -211,10 +236,19 @@ public class JdbcTemplatePostRepository implements PostRepository{
             SELECT
                 p.*,
                 m.name AS name,
-                m.email AS author_email
+                m.email AS author_email,
+                COALESCE(cc.comment_count, 0) AS comment_count
             FROM posts p
             LEFT JOIN members m
                 ON m.id = p.member_id
+            LEFT JOIN (
+                SELECT
+                    post_id,
+                    COUNT(*) AS comment_count
+                FROM comments
+                GROUP BY post_id
+            ) cc
+                ON cc.post_id = p.id
             %s
             ORDER BY
                 p.created_at %s,
