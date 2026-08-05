@@ -8,7 +8,6 @@ public interface MemberRepository {
     MemberDto findByEmail(String email);
     int save(MemberDto memberDto);
     MemberDto findById(Long id);
-    int saveAdmin(MemberDto memberDto);
     int updateRole(MemberDto memberDto);
     void deleteById(Long id);
 }

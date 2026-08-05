@@ -3,6 +3,7 @@ package net.tuna.member.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import net.tuna.member.dto.RequestSignUpDto;
+import net.tuna.member.dto.Role;
 import net.tuna.member.service.MemberService;
 import net.tuna.member.validation.ValidationSequence;
 import org.springframework.stereotype.Controller;
@@ -56,7 +57,7 @@ public class MemberController {
             return "pages/auth/signup";
         }
 
-        memberService.save(requestSignUpDto);
+        memberService.save(requestSignUpDto, Role.USER);
         redirectAttributes.addFlashAttribute("message", "회원가입이 완료되었습니다.");
 
         return "redirect:/login";
