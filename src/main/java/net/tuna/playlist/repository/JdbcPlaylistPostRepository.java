@@ -72,8 +72,8 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 p.created_at,
                 p.updated_at,
                 m.name,
-                m.email AS author_email
-                COALESCE(cc.comment_count, 0) AS comment_count,
+                m.email AS author_email,
+                COALESCE(cc.comment_count, 0) AS comment_count
             FROM post_playlist_mapping ppm
             JOIN playlists pl
                 ON pl.id = ppm.playlist_id
