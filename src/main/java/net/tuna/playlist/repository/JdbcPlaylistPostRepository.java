@@ -29,6 +29,7 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 post.setContent(resultSet.getString("content"));
                 post.setMusicUrl(resultSet.getString("music_url"));
                 post.setAuthorEmail(resultSet.getString("author_email"));
+                post.setCommentCount(resultSet.getInt("comment_count"));
                 post.setViewCount(resultSet.getInt("view_count"));
                 post.setCreatedAt(resultSet.getTimestamp("created_at").toLocalDateTime());
                 post.setUpdatedAt(resultSet.getTimestamp("updated_at").toLocalDateTime());
@@ -72,6 +73,7 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 p.updated_at,
                 m.name,
                 m.email AS author_email
+                COALESCE(cc.comment_count, 0) AS comment_count,
             FROM post_playlist_mapping ppm
             JOIN playlists pl
                 ON pl.id = ppm.playlist_id
@@ -79,6 +81,12 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 ON p.id = ppm.post_id
             JOIN members m
                 ON m.id = p.member_id
+            LEFT JOIN (
+                SELECT post_id, COUNT(*) AS comment_count
+                FROM comments
+                GROUP BY post_id
+            ) cc
+                ON cc.post_id = p.id
             WHERE ppm.playlist_id = ?
                 AND pl.member_id = ?
                 AND ppm.member_id = pl.member_id
@@ -241,6 +249,7 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 p.title,
                 p.music_url,
                 ppm.created_at AS added_at
+                
             FROM post_playlist_mapping ppm
             JOIN playlists pl
                 ON pl.id = ppm.playlist_id
@@ -334,6 +343,7 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 p.updated_at,
                 m.name,
                 m.email AS author_email,
+                COALESCE(c.comment_count, 0) AS comment_count,
                 ppm.created_at AS added_at
             FROM post_playlist_mapping ppm
             JOIN playlists pl
@@ -342,6 +352,12 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 ON p.id = ppm.post_id
             JOIN members m
                 ON m.id = p.member_id
+            LEFT JOIN (
+                SELECT post_id, COUNT(*) AS comment_count
+                FROM comments
+                GROUP BY post_id
+            ) c
+                ON c.post_id = p.id
             WHERE ppm.playlist_id = ?
                 AND pl.member_id = ?
                 AND ppm.member_id = pl.member_id

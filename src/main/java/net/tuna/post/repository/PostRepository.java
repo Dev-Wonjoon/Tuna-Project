@@ -19,4 +19,5 @@ public interface PostRepository {
     List<PostDto> findByKeywordFromTitleContent(String keyword);
     List<PostDto> findByKeywordFromAuthor(String keyword);
     List<PostDto> findSlice(CursorKey cursor, CursorDirection direction, int limit);
+    long findAllByCommentCount(long postId);
 }
