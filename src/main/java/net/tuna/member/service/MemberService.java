@@ -21,7 +21,7 @@ public class MemberService {
         return true;
     }
 
-    public int save(RequestSignUpDto requestSignUpDto) {
+    public int save(RequestSignUpDto requestSignUpDto, Role role) {
         String[] imgList = new String[]{
                 "/img/tuna-note-blurple.png",
                 "/img/tuna-note-coral.png",
@@ -36,7 +36,7 @@ public class MemberService {
                         .password(passwordEncoder.encode(requestSignUpDto.getPassword()))
                         .name((requestSignUpDto.getName()))
                         .imageUrl(imgList[(int)(Math.random() * 6)])
-                        .role(Role.USER)
+                        .role(role)
                         .build()
         );
     }
