@@ -198,15 +198,15 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 )
         """.formatted(placeholders);
 
-        List<Object> paramaters = new ArrayList<>();
+        List<Object> parameters = new ArrayList<>();
 
-        paramaters.add(playlistId);
-        paramaters.add(memberId);
-        paramaters.addAll(distinctPostIds);
-        paramaters.add(playlistId);
-        paramaters.add(memberId);
+        parameters.add(playlistId);
+        parameters.add(memberId);
+        parameters.addAll(distinctPostIds);
+        parameters.add(playlistId);
+        parameters.add(memberId);
 
-        return jdbcTemplate.update(sql, paramaters.toArray());
+        return jdbcTemplate.update(sql, parameters.toArray());
     }
 
     @Override
@@ -249,7 +249,6 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 p.title,
                 p.music_url,
                 ppm.created_at AS added_at
-                
             FROM post_playlist_mapping ppm
             JOIN playlists pl
                 ON pl.id = ppm.playlist_id
@@ -275,6 +274,8 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                         LIKE 'http%%://youtube-nocookie.com/%%'
                     OR LOWER(TRIM(p.music_url))
                         LIKE 'http%%://www.youtube-nocookie.com/%%'
+                    OR LOWER(TRIM(p.music_url))
+                        LIKE 'http%%://www.youtube.com/%%'
                 )
                 %s
             ORDER BY
