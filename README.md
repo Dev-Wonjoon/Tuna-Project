@@ -12,6 +12,8 @@
 
 ## [ERD 데이터그램](docs/02_design/02_erd.md)
 
+## [트러블 슈팅](docs/03_reports/troubleshooting.md)
+
 ## 구성원
 
 ### 김두희
@@ -43,8 +45,8 @@
 
 ### 정승우
 - [alpha99k](github.com/alpha99k)
-  - 산출물 관리
-  - 시연영상 제작
-  - 도메인
-    - 게시글 CRUD 기능 구현
-    - 메인화면 기능 구현
+- 산출물 관리
+- 시연영상 제작
+- 도메인
+  - 게시글 CRUD 기능 구현
+  - 메인화면 기능 구현
