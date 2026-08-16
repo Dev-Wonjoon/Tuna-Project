@@ -16,8 +16,13 @@ public class YoutubeMusicUrlResolver implements MusicUrlResolver {
 
 
     @Override
-    public Optional<MusicSource> resolve(String rawUrl) {
+    public Optional<ResolvedMusicSource> resolve(String rawUrl) {
         return youtubeUrlParser.extractVideoId(rawUrl)
-                .map(videoId -> new MusicSource("youtube", videoId));
+                .map(videoId -> new ResolvedMusicSource(
+                        "youtube",
+                        "video",
+                        videoId,
+                        "https://www.youtube.com/watch?v=" + videoId
+                ));
     }
 }

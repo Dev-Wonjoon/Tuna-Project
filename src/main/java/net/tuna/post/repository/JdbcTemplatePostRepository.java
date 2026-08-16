@@ -15,10 +15,9 @@ import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Repository
-public class JdbcTemplatePostRepository implements PostRepository {
+public class JdbcTemplatePostRepository implements PostQueryRepository {
     private final JdbcTemplate jdbcTemplate;
 
     public JdbcTemplatePostRepository(JdbcTemplate jdbcTemplate) {
@@ -34,13 +33,21 @@ public class JdbcTemplatePostRepository implements PostRepository {
                 .memberId(rs.getLong("member_id"))
                 .title(rs.getString("title"))
                 .content(rs.getString("content"))
-                .musicUrl(rs.getString("music_url"))
+                .musicUrls(toMusicUrls(rs.getString("music_url")))
                 .viewCount(rs.getInt("view_count"))
                 .commentCount((rs.getInt("comment_count")))
                 .createdAt(rs.getObject("created_at", LocalDateTime.class))
                 .updatedAt(rs.getObject("updated_at", LocalDateTime.class))
                 .build();
     };
+
+    private static List<String> toMusicUrls(String musicUrl) {
+        if(musicUrl == null || musicUrl.isBlank()) {
+            return List.of();
+        }
+
+        return List.of(musicUrl);
+    }
 
     //게시물 상세보기
     @Override

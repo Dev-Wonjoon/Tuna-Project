@@ -5,7 +5,7 @@ import net.tuna.member.dto.MemberDto;
 import net.tuna.member.repository.MemberRepository;
 import net.tuna.member.security.CustomUserDetails;
 import net.tuna.post.dto.PostDto;
-import net.tuna.post.repository.PostRepository;
+import net.tuna.post.repository.PostQueryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.List;
 public class MypageService {
 
     private final MemberRepository memberRepository;
-    private final PostRepository postRepository;
+    private final PostQueryRepository postQueryRepository;
 
     public MemberDto getMypage(CustomUserDetails user) {
         return memberRepository.findById(user.getMemberId());
@@ -23,7 +23,7 @@ public class MypageService {
 
     public List<PostDto> getMyPosts(long memberId) {
 
-        List<PostDto> posts = postRepository.findPostsByMemberId(memberId);
+        List<PostDto> posts = postQueryRepository.findPostsByMemberId(memberId);
 
         for (PostDto post : posts) {
 

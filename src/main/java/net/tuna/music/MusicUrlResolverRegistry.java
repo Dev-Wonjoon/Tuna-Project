@@ -15,7 +15,7 @@ public class MusicUrlResolverRegistry {
         this.resolvers = resolvers;
     }
 
-    public Optional<MusicSource> resolve(String rawUrl) {
+    public Optional<ResolvedMusicSource> resolve(String rawUrl) {
         return resolvers.stream()
                 .map(resolvers -> resolvers.resolve(rawUrl))
                 .flatMap(Optional::stream)

@@ -1,73 +1,136 @@
 package net.tuna.post.service;
 
 import net.tuna.cursor.*;
+import net.tuna.music.*;
+import net.tuna.post.Post;
 import net.tuna.post.dto.PostDto;
-import net.tuna.post.repository.PostRepository;
+import net.tuna.post.repository.PostQueryRepository;
+import net.tuna.post.repository.JpaPostRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 public class PostServiceImpl implements PostService {
     private static final int MAX_PAGE_SIZE = 50;
 
-    private final PostRepository postRepository;
+    private final PostQueryRepository postQueryRepository;
+    private final JpaPostRepository jpaPostRepository;
+    private final MusicSourceRepository musicSourceRepository;
+    private final MusicUrlResolverRegistry musicUrlResolverRegistry;
     private final CursorCodec cursorCodec;
 
-    public PostServiceImpl(@Qualifier("jdbcTemplatePostRepository")PostRepository postRepository, CursorCodec cursorCodec) {
-        this.postRepository = postRepository;
+    public PostServiceImpl(
+            @Qualifier("jdbcTemplatePostRepository") PostQueryRepository postQueryRepository,
+            JpaPostRepository jpaPostRepository,
+            MusicSourceRepository musicSourceRepository,
+            MusicUrlResolverRegistry resolverRegistry,
+            CursorCodec cursorCodec
+    ) {
+        this.postQueryRepository = postQueryRepository;
+        this.jpaPostRepository = jpaPostRepository;
+        this.musicSourceRepository = musicSourceRepository;
+        this.musicUrlResolverRegistry = resolverRegistry;
         this.cursorCodec = cursorCodec;
     }
 
     @Override
-    public long writePost(PostDto post) {
-        return postRepository.createPost(post);
+    @Transactional
+    public long writePost(PostDto request, long memberId) {
+        List<ResolvedMusicSource> resolvedMusicSources =
+                resolveAll(request.getMusicUrls());
+
+        List<MusicSource> musicSources =
+                findOrCreateMusicSources(resolvedMusicSources);
+
+        Post post = new Post(
+                request.getTitle(),
+                request.getContent(),
+                memberId
+        );
+
+        post.replaceMusicSources(musicSources);
+
+        return jpaPostRepository.save(post).getId();
     }
 
     @Override
-    public void editPost(PostDto post) {
-        postRepository.updatePost(post);
+    @Transactional
+    public void editPost(long postId, PostDto request) {
+        Post post = jpaPostRepository.findAggregateById(postId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "게시글을 찾을 수 없습니다.")
+                );
+
+        List<ResolvedMusicSource> resolvedMusicSources =
+                resolveAll(request.getMusicUrls());
+
+        List<MusicSource> musicSources =
+                findOrCreateMusicSources(resolvedMusicSources);
+
+        post.update(
+                request.getTitle(),
+                request.getContent()
+        );
+
+        post.replaceMusicSources(musicSources);
     }
 
     @Override
     public PostDto getPost(long id) {
-        return  postRepository.findById(id);
+        return  postQueryRepository.findById(id);
     }
 
     @Override
     public List<PostDto> getPostsByMemberId(long id) {
-        return postRepository.findPostsByMemberId(id);
+        return postQueryRepository.findPostsByMemberId(id);
     }
 
     @Override
-    public void deletePost(long id) {
-        postRepository.deleteById(id);
+    @Transactional
+    public void deletePost(long postId) {
+        Post post = jpaPostRepository
+                .findAggregateById(postId)
+                .orElseThrow(() ->
+                        new ResponseStatusException(
+                                HttpStatus.NOT_FOUND,
+                                "게시글을 찾을 수 없습니다."
+                        )
+                );
+        jpaPostRepository.delete(post);
     }
 
     @Override
-    public void addViewCount(long id) {
-        postRepository.addViewCount(id);
+    @Transactional
+    public void addViewCount(long postId) {
+        int affectedRows = jpaPostRepository.increaseViewCount(postId);
+
+        if(affectedRows != 1) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "게시글을 찾을 수 없습니다."
+            );
+        }
     }
 
     @Override
     public List<PostDto> getSearchPosts(String type, String value) {
         if (type.equals("searchTitleContent")) {
-            return postRepository.findByKeywordFromTitleContent(value);
+            return postQueryRepository.findByKeywordFromTitleContent(value);
         }
         if (type.equals("searchTitle")) {
-            return postRepository.findByKeywordFromTitle(value);
+            return postQueryRepository.findByKeywordFromTitle(value);
         }
         if (type.equals("searchContent")) {
-            return postRepository.findByKeywordFromContent(value);
+            return postQueryRepository.findByKeywordFromContent(value);
         }
         if (type.equals("searchAuthor")) {
-            return postRepository.findByKeywordFromAuthor(value);
+            return postQueryRepository.findByKeywordFromAuthor(value);
         }
         return null;
     }
@@ -85,7 +148,7 @@ public class PostServiceImpl implements PostService {
                 : request.getDirection();
 
         List<PostDto> candidates =
-                postRepository.findSlice(
+                postQueryRepository.findSlice(
                         request.getKey(),
                         direction,
                         size + 1
@@ -137,6 +200,75 @@ public class PostServiceImpl implements PostService {
         return new CursorSlice<>(content, previousCursor, nextCursor);
     }
 
+    private List<ResolvedMusicSource> resolveAll(
+            List<String> rawUrls
+    ) {
+        if(rawUrls == null || rawUrls.isEmpty()) {
+            return List.of();
+        }
+
+        List<ResolvedMusicSource> resolved = new ArrayList<>();
+        Set<MusicIdentity> identities = new HashSet<>();
+
+        for(String rawUrl : rawUrls) {
+            if(rawUrl == null || rawUrl.isBlank()) {
+                continue;
+            }
+
+            String normalizedInput = rawUrl.trim();
+
+            ResolvedMusicSource source = musicUrlResolverRegistry
+                    .resolve(normalizedInput)
+                    .orElseThrow(() ->
+                            new MusicUrlValidationException(
+                                    "지원하지 않는 음악 URL입니다: " + normalizedInput
+                            ));
+
+            MusicIdentity identity = new MusicIdentity(
+                    source.provider(),
+                    source.resourceType(),
+                    source.resourceId()
+            );
+
+            if(!identities.add(identity)) {
+                throw new MusicUrlValidationException("같은 음악을 중복 등록할 수 없습니다.");
+            }
+
+            resolved.add(source);
+        }
+
+        return List.copyOf(resolved);
+    }
+
+    private List<MusicSource> findOrCreateMusicSources(
+            List<ResolvedMusicSource> resolvedMusicSources
+    ) {
+        List<MusicSource> results = new ArrayList<>(resolvedMusicSources.size());
+
+        for(ResolvedMusicSource resolved : resolvedMusicSources) {
+            musicSourceRepository.insertIfAbsent(
+                    resolved.provider(),
+                    resolved.resourceType(),
+                    resolved.resourceId(),
+                    resolved.canonicalUrl()
+            );
+
+            MusicSource musicSource = musicSourceRepository
+                    .findByProviderAndResourceTypeAndResourceId(
+                            resolved.provider(),
+                            resolved.resourceType(),
+                            resolved.resourceId()
+                    )
+                    .orElseThrow(() ->
+                        new IllegalStateException("음악 출처 저장 후 조회에 실패했습니다.")
+                    );
+
+            results.add(musicSource);
+        }
+
+        return results;
+    }
+
     private CursorKey toCursorKey(PostDto post) {
         return new CursorKey(
                 post.getCreatedAt(),
@@ -152,4 +284,10 @@ public class PostServiceImpl implements PostService {
             );
         }
     }
+
+    private record MusicIdentity(
+            String provider,
+            String resourceType,
+            String resourceId
+    ) {}
 }

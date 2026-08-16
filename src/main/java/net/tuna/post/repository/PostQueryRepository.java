@@ -5,9 +5,8 @@ import net.tuna.cursor.CursorKey;
 import net.tuna.post.dto.PostDto;
 
 import java.util.List;
-import java.util.Map;
 
-public interface PostRepository {
+public interface PostQueryRepository {
     long createPost(PostDto post);
     void updatePost(PostDto post);
     PostDto findById(long id);

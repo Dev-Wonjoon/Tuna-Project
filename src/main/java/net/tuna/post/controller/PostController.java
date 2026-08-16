@@ -7,6 +7,7 @@ import net.tuna.comment.dto.CommentDto;
 import net.tuna.comment.service.CommentService;
 import net.tuna.member.dto.Role;
 import net.tuna.member.security.CustomUserDetails;
+import net.tuna.music.MusicUrlValidationException;
 import net.tuna.post.dto.PostDetailResponse;
 import net.tuna.post.dto.PostDto;
 import net.tuna.post.service.PostService;
@@ -72,20 +73,31 @@ public class PostController {
 
     //게시글 등록 요청
     @PostMapping("/posts")
-    public String createPost(@Valid @ModelAttribute("postForm") PostDto post,
-                             BindingResult bindingResult,
-                             @AuthenticationPrincipal CustomUserDetails userDetails){
+    public String createPost(
+            @Valid @ModelAttribute("postForm") PostDto post,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
         if(bindingResult.hasFieldErrors()){
             return "pages/post-create";
         }
 
-        //멤버에서 로그인된 유저 ID 아이디가져오기
-        if(userDetails != null){
-            post.setMemberId(userDetails.getMemberId());
-        }
+        try {
+            long redirectId = postService.writePost(
+                    post,
+                    userDetails.getMemberId()
+            );
 
-        long redirectId = postService.writePost(post);
-        return "redirect:/posts/" + redirectId;
+            return "redirect:/posts/" + redirectId;
+        } catch (MusicUrlValidationException e) {
+            bindingResult.rejectValue(
+                    "musicUrl",
+                    "musicUrl.invalid",
+                    e.getMessage()
+            );
+
+            return "pages/post-create";
+        }
     }
 
     //게시글 수정화면 요청
@@ -110,18 +122,43 @@ public class PostController {
     @PostMapping("/posts/{postId}/edit")
     public String editPost(
             @PathVariable("postId") long id,
-            @ModelAttribute("postForm") PostDto post,
-            @AuthenticationPrincipal CustomUserDetails userDetails){
-        Long postMemberId = postService.getPost(id).getMemberId();
-        Long memberId = userDetails.getMemberId();
+            @Valid @ModelAttribute("postForm") PostDto post,
+            BindingResult bindingResult,
+            Model model,
+            @AuthenticationPrincipal CustomUserDetails userDetails
+    ){
+        PostDto savedPost = postService.getPost(id);
 
-        // 일단 조건에 맞으면 삭제 동작을 하게 짰는데, 왠만하면 조건 안되면 에러페이지를 띄우고 싶다.
-        if (postMemberId.equals(memberId) || userDetails.getRole() == Role.ADMIN) {
-            postService.editPost(post);
-            return "redirect:/posts/"+id;
+        Long postMemberId = savedPost.getMemberId();
+        Long loginMemberId = userDetails.getMemberId();
+
+        boolean editable =
+                postMemberId.equals(loginMemberId)
+                || userDetails.getRole() == Role.ADMIN;
+
+        if(!editable) {
+            return "error/403";
         }
 
-        return "error/403";
+        if(bindingResult.hasErrors()) {
+            prepareEditForm(id, post, model);
+            return "pages/post-edit";
+        }
+
+        try {
+            postService.editPost(id, post);
+
+            return "redirect:/posts/" + id;
+        } catch (MusicUrlValidationException e) {
+            bindingResult.rejectValue(
+                    "musicUrl",
+                    "musicUrl.invalid",
+                    e.getMessage()
+            );
+
+            prepareEditForm(id, post, model);
+            return "pages/post-edit";
+        }
     }
 
 
@@ -176,4 +213,8 @@ public class PostController {
         return "pages/home";
     }
 
+    private void prepareEditForm(long id, PostDto post, Model model) {
+        post.setId(id);
+        model.addAttribute("post", post);
+    }
 }

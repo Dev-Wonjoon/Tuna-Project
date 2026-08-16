@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface PostService {
-    long writePost(PostDto post);
-    void editPost(PostDto post);
+    long writePost(PostDto post, long memberId);
+    void editPost(long postId, PostDto post);
     PostDto getPost(long id);
     List<PostDto> getPostsByMemberId(long id);
     void deletePost(long id);
