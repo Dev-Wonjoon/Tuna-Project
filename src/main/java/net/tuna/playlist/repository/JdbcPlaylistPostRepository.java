@@ -89,7 +89,6 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 ON cc.post_id = p.id
             WHERE ppm.playlist_id = ?
                 AND pl.member_id = ?
-                AND ppm.member_id = pl.member_id
             ORDER BY
                 ppm.created_at DESC,
                 ppm.post_id DESC
@@ -101,13 +100,11 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
         return jdbcTemplate.update("""
             INSERT INTO post_playlist_mapping (
                 post_id,
-                playlist_id,
-                member_id
+                playlist_id
             )
             SELECT
                 p.id,
-                pl.id,
-                pl.member_id
+                pl.id
             FROM posts p
             JOIN playlists pl
                 ON pl.id = ?
@@ -118,56 +115,33 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                     FROM post_playlist_mapping ppm
                     WHERE ppm.post_id = p.id
                         AND ppm.playlist_id = pl.id
-                        AND ppm.member_id = pl.member_id
-            )
-        """,
-                playlistId,
-                postId,
-                memberId
-        );
-
+                )
+        """, playlistId, postId, memberId);
     }
 
     @Override
     public int remove(long playlistId, long postId, long memberId) {
         return jdbcTemplate.update("""
-            DELETE FROM post_playlist_mapping ppm
-            WHERE post_id = ?
-                AND playlist_id = ?
-                AND member_id = ?
-                AND playlist_id IN (
-                    SELECT id
-                    FROM playlists
-                    WHERE id = ?
-                        AND member_id = ?
-                )
-        """,
-                postId,
-                playlistId,
-                memberId,
-                playlistId,
-                memberId
-        );
+            DELETE ppm
+            FROM post_playlist_mapping ppm
+            JOIN playlists pl
+                ON pl.id = ppm.playlist_id
+            WHERE ppm.post_id = ?
+                AND ppm.playlist_id = ?
+                AND pl.member_id = ?
+        """, postId, playlistId, memberId);
     }
 
     @Override
     public int removeAll(long playlistId, long memberId) {
         return jdbcTemplate.update("""
-                    DELETE FROM post_playlist_mapping ppm
-                    WHERE playlist_id = ?
-                        AND member_id = ?
-                        AND playlist_id IN (
-                            SELECT id
-                            FROM playlists
-                            WHERE id = ?
-                                AND member_id = ?
-                        )
-                    """,
-                playlistId,
-                memberId,
-                playlistId,
-                memberId
-        );
+            DELETE ppm
+            FROM post_playlist_mapping ppm
+            JOIN playlists pl
+                ON pl.id = ppm.playlist_id
+            WHERE ppm.playlist_id = ?
+                AND pl.member_id = ?
+        """, playlistId, memberId);
     }
 
     @Override
@@ -186,16 +160,13 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
         );
 
         String sql = """
-            DELETE FROM post_playlist_mapping ppm
-            WHERE playlist_id = ?
-                AND member_id = ?
-                AND post_id IN (%s)
-                AND playlist_id IN (
-                    SELECT id
-                    FROM playlists
-                    WHERE id = ?
-                        AND member_id = ?
-                )
+            DELETE ppm
+            FROM post_playlist_mapping ppm
+            JOIN playlists pl
+                ON pl.id = ppm.playlist_id
+            WHERE ppm.playlist_id = ?
+                AND pl.member_id = ?
+                AND ppm.post_id IN (%s)
         """.formatted(placeholders);
 
         List<Object> parameters = new ArrayList<>();
@@ -203,8 +174,6 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
         parameters.add(playlistId);
         parameters.add(memberId);
         parameters.addAll(distinctPostIds);
-        parameters.add(playlistId);
-        parameters.add(memberId);
 
         return jdbcTemplate.update(sql, parameters.toArray());
     }
@@ -255,9 +224,7 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
             JOIN posts p
                 ON p.id = ppm.post_id
             WHERE ppm.playlist_id = ?
-                AND ppm.member_id = ?
-                AND ppm.member_id = pl.member_id
-                AND p.music_url IS NOT NULL
+                AND pl.member_id = ?
                 AND TRIM(p.music_url) <> ''
                 AND (
                     LOWER(TRIM(p.music_url))
@@ -361,7 +328,6 @@ public class JdbcPlaylistPostRepository implements PlaylistPostRepository {
                 ON c.post_id = p.id
             WHERE ppm.playlist_id = ?
                 AND pl.member_id = ?
-                AND ppm.member_id = pl.member_id
                 %s
             ORDER BY
                 ppm.created_at %s,
