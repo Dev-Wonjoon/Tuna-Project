@@ -23,7 +23,7 @@
 
 ## 공통 nav
 
-![nav](../images/0-nav.jpg)
+![nav](../04_images/0-nav.jpg)
 
 - 출력 항목
     - 로그인 안된 상태: 로그인 버튼, 회원가입 버튼만 출력
@@ -41,7 +41,7 @@
 
 ## 메인화면 (Home)
 
-![home](../images/1-home.jpg)
+![home](../04_images/1-home.jpg)
 
 - 출력 항목
     - 게시글 목록 영역: 제목, 내용, 링크, 작성자 이름, 조회수, 생성 일시 → 게시글 전체 목록 조회
@@ -64,7 +64,7 @@
 
 ## 게시글 상세 (Post Detail)
 
-![post-detail](../images/2-post-detail.jpg)
+![post-detail](../04_images/2-post-detail.jpg)
 
 - 출력 항목
     - 게시글 본문 영역: 게시글 정보 (제목, 내용, 노래 링크, 작성자 이름, 조회수, 생성 일시)
@@ -85,7 +85,7 @@
 
 ## 게시글 작성 (Post Create)
 
-![post-create](../images/3-post-create.jpg)
+![post-create](../04_images/3-post-create.jpg)
 
 - 출력 항목
     - 항목 없음
@@ -99,7 +99,7 @@
 
 ## 게시글 수정 (Post Edit)
 
-![post-edit](../images/4-post-edit.jpg)
+![post-edit](../04_images/4-post-edit.jpg)
 
 - 출력 항목
     - 항목 없음
@@ -114,7 +114,7 @@
 
 ## 플레이리스트 생성/추가 팝업
 
-![playlist-popup](../images/11-playlist-popup.jpg)
+![playlist-popup](../04_images/11-playlist-popup.jpg)
 
 - 출력 항목:
     - 플레이리스트 생성 팝업: 없음
@@ -131,7 +131,7 @@
 
 ## 플레이리스트 상세 (Playlist Detail)
 
-![playlist-detail](../images/7-playlist-detail.jpg)
+![playlist-detail](../04_images/7-playlist-detail.jpg)
 
 - 출력 항목
     - 플레이리스트 상세 조회
@@ -145,7 +145,7 @@
 
 ## 플레이리스트 수정 (Playlist Edit)
 
-![playlist-edit](../images/6-playlist-edit.jpg)
+![playlist-edit](../04_images/6-playlist-edit.jpg)
 
 - 출력 항목
     - 플레이리스트 상세 조회
@@ -162,7 +162,7 @@
 
 ## 로그인 (Login)
 
-![login](../images/8-login.jpg)
+![login](../04_images/8-login.jpg)
 
 - 출력 항목
     - 없음
@@ -176,7 +176,7 @@
 
 ## 관리자 계정 생성 (Admin-Signin)
 
-![admin-signup](../images/12-admin-signup.png)
+![admin-signup](../04_images/12-admin-signup.png)
 
 - 출력 항목
     - 없음
@@ -191,7 +191,7 @@
 
 ## 회원가입 (Signin)
 
-![signin](../images/9-signin.jpg)
+![signin](../04_images/9-signin.jpg)
 
 - 출력 항목
     - 없음
@@ -209,7 +209,7 @@
 
 ## 마이페이지 (My Page)
 
-![mypage](../images/10-mypage.jpg)
+![mypage](../04_images/10-mypage.jpg)
 
 - 출력 항목
     - 사용자 영역 : 회원가입 시 저장된 사용자 정보 (이메일, 이름 , 가입날짜, 권한등급, 게시글 작성수)
@@ -222,7 +222,7 @@
 
 ## 회원 관리 페이지
 
-![admin](../images/15-admin-members.jpg)
+![admin](../04_images/15-admin-members.jpg)
 
 - 출력 항목
     - 회원 목록 영역: 닉네임, 이메일, 권한등급, 가입일, 게시글 수

@@ -25,4 +25,4 @@
 
 ---
 
-![architecture](../images/architecture.jpg)
+![architecture](../04_images/architecture.jpg)
